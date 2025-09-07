@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 20:19:25 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/07 20:28:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/09/07 21:04:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,34 +19,34 @@
 enum e_metachars
 {
 	/** @brief Space character, separates tokens. */
-	META_SPACE = ' ',
+	METACHAR_SPACE = ' ',
 
 	/** @brief Tab character, separates tokens. */
-	META_TAB = '\t',
+	METACHAR_TAB = '\t',
 
 	/** @brief Newline, separates commands or lines. */
-	META_NL = '\n',
+	METACHAR_NEWLINE = '\n',
 
 	/** @brief Pipe operator, redirects output to another command. */
-	META_PIPE = '|',
+	METACHAR_PIPE = '|',
 
 	/** @brief Ampersand, for background processes or logical AND. */
-	META_AMP = '&',
+	METACHAR_AMPERSAND = '&',
 
 	/** @brief Semicolon, separates commands on the same line. */
-	META_SMCLN = ';',
+	METACHAR_SEMICOLON = ';',
 
 	/** @brief Left parenthesis, begins subshell or grouping. */
-	META_PARENT_LEFT = '(',
+	METACHAR_PAREN_LEFT = '(',
 
 	/** @brief Right parenthesis, ends subshell or grouping. */
-	META_PAREN_RIGHT = ')',
+	METACHAR_PAREN_RIGHT = ')',
 
 	/** @brief Less-than, input redirection operator. */
-	META_REDIR_LEFT = '<',
+	METACHAR_REDIR_LEFT = '<',
 
 	/** @brief Greater-than, output redirection operator. */
-	META_REDIR_RIGHT = '>'
+	METACHAR_REDIR_RIGHT = '>'
 };
 
 #endif
