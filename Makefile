@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/09/07 21:28:20 by yademirk         ###   ########.fr        #
+#    Updated: 2025/09/07 22:30:16 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -23,6 +23,8 @@ CC = cc
 # Flags
 W_FLAGS = -Wall -Wextra -Werror
 INC_FLAGS = -I$(INC_DIR)
+LIB_DIRS =
+LIB_FLAGS = $(LIB_DIRS) -lreadline
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
 
 # C FILES AND DIRECTORIES
@@ -44,11 +46,11 @@ OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME) $(LIB_FLAGS)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) $^ -c -o $@
+	$(CC) $(FLAGS) $^ -c -o $@ $(LIB_FLAGS)
 
 clean:
 	rm -rf $(OBJ_DIR)*
