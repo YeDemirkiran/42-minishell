@@ -23,6 +23,9 @@ Shell Expansion: https://www.spsanderson.com/steveondata/posts/2024-10-18/ <br /
 ## GNU Readline
 GNU Readline Documentation: https://tiswww.case.edu/php/chet/readline/readline.html
 
+## Miscellaneous
+ANSI Color Codes: https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
+
 # Common Pitfalls
 
 ## GNU Readline Memory Leaks
