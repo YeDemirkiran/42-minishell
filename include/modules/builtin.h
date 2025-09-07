@@ -1,25 +1,18 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/07 11:06:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/07 21:28:08 by yademirk         ###   ########.fr       */
+/*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
+/*   Updated: 2025/09/07 21:27:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stdlib.h>
+#ifndef BUILTIN_H
+# define BUILTIN_H
 
-#include <modules/builtin.h>
+void	change_directory(const char *path);
 
-int	main(int argc, char **argv, char **envp)
-{
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	if (argc > 1)
-		change_directory(argv[1]);
-	return (EXIT_SUCCESS);
-}
+#endif

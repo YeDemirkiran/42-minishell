@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/09/07 11:18:40 by yademirk         ###   ########.fr        #
+#    Updated: 2025/09/07 21:28:20 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -26,11 +26,15 @@ INC_FLAGS = -I$(INC_DIR)
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
 
 # C FILES AND DIRECTORIES
-C_FILES = $(MAIN_FILES)
+C_FILES = $(MAIN_FILES) $(BUILTIN_FILES)
 
 #   Main
 MAIN_DIR = main/
 MAIN_FILES = $(addprefix $(MAIN_DIR), main.c)
+
+#   Built-ins
+BUILTIN_DIR = builtin/
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
