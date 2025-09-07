@@ -14,10 +14,10 @@ Prompt > Parse Input > Tokenization > Expansion > Execution > Repeat
 (todo: add an image here showcasing the steps)
 
 # Resources
-GNU Bash Manual: https://www.gnu.org/software/bash/manual/
-Bash Wikipedia Article: https://en.wikipedia.org/wiki/Bash_(Unix_shell)
-Shell Terminology: https://www.ibm.com/docs/en/aix/7.1.0?topic=concepts-shells-terminology
-Shell Expansion: https://www.spsanderson.com/steveondata/posts/2024-10-18/
+GNU Bash Manual: https://www.gnu.org/software/bash/manual/ <br />
+Bash Wikipedia Article: https://en.wikipedia.org/wiki/Bash_(Unix_shell) <br />
+Shell Terminology: https://www.ibm.com/docs/en/aix/7.1.0?topic=concepts-shells-terminology <br />
+Shell Expansion: https://www.spsanderson.com/steveondata/posts/2024-10-18/ <br />
 
 # Common Pitfalls
 
