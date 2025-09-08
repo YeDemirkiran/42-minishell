@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/09/07 22:30:16 by yademirk         ###   ########.fr        #
+#    Updated: 2025/09/07 23:13:20 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -28,7 +28,7 @@ LIB_FLAGS = $(LIB_DIRS) -lreadline
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
 
 # C FILES AND DIRECTORIES
-C_FILES = $(MAIN_FILES) $(BUILTIN_FILES)
+C_FILES = $(MAIN_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
 
 #   Main
 MAIN_DIR = main/
@@ -37,6 +37,10 @@ MAIN_FILES = $(addprefix $(MAIN_DIR), main.c)
 #   Built-ins
 BUILTIN_DIR = builtin/
 BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c)
+
+#   Signals
+SIGNAL_DIR = signal/
+SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
