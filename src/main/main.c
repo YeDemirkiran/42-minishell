@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 20:08:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/09/20 20:45:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -38,8 +38,11 @@ int	main(int argc, char **argv, char **envp)
 			free(str);
 		first_run = 0;
 		str = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
-		// if (str && strlen(str) > 0)
-		// 	printf("%s\n", str);
+		// time to read the line
+		if (str[0] == '#') // ignore comments
+			continue;
+		if (str && strlen(str) > 0)
+			printf("%s\n", str);
 	}
 	return (EXIT_SUCCESS);
 }
