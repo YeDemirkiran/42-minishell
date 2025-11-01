@@ -1,14 +1,14 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/09/07 23:13:20 by yademirk         ###   ########.fr        #
+#    Updated: 2025/11/01 16:33:04 by yademirk         ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
 NAME = minishell
 
@@ -23,9 +23,8 @@ CC = cc
 # Flags
 W_FLAGS = -Wall -Wextra -Werror
 INC_FLAGS = -I$(INC_DIR)
-LIB_DIRS =
-LIB_FLAGS = $(LIB_DIRS) -lreadline
-FLAGS = $(W_FLAGS) $(INC_FLAGS)
+LIB_FLAGS = 
+FLAGS = $(W_FLAGS) $(INC_FLAGS) $(LIB_FLAGS)
 
 # C FILES AND DIRECTORIES
 C_FILES = $(MAIN_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
@@ -50,11 +49,11 @@ OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME) $(LIB_FLAGS)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME) -lreadline
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) $^ -c -o $@ $(LIB_FLAGS)
+	$(CC) $(FLAGS) $^ -c -o $@
 
 clean:
 	rm -rf $(OBJ_DIR)*

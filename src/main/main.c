@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 20:46:55 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/01 16:38:51 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -30,6 +30,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	(void)envp;
+	str = NULL;
 	first_run = 1;
 	signal(SIGINT, on_sigint);
 	while (str || first_run)
@@ -38,7 +39,8 @@ int	main(int argc, char **argv, char **envp)
 			free(str);
 		first_run = 0;
 		str = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
-		// time to read the line
+		// parse
+		// execute
 
 		// but ignore comments!
 		// todo: move this step inside the parsing logic, make it so it starts ignoring the part after the # symbol
