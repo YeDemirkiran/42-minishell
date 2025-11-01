@@ -15,11 +15,25 @@ Prompt > Parse Input > Tokenization > Expansion > Execution > Repeat
 
 # Resources
 ## Shell - Bash
-GNU Bash Manual: https://www.gnu.org/software/bash/manual/ <br />
-Bash Wikipedia Article: https://en.wikipedia.org/wiki/Bash_(Unix_shell) <br />
-Shell Terminology: https://www.ibm.com/docs/en/aix/7.1.0?topic=concepts-shells-terminology <br />
-Shell Expansion: https://www.spsanderson.com/steveondata/posts/2024-10-18/ <br />
-Special Variables: https://www.tutorialspoint.com/unix/unix-special-variables.htm <br />
+- GNU Bash Manual: https://www.gnu.org/software/bash/manual/
+- Bash Wikipedia Article: https://en.wikipedia.org/wiki/Bash_(Unix_shell)
+- Shell Terminology: https://www.ibm.com/docs/en/aix/7.1.0?topic=concepts-shells-terminology
+- Shell Expansion: https://www.spsanderson.com/steveondata/posts/2024-10-18/
+- Special Variables: https://www.tutorialspoint.com/unix/unix-special-variables.htm
+
+## Parser
+
+### Lexical Analysis
+- Lexical Analysis: https://en.wikipedia.org/wiki/Lexical_analysis
+
+### Backus-Naur Form
+- Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+- BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
+
+### Abstract Syntax Tree
+- Abstract Syntax: https://en.wikipedia.org/wiki/Abstract_syntax
+- Parse Tree: https://en.wikipedia.org/wiki/Parse_tree
+- Abstract Syntax Tree: https://en.wikipedia.org/wiki/Abstract_syntax_tree
 
 ## GNU Readline
 GNU Readline Documentation: https://tiswww.case.edu/php/chet/readline/readline.html
