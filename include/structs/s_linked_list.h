@@ -1,26 +1,22 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   s_linked_list.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/07 23:02:10 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 20:08:47 by yademirk         ###   ########.fr       */
+/*   Created: 2025/09/20 23:52:48 by yademirk          #+#    #+#             */
+/*   Updated: 2025/09/20 23:55:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
+#ifndef S_LINKED_LIST_H
+# define S_LINKED_LIST_H
 
-#include <macros/m_colors.h>
-
-void	on_sigint(int i)
+typedef struct s_linked_list
 {
-	(void)i;
-	// rl_replace_line("", 0);
-	// rl_redisplay();
-	// printf("\n"COLOR_GREEN "babashell" COLOR_WHITE " > ");
-	// rl_on_new_line();
-}
+	t_linked_list	*next;
+	void			*content;
+}			t_linked_list;
+
+#endif

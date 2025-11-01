@@ -1,26 +1,32 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   s_command.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/07 23:02:10 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 20:08:47 by yademirk         ###   ########.fr       */
+/*   Created: 2025/09/20 23:37:56 by yademirk          #+#    #+#             */
+/*   Updated: 2025/09/20 23:56:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
+#ifndef S_COMMAND_H
+# define S_COMMAND_H
 
-#include <macros/m_colors.h>
+# include <structs/s_linked_list.h>
 
-void	on_sigint(int i)
+/**
+ * @brief Struct of a command, to be used by the executor.
+ */
+
+typedef struct s_command
 {
-	(void)i;
-	// rl_replace_line("", 0);
-	// rl_redisplay();
-	// printf("\n"COLOR_GREEN "babashell" COLOR_WHITE " > ");
-	// rl_on_new_line();
-}
+	char			*command_path;
+	t_linked_list	*arguments;
+
+	int		stdin_fd;
+	int		stdout_fd;
+	int		stderr_fd;
+}			t_command;
+
+#endif
