@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/01 16:33:04 by yademirk         ###   ########.fr        #
+#    Updated: 2025/11/10 14:42:38 by yademirk         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ LIB_FLAGS =
 FLAGS = $(W_FLAGS) $(INC_FLAGS) $(LIB_FLAGS)
 
 # C FILES AND DIRECTORIES
-C_FILES = $(MAIN_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
+C_FILES = $(MAIN_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES) $(LEXER_FILES)
 
 #   Main
 MAIN_DIR = main/
@@ -40,6 +40,10 @@ BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c)
 #   Signals
 SIGNAL_DIR = signal/
 SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
+
+# Lexer
+LEXER_DIR = lexer/
+LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
