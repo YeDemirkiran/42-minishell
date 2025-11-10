@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/01 16:38:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/10 18:52:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,37 +17,53 @@
 #include <readline/readline.h>
 
 #include <modules/builtin.h>
+#include <modules/lexer.h>
 #include <modules/signal.h>
+#include <modules/executor.h>
+
 #include <macros/m_colors.h>
+#include <structs/s_command.h>
 
 #define SHELL_NAME "babashell"
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*str;
-	char	first_run;
+	char		*input;
+	char		first_run;
+	t_command	cmd;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	str = NULL;
+	input = NULL;
 	first_run = 1;
 	signal(SIGINT, on_sigint);
-	while (str || first_run)
+	while (input || first_run)
 	{
 		if (!first_run)
-			free(str);
+			free(input);
 		first_run = 0;
-		str = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
-		// parse
-		// execute
+		input = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
+		
+		// STEP 1: Lexical Analysis
+		// Analyze and tokenize the input.
+		lexical_analyze(input);
+		
+		// STEP 2: Parser
+		// Use the tokens from lexer and parse them to usable commands by the executor.
+		// cmd = parse();
 
-		// but ignore comments!
-		// todo: move this step inside the parsing logic, make it so it starts ignoring the part after the # symbol
-		if (str[0] == '#') // ignore comments
-			continue;
-		if (str && strlen(str) > 0)
-			printf("%s\n", str);
+		// STEP 3: Execution
+		// Execute the parsed commands here. Provide envp for them.
+
+		cmd.command_path = "/bin/ls";
+		cmd.stdin_fd = 0;
+		cmd.stdout_fd = 1;
+		cmd.stderr_fd = 2;
+		executor(&cmd);
+
+		// STEP 4: Restart
+		// Prepare the shell for the next iteration.
 	}
 	return (EXIT_SUCCESS);
 }

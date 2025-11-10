@@ -181,7 +181,7 @@ Sometimes, using GNU Readline may cause leftover "still reachable memory" errors
 # Collaborators
 
 ## Main Programmers
-- Muhammed Emin Aynacı (muayna)
+- Muhammed Emin Ayna (muayna)
 - Yaşam Ensar Demirkıran (yademirk)
 
 ## Contributors
