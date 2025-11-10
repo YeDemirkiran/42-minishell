@@ -1,16 +1,22 @@
 # MANDATORY
 ## Program Flow
-Lexer/Parser > Tokenizer > Expansion > Executor > Repeat
+Prompt > Input > Lexer > Parser > Executor > Repeat
 
-### Lexer/Parser
+### Lexer
+#### Split
+#### Quote Handling
+#### Tokenization
 
-### Tokenizer
-
-### Expansion
+### Parser
+#### Expansion	
+#### AST
 
 ### Executor
-
-## Built-ins
+#### Simple Commands
+#### Pipes
+#### Redirections
+#### Heredoc
+#### Built-ins
 - [ ] echo <br>
 - [ ] cd <br>
 - [ ] pwd <br>
@@ -19,7 +25,9 @@ Lexer/Parser > Tokenizer > Expansion > Executor > Repeat
 - [ ] env <br>
 - [ ] exit <br>
 
-## Testing
+#### Environment Variables
+
+## Testing & Error Handling
 ### General Cases
 
 ### Edge Cases
