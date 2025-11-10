@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:52:48 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 23:55:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/10 23:38:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,8 +15,8 @@
 
 typedef struct s_linked_list
 {
-	t_linked_list	*next;
-	void			*content;
+	struct s_linked_list	*next;
+	void					*content;
 }			t_linked_list;
 
 #endif
