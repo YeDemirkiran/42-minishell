@@ -53,8 +53,11 @@ The step of analysing and tokenizing input before parsing them to data structure
 - Lexer Hack: https://en.wikipedia.org/wiki/Lexer_hack
 
 ### Backus-Naur Form
+Not strictly required.
+
 - Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
 - BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
+- GNU Bison: https://en.wikipedia.org/wiki/GNU_Bison
 
 ## Parser
 The second step. Parser uses the tokens produced by lexer and parses them into meaningful data structures for the executor to use.
