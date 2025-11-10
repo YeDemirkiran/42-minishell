@@ -27,6 +27,7 @@ Resources about shells and their history.
 - Shell Script: https://en.wikipedia.org/wiki/Shell_script
 - Unix Shell: https://en.wikipedia.org/wiki/Unix_shell
 - Command-line Interface: https://en.wikipedia.org/wiki/Command-line_interface
+- Comnmand-line Completion: https://en.wikipedia.org/wiki/Command-line_completion
 
 ## Bash (Bourne Again SHell)
 Among these, GNU Bash Manual and OpenGroup Shell Specifications are the most important. They will guide you through building your shell.
