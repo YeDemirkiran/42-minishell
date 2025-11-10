@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/11 00:24:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/11 00:41:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -31,6 +31,7 @@
 int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
+	char		*tokens;
 	char		first_run;
 	t_command	cmd;
 
@@ -49,7 +50,8 @@ int	main(int argc, char **argv, char **envp)
 
 		// STEP 1: Lexical Analysis
 		// Analyze and tokenize the input.
-		lexical_analyze(input);
+		tokens = lexical_analyze(input);
+		(void)tokens;
 
 		// STEP 2: Parser
 		// Use the tokens from lexer and parse them to usable commands by the executor.
