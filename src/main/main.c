@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/10 14:40:04 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:59:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,17 @@ int	main(int argc, char **argv, char **envp)
 		input = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
 		
 		// STEP 1: Lexical Analysis
+		// Analyze and tokenize the input.
 		lexical_analyze(input);
 		
 		// STEP 2: Parser
+		// Use the tokens from lexer and parse them to usable commands by the executor.
 
 		// STEP 3: Execution
+		// Execute the parsed commands here. Provide envp for them.
 
 		// STEP 4: Restart
+		// Prepare the shell for the next iteration.
 	}
 	return (EXIT_SUCCESS);
 }
