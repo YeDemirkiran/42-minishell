@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/10 18:52:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/11 00:24:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -25,6 +25,8 @@
 #include <structs/s_command.h>
 
 #define SHELL_NAME "babashell"
+#define RL_START "\001"
+#define RL_END "\002"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -43,12 +45,12 @@ int	main(int argc, char **argv, char **envp)
 		if (!first_run)
 			free(input);
 		first_run = 0;
-		input = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
-		
+		input = readline(RL_START COLOR_GREEN RL_END SHELL_NAME RL_START COLOR_WHITE RL_END " > ");
+
 		// STEP 1: Lexical Analysis
 		// Analyze and tokenize the input.
 		lexical_analyze(input);
-		
+
 		// STEP 2: Parser
 		// Use the tokens from lexer and parse them to usable commands by the executor.
 		// cmd = parse();
