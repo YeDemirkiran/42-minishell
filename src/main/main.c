@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/01 16:38:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:40:04 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,37 +17,39 @@
 #include <readline/readline.h>
 
 #include <modules/builtin.h>
+#include <modules/lexer.h>
 #include <modules/signal.h>
+
 #include <macros/m_colors.h>
 
 #define SHELL_NAME "babashell"
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*str;
+	char	*input;
 	char	first_run;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	str = NULL;
+	input = NULL;
 	first_run = 1;
 	signal(SIGINT, on_sigint);
-	while (str || first_run)
+	while (input || first_run)
 	{
 		if (!first_run)
-			free(str);
+			free(input);
 		first_run = 0;
-		str = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
-		// parse
-		// execute
+		input = readline(COLOR_GREEN SHELL_NAME COLOR_WHITE " > ");
+		
+		// STEP 1: Lexical Analysis
+		lexical_analyze(input);
+		
+		// STEP 2: Parser
 
-		// but ignore comments!
-		// todo: move this step inside the parsing logic, make it so it starts ignoring the part after the # symbol
-		if (str[0] == '#') // ignore comments
-			continue;
-		if (str && strlen(str) > 0)
-			printf("%s\n", str);
+		// STEP 3: Execution
+
+		// STEP 4: Restart
 	}
 	return (EXIT_SUCCESS);
 }
