@@ -5,8 +5,20 @@ Some of these cases may not be required by the subject. However, you are free to
 
 ## Requirements and Normal Cases (Happy Path)
 
-### Variables
+### Redirection
+#### '<' Operator (Infile)
+The '<' doesn't just redirect the target file to stdin, it does more. The full syntax is 'num<word', and the input is redirected to the file descriptor 'num'. The Bash syntax allows multiple infile redirections, even if they all share the same num. The last coming redirection to the same number overrides previous redirections.
 
+#### '<<' Operator (Heredoc)
+Same with the Infile operator, but its syntax is 'num<<EOF'. It reads input from stdin until it encounters the word choosen as EOF, and redirects it to the number.
+
+#### '>' Operator (Outfile)
+The '>' doesn't just redirect stdout to the target file, it does more. The full syntax is 'num>word', and the output is redirected to the file descriptor 'num'. The Bash syntax allows multiple outfile redirections, even if they all share the same num. The last coming redirection to the same number overrides previous redirections.
+
+#### '>>' Operator (Append)
+Same with the Outfile operator, but it doesn't open the files in truncate mode. Instead, it appends the changes to the end of the file.
+
+### Variables
 #### Environment Variables
 - \$PATH: A colon-separated list of directories in which the shell looks for commands.
 
@@ -106,6 +118,9 @@ Holds either:
 - Very long argument list
 	- Bash: Works slow but still works.
 	- Minishell: (none)
+
+### Quoting
+(to be added)
 
 ### Built-ins
 #### echo
@@ -233,21 +248,107 @@ Holds either:
 	- Minishell (none)
 
 ### Pipes
-- (to be added)
+- Only the | symbol
+	- Bash: Throws "bash: syntax error near unexpected token `|'"
+	- Minishell: (none)
+- Only the | symbol, single quoted ('|')
+	- Bash: Says "|: command not found"
+	- Minishell: (none)
+- Only the | symbol, double quoted ("|")
+	- Bash: Same as single quoted
+	- Minishell: (none)
+- Empty pipe in pipeline (cat Makefile | | wc -l)
+	- Bash: Throws "bash: syntax error near unexpected token `|'"
+	- Minishell: (none)
+- No spaces between pipes (cat Makefile|sort|wc -l)
+	- Bash: Works like normal pipes, no error.
+	- Minishell: (none)
+- Nothing right to the last pipe char ("cat Makefile | ")
+	- Bash: Prompts new line ("> "), continues to take input for the pipeline
+	- Minishell: (none)
+- Long pipe count:
+	- 25
+		- Bash: Works as expected
+		- Minishell: (none)
+	- 50
+		- Bash: Works as expected
+		- Minishell: (none)
+	- 100
+		- Bash: Works as expected
+		- Minishell: (none)
+	- 500
+		- Bash: Works, but slow (0.5s delay)
+		- Minishell: (none)
+	- 1000
+		- Bash: Works, but slow (0.5s delay)
+		- Minishell: (none)
+	- 2500
+		- Bash: Worksi, but slow (1s delay)
+		- Minishell: (none)
 
 ### Redirection
-#### < (Herefile)
-- (to be added)
+#### < (Infile)
+- Just <
+	- Bash: Says "bash: syntax error near unexpected token `newline'"
+	- Minishell: (none)
+- Just < but single quoted ('<')
+	- Bash: Says "<: command not found"
+	- Minishell: (none)
+- Just < but double quoted ("<")
+	- Bash: Says "<: command not found"
+	- Minishell: (none)
+- < with an argument but only that (e.g. "< Makefile")
+	- Bash: Does nothing if the file exists. Throws "bash: (file_name): No such file or directory" otherwise.
+	- Minishell: (none)
+- < (filename) <
+	- Bash: Same as syntax error
+	- Minishell: (none)
+- Multiple valid <
+	- Bash: Opens and redirects each file to stdin, up to the last one. But only the last one is processed because it stays as stdin.
+	- Minishell: (none)
 
-#### > (Write)
+#### > (Outfile)
+- Just >
+	- Bash: Says "bash: syntax error near unexpected token `newline'"
+	- Minishell: (none)
+- Just > but single quoted ('>')
+	- Bash: Says ">: command not found"
+	- Minishell: (none)
+- Just > but double quoted (">")
+	- Bash: Says ">: command not found"
+	- Minishell: (none)
+- > with an argument but only that (e.g. "> Makefile")
+	- Bash: Overwrites the files if it exists, creates a new file if it doesn't. Since we didn't execute a command, it does nothing else.
+	- Minishell: (none)
+- > (filename) >
+	- Bash: Same as syntax error, doesn't create or truncate any file.
+	- Minishell: (none)
+- Multiple valid >
+	- Bash: Opens/creates and redirects stdout to each, up to the last one. But only the last one is processed because it stays as stdout.
+	- Minishell: (none)
+- > with full syntax but no command (fd>file)
+	- Bash: Overwrites the files if it exists, creates a new file if it doesn't. Since we didn't execute a command, it does nothing else.
+	- Minishell: (none)
+- > with full syntax but no command, single quoted ('fd>file')
+	- Bash: It takes it as a command, says "couldn't be found" if it doesn't exist.
+	- Minishell: (none)
+- > with full syntax but no command, double quoted ("fd>file")
+	- Bash: The same as single quoted.
+	- Minishell: (none)
+
+#### Heredoc (<<)
 - (to be added)
 
 #### >> (Append)
 - (to be added)
 
-### Heredoc (<<)
-- (to be added)
-
+### Pipelines & Redirection Combination
+- One pipe, second command using infile
+	- Bash: Infile takes precedence over pipe's in
+	- Minishell: (none)
+- One pipe, first command using outfile
+	- Bash: Outfile takes precedence over pipe's out
+	- Minishell: (none)
 ### Variables
 #### Environment Variables
 ##### $PATH
@@ -261,8 +362,9 @@ SHLVL is always set to the current level of the nested shells. It starts from 1.
 #### Special Variables
 
 ### History
-- Nested Bash
-	- Bash: Nested instances
+- Nested Bash instances
+	- Bash: Nested instances use .bash_history, ignore the parent shell's history. Upon exiting, they save their history to .bash_history.
+	- Minishell: (none)
 
 ### Exit Status
 - (to be added)
