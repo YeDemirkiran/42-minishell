@@ -97,6 +97,7 @@ Understanding exit codes is a crucial part of shell design.
 
 - Exit: https://en.wikipedia.org/wiki/Exit_(system_call)
 - Exit Status: https://en.wikipedia.org/wiki/Exit_status
+- Special Exit Codes: https://tldp.org/LDP/abs/html/exitcodes.html
 
 ### Environment Variables
 Parent processes pass on their environment variables to the child processes they create. Your login shell is responsible for passing on the environment variables to all other processes.
