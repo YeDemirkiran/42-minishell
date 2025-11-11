@@ -95,7 +95,7 @@ GNU Readline grants you extra line editing capabilities. These come by default w
 ### Exit Status
 Holds either:
 - The exit status of the last executed command in a command chain in a variable ($?), or,
-- Retrieved signals. If it's a signal, the exit status is '127 + signal number'.
+- Retrieved signals. If it's a signal, the exit status is '128 + signal number'.
 
 ## Edge Cases
 
@@ -222,10 +222,15 @@ Holds either:
 - exit with more than 1 argument
 	- Bash: Prints "exit" first, then prints "bash: exit: too many arguments". Doesn't actually exit the shell.
 	- Minishell: (none)
-- Non-numeric argument:
+- Non-numeric argument
 	- Bash: Prints "exit" first, then prints "bash: exit: a: numeric argument required", but then actually exits with code 2.
 	- Minishell: (none)
-
+- Out-of-range exit code (not between 0-255)
+	- Bash: Exits, wraps the exit status around 255. -1 becomes 255, -2 becomes 254, 1000 becomes 232 and so on.
+	- Minishell: (none)
+- Very large numeric value (over MAX_LONG: 9223372036854775807)
+	- Bash: Same as non-numeric argument error.
+	- Minishell (none)
 
 ### Pipes
 - (to be added)
