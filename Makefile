@@ -1,14 +1,14 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/10 18:47:22 by yademirk         ###   ########.fr        #
+#    Updated: 2025/11/12 20:22:57 by yademirk         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
+#******************************************************************************#
 
 NAME = minishell
 
@@ -23,7 +23,7 @@ CC = cc
 # Flags
 W_FLAGS = -Wall -Wextra -Werror
 INC_FLAGS = -I$(INC_DIR)
-LIB_FLAGS = 
+LIB_FLAGS =
 FLAGS = $(W_FLAGS) $(INC_FLAGS) $(LIB_FLAGS)
 
 # C FILES AND DIRECTORIES
@@ -64,7 +64,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(FLAGS) $^ -c -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)*
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -rf $(NAME)
