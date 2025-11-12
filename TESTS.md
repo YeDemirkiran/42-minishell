@@ -18,6 +18,75 @@ The '>' doesn't just redirect stdout to the target file, it does more. The full 
 #### '>>' Operator (Append)
 Same with the Outfile operator, but it doesn't open the files in truncate mode. Instead, it appends the changes to the end of the file.
 
+### Quoting
+#### Single Quotes
+Single quotes ('') removes the special meaning of certain symbols in them, and preserve the literal value of the text. Things like redirection, pipe and dollar-sign variables don't work in them and are used as they are.
+
+- Single-quoted pipe (command1 args '|' command2 args)
+	- Bash: The pipe character will be treated as an argument itself and will be fed to the first command. The command will certainly throw an error if it isn't expecting a pipe character as an argument.
+	- Minishell: (none)
+- Single-quoted redirection (command '>' file, command '> file', command '< file > file2' etc)
+	- Bash: As expected, their special meaning is removed and they are treated as arguments.
+	- Minishell: (none)
+- Single-quoted local shell variables
+	- Bash: Ignores the variable and doesn't perform an expansion. It's used as a literal (e.g. echo '$var' literally prints $var to the screen, not the value it holds.)
+	- Minishell: (none)
+- Single-quoted environment variables
+	- Bash: Same as local shell variables.
+	- Minishell: (none)
+- Single-quoted wildcard (* symbol)
+	- Bash: The * symbol is ignored.
+	- Minishell: (none)
+- Single quote within single quote (e.g. echo 'test ' quote')
+	- Bash: The single quote isn't used literally, it just closes the previous single quote, thus rendering the original closing quote 'left open'. When used like this: echo 'test '' quote' as in two single quotes, the result is two different arguments 'test' and 'quote'.
+	- Minishell: (none)
+- Single-quoted arguments next to each other with no space between them (echo 'arg1''arg2''arg3')
+	- Bash: Since there is no space between them when the quotes are removed, they are used as one, joined single argument.
+	- Minishell: (none)
+- Double quotes within single quotes
+	- Bash: The double quotes lose their meaning within single quotes and are used literally. e.g. echo '"test"' prints "test", double quotes included.
+	- Minishell: (none)
+- Empty single-quotes
+	- Bash: They are treated as seperate arguments with no content or length, except for the \0 (null) char.
+	- Minishell: (none)
+- Unclosed single-quote (echo 'arg)
+	- Bash: Adds newline (\n) to the input and prints new prompt (>), waiting for the unclosed quote to be closed. If the first quote is closed but then another quote without closing appears, this step repeats.
+	- Minishell: (none)
+
+#### Double Quotes
+Dobule quotes ("") removes the special meaning of certain symbols in them, and preserve the literal value of the text, EXCEPT for the dollar ($) sign for shell variables. Other than allowing variable expansion, it works exactly like double quotes.
+
+- Double-quoted pipe (command1 args "|" command2 args)
+	- Bash: The pipe character will be treated as an argument itself and will be fed to the first command. The command will certainly throw an error if it isn't expecting a pipe character as an argument.
+	- Minishell: (none)
+- Double-quoted redirection (command '>' file, command '> file', command '< file > file2' etc)
+	- Bash: As expected, their special meaning is removed and they are treated as arguments.
+	- Minishell: (none)
+- Double-quoted local shell variables
+	- Bash: Ignores the variable and doesn't perform an expansion. It's used as a literal (e.g. echo '$var' literally prints $var to the screen, not the value it holds.)
+	- Minishell: (none)
+- Double-quoted environment variables
+	- Bash: Same as local shell variables.
+	- Minishell: (none)
+- Double-quoted wildcard (* symbol)
+	- Bash: * is ignored.
+	- Minishell: (none)
+- Double quote within double quote (e.g. echo "test " quote")
+	- Bash: The double quote isn't used literally, it just closes the previous double quote, thus rendering the original closing quote 'left open'. When used like this: echo "test "" quote" as in two double quotes, the result is two different arguments "test" and "quote".
+	- Minishell: (none)
+- Double-quoted arguments next to each other with no space between them (echo "arg1""arg2""arg3")
+	- Bash: Since there is no space between them when the quotes are removed, they are used as one, joined single argument.
+	- Minishell: (none)
+- Single quotes within double quotes
+	- Bash: The single quotes lose their meaning within double quotes and are used literally. e.g. echo "'test'" prints 'test', single quotes included.
+	- Minishell: (none)
+- Empty double-quotes
+	- Bash: They are treated as seperate arguments with no content or length, except for the \0 (null) char.
+	- Minishell: (none)
+- Unclosed Double-quote (echo "arg)
+	- Bash: Adds newline (\n) to the input and prints new prompt (>), waiting for the unclosed quote to be closed. If the first quote is closed but then another quote without closing appears, this step repeats.
+	- Minishell: (none)
+
 ### Variables
 #### Environment Variables
 - \$PATH: A colon-separated list of directories in which the shell looks for commands.
@@ -25,6 +94,9 @@ Same with the Outfile operator, but it doesn't open the files in truncate mode. 
 #### Special Variables
 - $_ (underscore): It does two things: First, it's the name (or path if fully given) of the used command, set as an environment variable and passed to the process. Second, it's the name of the last expanded argument in a list, changed after executing the process so both of them are separated.
 - $?: Expand to the exit status of the most recently executed foreground pipeline.
+
+### Expansion
+(to be added)
 
 ### Builtins
 You have to implement a total of 7 shell builtins (man builtins).
@@ -120,7 +192,36 @@ Holds either:
 	- Minishell: (none)
 
 ### Quoting
+#### Single Quotes
 (to be added)
+
+#### Double Quotes
+(to be added)
+
+### Variables
+#### Environment Variables
+##### $PATH
+- Empty $PATH
+	- Bash: If PATH is empty, or there is an empty (null) path provided amongs the other paths, the current directory is included in the path.
+	- Minishell: (none)
+
+##### $SHLVL
+SHLVL is always set to the current level of the nested shells. It starts from 1. If you type bash and enter, it will be 2. Then 3, then 4, and so on.
+
+### Expansion
+#### Variable Expansion
+- Non-quoted expansions on variables with spaces inside them (var="word word2", echo $var)
+	- Bash: When expanded, these words inside the variable turn into seperate arguments due to the space between them.
+- Quoted expansions on variables with spaces inside them (var="word word2", echo "$var")
+	- Bash: The double quotes protect the seperate words in the variable, preventing them to become seperate arguments.
+-
+#### Wildcard Expansion
+- Wildcard in single quotes (echo '*')
+	- Bash: The * symbol lose its meaning and is printed as a string literal.
+- Wildcard in double quotes (echo "*")
+	- Bash: The * symbol lose its meaning and is printed as a string literal.
+- Wildcard inside paramater (var="*")
+	- Bash: Wildcard is expaned when the variable isn't enclosed with quotes (e.g. echo $var). If enclosed (e.g. echo "$var"), the command becomes echo "*" upon variable expansion, and wildcard expansion doesn't happen due to the quotes.
 
 ### Built-ins
 #### echo
@@ -306,6 +407,18 @@ Holds either:
 - Multiple valid <
 	- Bash: Opens and redirects each file to stdin, up to the last one. But only the last one is processed because it stays as stdin.
 	- Minishell: (none)
+- Multiple invalid <
+	- Bash: Throws "bash: (file name): No such file or directory" in the first instance of invalid filename.
+	- Minishell: (none)
+- Mixed validity (< existing-file < non-existing-file)
+	- Bash: Throws "bash: (file name): No such file or directory" in the first instance of invalid filename.
+	- Minishell: (none)
+- Very long valid <
+	- Bash: Works correctly, no crash
+	- Minishell: (none)
+- Very long invalid <
+	- Bash: Throws "bash: (file name): No such file or directory" in the first instance of invalid filename.
+	- Minishell: (none)
 
 #### > (Outfile)
 - Just >
@@ -342,6 +455,17 @@ Holds either:
 #### >> (Append)
 - (to be added)
 
+#### Combinations (<, <<, >, >>)
+- Infile and outfile to the same file in a single command (cat < file > file)
+	- Bash: Overwrites the file and the file is empty as a result
+	- Minishell: (none)
+- Infile and outfile append to the same file in a single command (cat < file >> file)
+	- Bash: Throws the "cat: -: input file is output file" error
+	- Minishell: (none)
+- Multiple redirections in different syntax (< Makefile wc > test -l)
+	- Bash: Works like a proper written command. Bash allows redirections anywhere in a command as long as a file name is provided.
+	- Minishell: (none)
+
 ### Pipelines & Redirection Combination
 - One pipe, second command using infile
 	- Bash: Infile takes precedence over pipe's in
@@ -349,15 +473,12 @@ Holds either:
 - One pipe, first command using outfile
 	- Bash: Outfile takes precedence over pipe's out
 	- Minishell: (none)
-### Variables
-#### Environment Variables
-##### $PATH
-- Empty $PATH
-	- Bash: If PATH is empty, or there is an empty (null) path provided amongs the other paths, the current directory is included in the path.
+- One pipe, first stdin and second stdout refer to the same file
+	- Bash: Overwrites the file and the file is empty as a result
 	- Minishell: (none)
-
-##### $SHLVL
-SHLVL is always set to the current level of the nested shells. It starts from 1. If you type bash and enter, it will be 2. Then 3, then 4, and so on.
+- One pipe, first stdin and second stdout refer to the same file in append mode
+	- Bash: Duplicates and appends the content of the file to the end, effectively mulitplying it
+	- Minishell: (none)
 
 #### Special Variables
 
