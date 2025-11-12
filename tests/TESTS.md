@@ -4,19 +4,8 @@ Test your shell against these cases and compare their results.
 Some of these cases may not be required by the subject. However, you are free to fix them.
 
 ## Requirements and Normal Cases (Happy Path)
-
-### Redirection
-#### '<' Operator (Infile)
-The '<' doesn't just redirect the target file to stdin, it does more. The full syntax is 'num<word', and the input is redirected to the file descriptor 'num'. The Bash syntax allows multiple infile redirections, even if they all share the same num. The last coming redirection to the same number overrides previous redirections.
-
-#### '<<' Operator (Heredoc)
-Same with the Infile operator, but its syntax is 'num<<EOF'. It reads input from stdin until it encounters the word choosen as EOF, and redirects it to the number.
-
-#### '>' Operator (Outfile)
-The '>' doesn't just redirect stdout to the target file, it does more. The full syntax is 'num>word', and the output is redirected to the file descriptor 'num'. The Bash syntax allows multiple outfile redirections, even if they all share the same num. The last coming redirection to the same number overrides previous redirections.
-
-#### '>>' Operator (Append)
-Same with the Outfile operator, but it doesn't open the files in truncate mode. Instead, it appends the changes to the end of the file.
+### Input
+(to be added)
 
 ### Quoting
 #### Single Quotes
@@ -96,6 +85,22 @@ Dobule quotes ("") removes the special meaning of certain symbols in them, and p
 - $?: Expand to the exit status of the most recently executed foreground pipeline.
 
 ### Expansion
+(to be added)
+
+### Redirection
+#### '<' Operator (Infile)
+The '<' doesn't just redirect the target file to stdin, it does more. The full syntax is 'num<word', and the input is redirected to the file descriptor 'num'. The Bash syntax allows multiple infile redirections, even if they all share the same num. The last coming redirection to the same number overrides previous redirections.
+
+#### '<<' Operator (Heredoc)
+Same with the Infile operator, but its syntax is 'num<<EOF'. It reads input from stdin until it encounters the word choosen as EOF, and redirects it to the number.
+
+#### '>' Operator (Outfile)
+The '>' doesn't just redirect stdout to the target file, it does more. The full syntax is 'num>word', and the output is redirected to the file descriptor 'num'. The Bash syntax allows multiple outfile redirections, even if they all share the same num. The last coming redirection to the same number overrides previous redirections.
+
+#### '>>' Operator (Append)
+Same with the Outfile operator, but it doesn't open the files in truncate mode. Instead, it appends the changes to the end of the file.
+
+### Pipelines
 (to be added)
 
 ### Builtins
@@ -223,6 +228,7 @@ SHLVL is always set to the current level of the nested shells. It starts from 1.
 - Wildcard inside paramater (var="*")
 	- Bash: Wildcard is expaned when the variable isn't enclosed with quotes (e.g. echo $var). If enclosed (e.g. echo "$var"), the command becomes echo "*" upon variable expansion, and wildcard expansion doesn't happen due to the quotes.
 
+
 ### Built-ins
 #### echo
 - No arguments (just echo)
@@ -348,45 +354,6 @@ SHLVL is always set to the current level of the nested shells. It starts from 1.
 	- Bash: Same as non-numeric argument error.
 	- Minishell (none)
 
-### Pipes
-- Only the | symbol
-	- Bash: Throws "bash: syntax error near unexpected token `|'"
-	- Minishell: (none)
-- Only the | symbol, single quoted ('|')
-	- Bash: Says "|: command not found"
-	- Minishell: (none)
-- Only the | symbol, double quoted ("|")
-	- Bash: Same as single quoted
-	- Minishell: (none)
-- Empty pipe in pipeline (cat Makefile | | wc -l)
-	- Bash: Throws "bash: syntax error near unexpected token `|'"
-	- Minishell: (none)
-- No spaces between pipes (cat Makefile|sort|wc -l)
-	- Bash: Works like normal pipes, no error.
-	- Minishell: (none)
-- Nothing right to the last pipe char ("cat Makefile | ")
-	- Bash: Prompts new line ("> "), continues to take input for the pipeline
-	- Minishell: (none)
-- Long pipe count:
-	- 25
-		- Bash: Works as expected
-		- Minishell: (none)
-	- 50
-		- Bash: Works as expected
-		- Minishell: (none)
-	- 100
-		- Bash: Works as expected
-		- Minishell: (none)
-	- 500
-		- Bash: Works, but slow (0.5s delay)
-		- Minishell: (none)
-	- 1000
-		- Bash: Works, but slow (0.5s delay)
-		- Minishell: (none)
-	- 2500
-		- Bash: Worksi, but slow (1s delay)
-		- Minishell: (none)
-
 ### Redirection
 #### < (Infile)
 - Just <
@@ -465,6 +432,45 @@ SHLVL is always set to the current level of the nested shells. It starts from 1.
 - Multiple redirections in different syntax (< Makefile wc > test -l)
 	- Bash: Works like a proper written command. Bash allows redirections anywhere in a command as long as a file name is provided.
 	- Minishell: (none)
+
+### Pipes
+- Only the | symbol
+	- Bash: Throws "bash: syntax error near unexpected token `|'"
+	- Minishell: (none)
+- Only the | symbol, single quoted ('|')
+	- Bash: Says "|: command not found"
+	- Minishell: (none)
+- Only the | symbol, double quoted ("|")
+	- Bash: Same as single quoted
+	- Minishell: (none)
+- Empty pipe in pipeline (cat Makefile | | wc -l)
+	- Bash: Throws "bash: syntax error near unexpected token `|'"
+	- Minishell: (none)
+- No spaces between pipes (cat Makefile|sort|wc -l)
+	- Bash: Works like normal pipes, no error.
+	- Minishell: (none)
+- Nothing right to the last pipe char ("cat Makefile | ")
+	- Bash: Prompts new line ("> "), continues to take input for the pipeline
+	- Minishell: (none)
+- Long pipe count:
+	- 25
+		- Bash: Works as expected
+		- Minishell: (none)
+	- 50
+		- Bash: Works as expected
+		- Minishell: (none)
+	- 100
+		- Bash: Works as expected
+		- Minishell: (none)
+	- 500
+		- Bash: Works, but slow (0.5s delay)
+		- Minishell: (none)
+	- 1000
+		- Bash: Works, but slow (0.5s delay)
+		- Minishell: (none)
+	- 2500
+		- Bash: Worksi, but slow (1s delay)
+		- Minishell: (none)
 
 ### Pipelines & Redirection Combination
 - One pipe, second command using infile
