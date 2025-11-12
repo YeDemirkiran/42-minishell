@@ -42,10 +42,42 @@ Among these, GNU Bash Manual and OpenGroup Shell Specifications are the most imp
 ## Building
 Now it's time to start building this thing. It goes like: Lexer > Parser > Executor.
 
-## Lexer
+### Lexer
 The step of analysing and tokenizing input before parsing them to data structures. Usually the first step in compiler/interpreter design.
 
-### Lexical Analysis
+#### Programming Language Theory
+To implement your shell interpreter for the Shell Language, you have to gain basic knowledge about what even a language is, at least from a computer science viewpoint.
+
+One thing you have to understand is that, minishell isn't just about developing a CLI program; it's actually about implementing a 'language interpreter'. That is, you're developing a program that takes an already existing language and implements it. This language is the 'Shell Scripting Language'.
+
+- Programming Language Theory: https://en.wikipedia.org/wiki/Programming_language_theory
+- Formal Language: https://en.wikipedia.org/wiki/Formal_language
+
+##### Formal Language
+- Formal Grammar: https://en.wikipedia.org/wiki/Formal_grammar
+- Regular Grammar: https://en.wikipedia.org/wiki/Regular_grammar
+
+##### Regular Language
+- Regular Expression: https://en.wikipedia.org/wiki/Regular_expression
+- Regular Language: https://en.wikipedia.org/wiki/Regular_language
+
+##### Context-Free Language
+- Context-Free Grammar: https://en.wikipedia.org/wiki/Context-free_grammar
+- Context-Free Language: https://en.wikipedia.org/wiki/Context-free_language
+- Context-Sensitive Grammar: https://en.wikipedia.org/wiki/Context-sensitive_grammar
+- Context-Sensitive Language: https://en.wikipedia.org/wiki/Context-sensitive_language
+
+#### Backus-Naur Form
+Backus-Naur Form is how rules of formal languages are defined. These include programming and scripting languages, such as Shell language.
+
+- Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+- BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
+- Bash V2 Grammar in BNF: https://cmdse.github.io/pages/appendix/bash-grammar.html
+- GNU Bison: https://en.wikipedia.org/wiki/GNU_Bison
+
+#### Lexical Analysis
+Also known as tokenizing/tokenizer. This is where you take a meaningless string data and convert it into several pieces of meaningful tokens, to feed them to a parser.
+
 - Automata Theory: https://en.wikipedia.org/wiki/Automata_theory
 - Finite State Machine: https://en.wikipedia.org/wiki/Finite-state_machine
 - Deterministic Finite Automaton: https://en.wikipedia.org/wiki/Deterministic_finite_automaton
@@ -53,37 +85,29 @@ The step of analysing and tokenizing input before parsing them to data structure
 - Lexical Analysis: https://en.wikipedia.org/wiki/Lexical_analysis
 - Lexer Hack: https://en.wikipedia.org/wiki/Lexer_hack
 
-### Backus-Naur Form
-Not strictly required.
+### Parser
+The second step. Parser uses the tokens produced by lexer and parses them into meaningful data structures for the executor to use. Quote handling, expansion/substition and all that other stuff usually happen here.
 
-- Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
-- Bash V2 Grammar in BNF: https://cmdse.github.io/pages/appendix/bash-grammar.html
-- BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
-- GNU Bison: https://en.wikipedia.org/wiki/GNU_Bison
-
-## Parser
-The second step. Parser uses the tokens produced by lexer and parses them into meaningful data structures for the executor to use.
-
-### Parsing
+#### Parsing
 - Parsing: https://en.wikipedia.org/wiki/Parsing
 - Parse Tree: https://en.wikipedia.org/wiki/Parse_tree
 - Scanerless (Lexerless) Parsing: https://en.wikipedia.org/wiki/Scannerless_parsing
 
-### Abstract Syntax Tree
+#### Abstract Syntax Tree
 - Abstract Syntax: https://en.wikipedia.org/wiki/Abstract_syntax
 - Abstract Syntax Tree: https://en.wikipedia.org/wiki/Abstract_syntax_tree
 
-## Executor
+### Executor
 The third step. Executing, file handling, redirecting and all that stuff happen here. If you've done the Pipex project, you're probably already familiar with most of these.
 
-### Operating System
+#### Operating System
 Recommended if you seek to gain deeper knowledge about processes.
 
 - System Software: https://en.wikipedia.org/wiki/System_software
 - Operating System: https://en.wikipedia.org/wiki/Operating_system
 - Computer Program: https://en.wikipedia.org/wiki/Computer_program
 
-### Processes
+#### Processes
 You need to learn about them to implement your process-creation logic.
 
 - Process: https://en.wikipedia.org/wiki/Process_(computing)
@@ -93,14 +117,14 @@ You need to learn about them to implement your process-creation logic.
 - Child Process: https://en.wikipedia.org/wiki/Child_process
 - Runtime System: https://en.wikipedia.org/wiki/Runtime_system
 
-### Process Exit
-Understanding exit codes is a crucial part of shell design.
+#### Process Exit
+Understanding how processes exit, and exit status codes is a crucial part of shell design.
 
 - Exit: https://en.wikipedia.org/wiki/Exit_(system_call)
 - Exit Status: https://en.wikipedia.org/wiki/Exit_status
 - Special Exit Codes: https://tldp.org/LDP/abs/html/exitcodes.html
 
-### Environment Variables
+#### Environment Variables
 Parent processes pass on their environment variables to the child processes they create. Your login shell is responsible for passing on the environment variables to all other processes.
 
 - Login Shells: https://help.gnome.org/users/gnome-terminal/stable/pref-login-shell.html.en
@@ -108,20 +132,20 @@ Parent processes pass on their environment variables to the child processes they
 - Unix Environment Variables: https://www.geeksforgeeks.org/linux-unix/environment-variables-in-linux-unix/
 - Using env in C: https://www.geeksforgeeks.org/c/c-program-print-environment-variables/
 
-### Fork
+#### Fork
 You will create your child processes through the Fork system call.
 
 - Fork: https://en.wikipedia.org/wiki/Fork_(system_call)
 - Fork in C: https://www.geeksforgeeks.org/c/fork-system-call/
 
-### Exec & Execve
+#### Exec & Execve
 Exec system call is how you use other programs in your child processes.
 
 - Exec: https://en.wikipedia.org/wiki/Exec_(system_call)
 - Exec family in C: https://www.geeksforgeeks.org/c/exec-family-of-functions-in-c/
 - Execve: https://man7.org/linux/man-pages/man2/execve.2.html
 
-### Unix Signals
+#### Unix Signals
 Signals are used for inter-process communication. You will mostly use it to handle CTRL-C, CTRL-D and CTRL-\\.
 
 - Inter-process Communication: https://en.wikipedia.org/wiki/Inter-process_communication
@@ -131,7 +155,7 @@ Signals are used for inter-process communication. You will mostly use it to hand
 - Signal Codes: https://dsa.cs.tsinghua.edu.cn/oj/static/unix_signal.html
 - Signals in C: https://www.geeksforgeeks.org/c/signals-c-language/
 
-### Pipes & Redirections
+#### Pipes & Redirections
 Pipes and redirections are another example of inter-process communication.
 
 - Message Passing: https://en.wikipedia.org/wiki/Message_passing
@@ -140,7 +164,7 @@ Pipes and redirections are another example of inter-process communication.
 - Unix Pipes: https://wiki.osdev.org/Unix_Pipes
 - Pipes in C: https://www.geeksforgeeks.org/c/pipe-system-call/
 
-### Files
+#### Files
 Extra information about files. Recommended for a better understanding of pipes.
 
 - Computer Directories: https://en.wikipedia.org/wiki/Directory_(computing)
@@ -149,8 +173,8 @@ Extra information about files. Recommended for a better understanding of pipes.
 - File Permissions: https://en.wikipedia.org/wiki/File-system_permissions
 - Setuid: https://en.wikipedia.org/wiki/Setuid
 
-## GNU Readline
-GNU Readline library helps you prompt and read input from the user. It also provides command line editing and command history.
+### GNU Readline
+GNU Readline library helps you prompt and read input from the user. It also provides various command-line editing tools and command history utilities.
 
 - GNU Readline: https://en.wikipedia.org/wiki/GNU_Readline
 - GNU Readline Documentation: https://tiswww.case.edu/php/chet/readline/readline.html
@@ -158,9 +182,9 @@ GNU Readline library helps you prompt and read input from the user. It also prov
 - Video: https://www.youtube.com/watch?v=Dxk5LUY37x4
 
 ## Testing & Debugging
-This project is your opportunity to finally properly learn software testing, since it has so many cases and is very error-prone.
+This project is your opportunity to finally properly learn about software testing, since it has so many cases and is very error-prone.
 
-## Testing
+### Testing
 - Software Testing: https://en.wikipedia.org/wiki/Software_testing
 
 ### Tools
@@ -175,14 +199,12 @@ Use of color codes is allowed. So why not use them to make your shell pretty?
 - ANSI Color Codes: https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
 
 # Common Pitfalls
-
 ## GNU Readline Memory Leaks
 Sometimes, using GNU Readline may cause leftover "still reachable memory" errors in Valgrind. Although we are not required to fix them, the subject document implies that it is possible to fix it. At the time of writing this, I don't know how to fix it. I will update this section with an explanation of a possible fix, as soon as I implement it myself.
 
 (more coming soon)
 
 # Collaborators
-
 ## Main Programmers
 - Muhammed Emin Ayna (muayna)
 - Yaşam Ensar Demirkıran (yademirk)
