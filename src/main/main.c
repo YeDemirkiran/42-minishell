@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/11 00:41:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/13 02:02:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -31,7 +31,7 @@
 int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
-	char		*tokens;
+	char		**tokens;
 	char		first_run;
 	t_command	cmd;
 

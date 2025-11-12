@@ -6,8 +6,8 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:35:09 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/11 00:40:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/13 02:02:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-char	*lexical_analyze(char *input);
+char	**lexical_analyze(char *input);
