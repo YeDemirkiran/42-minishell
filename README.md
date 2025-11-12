@@ -57,6 +57,7 @@ The step of analysing and tokenizing input before parsing them to data structure
 Not strictly required.
 
 - Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+- Bash V2 Grammar in BNF: https://cmdse.github.io/pages/appendix/bash-grammar.html
 - BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
 - GNU Bison: https://en.wikipedia.org/wiki/GNU_Bison
 
