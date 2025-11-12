@@ -54,6 +54,8 @@ dkms.conf
 # debug information files
 *.dwo
 
+# other
 .vscode/
 minishell
 obj/
+test.c

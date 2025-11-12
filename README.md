@@ -27,6 +27,7 @@ Resources about shells and their history.
 - Shell Script: https://en.wikipedia.org/wiki/Shell_script
 - Unix Shell: https://en.wikipedia.org/wiki/Unix_shell
 - Command-line Interface: https://en.wikipedia.org/wiki/Command-line_interface
+- Comnmand-line Completion: https://en.wikipedia.org/wiki/Command-line_completion
 
 ## Bash (Bourne Again SHell)
 Among these, GNU Bash Manual and OpenGroup Shell Specifications are the most important. They will guide you through building your shell.
@@ -53,8 +54,12 @@ The step of analysing and tokenizing input before parsing them to data structure
 - Lexer Hack: https://en.wikipedia.org/wiki/Lexer_hack
 
 ### Backus-Naur Form
+Not strictly required.
+
 - Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+- Bash V2 Grammar in BNF: https://cmdse.github.io/pages/appendix/bash-grammar.html
 - BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
+- GNU Bison: https://en.wikipedia.org/wiki/GNU_Bison
 
 ## Parser
 The second step. Parser uses the tokens produced by lexer and parses them into meaningful data structures for the executor to use.
@@ -93,6 +98,7 @@ Understanding exit codes is a crucial part of shell design.
 
 - Exit: https://en.wikipedia.org/wiki/Exit_(system_call)
 - Exit Status: https://en.wikipedia.org/wiki/Exit_status
+- Special Exit Codes: https://tldp.org/LDP/abs/html/exitcodes.html
 
 ### Environment Variables
 Parent processes pass on their environment variables to the child processes they create. Your login shell is responsible for passing on the environment variables to all other processes.
