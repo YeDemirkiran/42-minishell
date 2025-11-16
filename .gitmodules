@@ -1,3 +1,6 @@
 [submodule "lib/garbage_collector"]
 	path = lib/garbage_collector
 	url = git@github.com:muh4mmedemin/garbage_collector.git
+[submodule "lib/libft"]
+	path = lib/libft
+	url = git@github.com:YeDemirkiran/libft.git
