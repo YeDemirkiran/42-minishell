@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   e_metachars.h                                      :+:      :+:    :+:   */
+/*   e_metachar.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef E_METACHARS_H
-# define E_METACHARS_H
+#ifndef E_METACHAR_H
+# define E_METACHAR_H
 
 // Metacharacters used for the tokenization phase.
-typedef enum e_metachars
+typedef enum e_metachar
 {
 	METACHAR_SPACE = ' ',
 	METACHAR_TAB = '\t',
@@ -26,6 +26,6 @@ typedef enum e_metachars
 	METACHAR_PAREN_RIGHT = ')',
 	METACHAR_REDIR_LEFT = '<',
 	METACHAR_REDIR_RIGHT = '>'
-}	t_metachars;
+}	t_metachar;
 
 #endif
