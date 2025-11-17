@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/17 08:53:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:19:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -31,9 +31,9 @@
 int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
-	char		**tokens;
+	t_token		*tokens;
 	char		first_run;
-	t_command	cmd;
+	t_command	*cmd;
 
 	(void)argc;
 	(void)argv;
@@ -52,6 +52,7 @@ int	main(int argc, char **argv, char **envp)
 		// Analyze and tokenize the input.
 		tokens = lexical_analyze(input);
 		(void)tokens;
+		(void)cmd;
 
 		// STEP 2: Parser
 		// Use the tokens from lexer and parse them to usable commands by the executor.
@@ -59,6 +60,7 @@ int	main(int argc, char **argv, char **envp)
 
 		// STEP 3: Execution
 		// Execute the parsed commands here. Provide envp for them.
+		// execute(cmd);
 
 		// STEP 4: Restart
 		// Prepare the shell for the next iteration.
