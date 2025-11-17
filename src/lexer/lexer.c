@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/17 17:44:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/17 18:56:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	// quotes
 	char	quote_type;
 
-	tokens = malloc((token_count + 1) * sizeof(t_token));
+	tokens = malloc((token_count + 100) * sizeof(t_token));
 	if (!tokens)
 		return (NULL);
 	i = 0;
@@ -176,45 +176,23 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	token_start = 0;
 	quote_type = '\0';
 	while (i < input_length)
-	{
-		if (ft_isquote(input[i]))
-		{			
-			if (quote_type == '\0')
-			{
-				if (i > 0)
-				{
-					current_token.type = TOKEN_STRING;
-					current_token.data = ft_substr(input, (unsigned int)token_start, i - token_start + 1);
-					tokens[token_index++] = current_token;
-				}
-				token_start = i;
-				quote_type = input[i];
-			}
-			else
-			{
-				if (input[i] == quote_type)
-				{
-					current_token.type = TOKEN_QUOTE;
-					current_token.data = ft_substr(input, (unsigned int)token_start, i - token_start + 1);
-					tokens[token_index++] = current_token;
-					token_start = i + 1;
-					quote_type = '\0';
-				}
-			}
-		}
-		else if (is_metachar(input[i]))
+	{			
+		if (is_metachar(input[i]))	
 		{	
 			// save the word so far
-			current_token.type = TOKEN_STRING;
-			current_token.data = ft_substr(input, (unsigned int)token_start, i - token_start + 1);
-			tokens[token_index++] = current_token;
+			if (i != token_start)
+			{
+				current_token.type = TOKEN_STRING;
+				current_token.data = ft_substr(input, (unsigned int)token_start, i - token_start);
+				tokens[token_index++] = current_token;
+			}
 			if (input[i] == METACHAR_PIPE)
 				current_token.type = TOKEN_PIPE;
 			else if (input[i] == METACHAR_REDIR_LEFT || input[i] == METACHAR_REDIR_RIGHT)
 				current_token.type = TOKEN_REDIR;
 			else if (input[i] == METACHAR_SPACE || input[i] == METACHAR_TAB)
 				current_token.type = TOKEN_BLANK;
-			current_token.data = NULL;
+			current_token.data = "METACHAR";
 			tokens[token_index++] = current_token;
 			token_start = i + 1;
 		}
