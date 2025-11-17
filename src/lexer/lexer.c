@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/17 23:52:33 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/18 00:12:51 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -74,9 +74,8 @@ static size_t	get_token_count(char *input)
 // TODO: Make norm compliant
 static t_token	*get_tokens(char *input, size_t token_count)
 {
-	size_t	i;
-	size_t	input_length;
 	t_token	*tokens;
+	size_t	i;
 	size_t	token_index;
 	size_t	token_start;
 
@@ -84,10 +83,9 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	if (!tokens)
 		return (NULL);
 	i = 0;
-	input_length = ft_strlen(input);
 	token_index = 0;
 	token_start = 0;
-	while (i < input_length)
+	while (input[i] != '\0')
 	{
 		if (is_metachar(input[i]))
 		{
@@ -124,7 +122,14 @@ static void	debug_print_tokens(t_token *tokens)
 	i = 0;
 	while (tokens[i].type != TOKEN_EOF)
 	{
-		printf("[%i]: %s", tokens[i].type, tokens[i].data);
+		if (tokens[i].type == TOKEN_BLANK)
+			printf("[BLANK]");
+		else if (tokens[i].type == TOKEN_REDIR)
+			printf("[REDIR]");
+		else if (tokens[i].type == TOKEN_PIPE)
+			printf("[PIPE]");
+		else
+			printf("%s", tokens[i].data);
 		if (tokens[i + 1].type != TOKEN_EOF)
 			printf(", ");
 		fflush(stdout);
