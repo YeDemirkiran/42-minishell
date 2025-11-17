@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/18 00:12:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/18 00:19:02 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,6 +19,15 @@
 #include <enums/e_metachar.h>
 #include <enums/e_token_type.h>
 #include <structs/s_token.h>
+
+static t_token	create_token(t_token_type type, char *data)
+{
+	t_token	token;
+
+	token.type = type;
+	token.data = data;
+	return (token);
+}
 
 // Returns true if a given character is a metacharacter.
 static int	is_metachar(unsigned char c)
@@ -90,10 +99,8 @@ static t_token	*get_tokens(char *input, size_t token_count)
 		if (is_metachar(input[i]))
 		{
 			if (i != token_start)
-			{
-				tokens[token_index].type = TOKEN_STRING;
-				tokens[token_index++].data = ft_substr(input, (unsigned int)token_start, i - token_start);
-			}
+				tokens[token_index++] = create_token(TOKEN_STRING,
+						ft_substr(input, token_start, i - token_start));
 			if (input[i] == METACHAR_PIPE)
 				tokens[token_index].type = TOKEN_PIPE;
 			else if (input[i] == METACHAR_REDIR_LEFT || input[i] == METACHAR_REDIR_RIGHT)
@@ -106,10 +113,8 @@ static t_token	*get_tokens(char *input, size_t token_count)
 		i++;
 	}
 	if (i != token_start)
-	{
-		tokens[token_index].type = TOKEN_STRING;
-		tokens[token_index++].data = ft_substr(input, (unsigned int)token_start, i - token_start + 1);
-	}
+		tokens[token_index++] = create_token(TOKEN_STRING,
+				ft_substr(input, token_start, i - token_start + 1));
 	tokens[token_index].type = TOKEN_EOF;
 	tokens[token_index].data = NULL;
 	return (tokens);
