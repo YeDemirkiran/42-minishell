@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/17 23:44:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/17 23:52:33 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -20,11 +20,7 @@
 #include <enums/e_token_type.h>
 #include <structs/s_token.h>
 
-static unsigned char	ft_isquote(unsigned char c)
-{
-	return (c == '\'' || c == '"');
-}
-
+// Returns true if a given character is a metacharacter.
 static int	is_metachar(unsigned char c)
 {
 	size_t		i;
@@ -54,102 +50,26 @@ static int	is_metachar(unsigned char c)
 // Returns the count of tokens in an input string.
 static size_t	get_token_count(char *input)
 {
-	size_t	token_count;
-	char	quote_type;
 	size_t	i;
+	size_t	input_length;
+	size_t	token_count;
 
 	i = 0;
+	input_length = ft_strlen(input);
+	if (input_length == 0)
+		return (0);
 	token_count = 0;
-	while (input[i])
+	while (i < input_length)
 	{
-		while (input[i] && ft_is_whitespace(input[i]))
-			i++;
-		while (input[i])
-		{
-			while (ft_isquote(input[i]))
-			{
-				quote_type = input[i];
-				i++;
-				while (input[i] && input[i] != quote_type)
-					i++;
-				i++;
-			}
-			if (ft_is_whitespace(input[i]))
-				break ;
-			i++;
-		}
-		token_count++;
+		if (is_metachar(input[i]))
+			token_count++;
+		else if (i > 0 && is_metachar(input[i - 1]))
+			token_count++;
+		i++;
 	}
+	token_count++;
 	return (token_count);
 }
-
-// char	*ft_substr(char *str, size_t start, size_t length)
-// {
-// 	char	*new_str;
-// 	size_t	i;
-
-// 	// todo: Use garbage collector here
-// 	new_str = malloc((length + 1) * sizeof(char));
-// 	if (new_str == NULL)
-// 		return (NULL);
-// 	i = 0;
-// 	while (i < length)
-// 	{
-// 		new_str[i] = str[start + i];
-// 		i++;
-// 	}
-// 	new_str[i] = '\0';
-// 	//printf("(new substr: %s)\n", new_str);
-// 	return (new_str);
-// }
-
-// static t_token	*get_tokens(char *input, size_t token_count)
-// {
-// 	size_t	i;
-// 	size_t	token_index;
-// 	t_token	*tokens;
-// 	size_t	current_token_length;
-// 	char	*current_token_start;
-// 	char	quote_type;
-
-// 	tokens = malloc((token_count + 1) * sizeof(t_token));
-// 	if (tokens == NULL)
-// 		return (NULL);
-// 	tokens[token_count].type = TOKEN_EOF;
-// 	i = 0;
-// 	token_index = 0;
-// 	while (input[i])
-// 	{
-// 		while (input[i] && ft_is_whitespace(input[i]))
-// 			i++;
-// 		if (input[i] == '\0')
-// 			break ;
-// 		current_token_length = 0;
-// 		current_token_start = input + i;
-// 		while (input[i])
-// 		{
-// 			while (ft_isquote(input[i]))
-// 			{
-// 				quote_type = input[i];
-// 				i++;
-// 				while (input[i] && input[i] != quote_type)
-// 					i++;
-// 				i++;
-// 			}
-// 			if (ft_is_whitespace(input[i]))
-// 				break ;
-// 			i++;
-// 		}
-// 		current_token_length = (size_t)((input + i) - current_token_start);
-// 		// todo: Null check
-// 		tokens[token_index].data = ft_substr(current_token_start, 0, current_token_length);
-// 		tokens[token_index].type = get_token_type(tokens[token_index].data);
-// 		token_index++;
-// 	}
-// 	return (tokens);
-// }
-
-// static void	create_token(t_token *token)
 
 // TODO: Make norm compliant
 static t_token	*get_tokens(char *input, size_t token_count)
@@ -160,7 +80,7 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	size_t	token_index;
 	size_t	token_start;
 
-	tokens = malloc((token_count + 100) * sizeof(t_token));
+	tokens = malloc((token_count + 1) * sizeof(t_token));
 	if (!tokens)
 		return (NULL);
 	i = 0;
