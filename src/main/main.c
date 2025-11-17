@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/13 02:02:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/17 08:53:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -59,12 +59,6 @@ int	main(int argc, char **argv, char **envp)
 
 		// STEP 3: Execution
 		// Execute the parsed commands here. Provide envp for them.
-
-		cmd.command_path = "/bin/ls";
-		cmd.stdin_fd = 0;
-		cmd.stdout_fd = 1;
-		cmd.stderr_fd = 2;
-		executor(&cmd);
 
 		// STEP 4: Restart
 		// Prepare the shell for the next iteration.
