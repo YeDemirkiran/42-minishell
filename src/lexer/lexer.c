@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/17 18:56:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/17 23:44:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -154,18 +154,11 @@ static size_t	get_token_count(char *input)
 // TODO: Make norm compliant
 static t_token	*get_tokens(char *input, size_t token_count)
 {
-	// get_tokens
 	size_t	i;
 	size_t	input_length;
 	t_token	*tokens;
-
-	// token specific
 	size_t	token_index;
 	size_t	token_start;
-	t_token	current_token;
-	
-	// quotes
-	char	quote_type;
 
 	tokens = malloc((token_count + 100) * sizeof(t_token));
 	if (!tokens)
@@ -174,43 +167,37 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	input_length = ft_strlen(input);
 	token_index = 0;
 	token_start = 0;
-	quote_type = '\0';
 	while (i < input_length)
-	{			
-		if (is_metachar(input[i]))	
-		{	
-			// save the word so far
+	{
+		if (is_metachar(input[i]))
+		{
 			if (i != token_start)
 			{
-				current_token.type = TOKEN_STRING;
-				current_token.data = ft_substr(input, (unsigned int)token_start, i - token_start);
-				tokens[token_index++] = current_token;
+				tokens[token_index].type = TOKEN_STRING;
+				tokens[token_index++].data = ft_substr(input, (unsigned int)token_start, i - token_start);
 			}
 			if (input[i] == METACHAR_PIPE)
-				current_token.type = TOKEN_PIPE;
+				tokens[token_index].type = TOKEN_PIPE;
 			else if (input[i] == METACHAR_REDIR_LEFT || input[i] == METACHAR_REDIR_RIGHT)
-				current_token.type = TOKEN_REDIR;
+				tokens[token_index].type = TOKEN_REDIR;
 			else if (input[i] == METACHAR_SPACE || input[i] == METACHAR_TAB)
-				current_token.type = TOKEN_BLANK;
-			current_token.data = "METACHAR";
-			tokens[token_index++] = current_token;
+				tokens[token_index].type = TOKEN_BLANK;
+			tokens[token_index++].data = "METACHAR";
 			token_start = i + 1;
 		}
 		i++;
 	}
 	if (i != token_start)
 	{
-		current_token.type = TOKEN_STRING;
-		current_token.data = ft_substr(input, (unsigned int)token_start, i - token_start + 1);
-		tokens[token_index++] = current_token;
+		tokens[token_index].type = TOKEN_STRING;
+		tokens[token_index++].data = ft_substr(input, (unsigned int)token_start, i - token_start + 1);
 	}
-	current_token.type = TOKEN_EOF;
-	current_token.data = NULL;
-	tokens[token_index++] = current_token;
+	tokens[token_index].type = TOKEN_EOF;
+	tokens[token_index].data = NULL;
 	return (tokens);
 }
 
-void	debug_print_tokens(t_token *tokens)
+static void	debug_print_tokens(t_token *tokens)
 {
 	int	i;
 
