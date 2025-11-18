@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/18 00:19:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:35:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -62,17 +62,26 @@ static size_t	get_token_count(char *input)
 	size_t	i;
 	size_t	input_length;
 	size_t	token_count;
+	char	quote;
 
 	i = 0;
 	input_length = ft_strlen(input);
 	if (input_length == 0)
 		return (0);
 	token_count = 0;
+	quote = '\0';
 	while (i < input_length)
 	{
-		if (is_metachar(input[i]))
+		if (input[i] == '"' || input[i] == '\'')
+		{
+			if (quote == '\0')
+				quote = input[i];
+			else if (quote == input[i])
+				quote = '\0';
+		}
+		else if (quote == '\0' && is_metachar(input[i]))
 			token_count++;
-		else if (i > 0 && is_metachar(input[i - 1]))
+		else if (quote == '\0' && i > 0 && is_metachar(input[i - 1]))
 			token_count++;
 		i++;
 	}
@@ -87,6 +96,7 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	size_t	i;
 	size_t	token_index;
 	size_t	token_start;
+	char	quote;
 
 	tokens = malloc((token_count + 1) * sizeof(t_token));
 	if (!tokens)
@@ -94,9 +104,17 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	i = 0;
 	token_index = 0;
 	token_start = 0;
+	quote = '\0';
 	while (input[i] != '\0')
 	{
-		if (is_metachar(input[i]))
+		if (input[i] == '"' || input[i] == '\'')
+		{
+			if (quote == '\0')
+				quote = input[i];
+			else if (quote == input[i])
+				quote = '\0';
+		}
+		else if (quote == '\0' && is_metachar(input[i]))
 		{
 			if (i != token_start)
 				tokens[token_index++] = create_token(TOKEN_STRING,
