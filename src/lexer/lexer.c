@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/18 10:35:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/18 11:42:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -20,6 +20,7 @@
 #include <enums/e_token_type.h>
 #include <structs/s_token.h>
 
+// Creates a token of type and with data.
 static t_token	create_token(t_token_type type, char *data)
 {
 	t_token	token;
@@ -57,6 +58,7 @@ static int	is_metachar(unsigned char c)
 }
 
 // Returns the count of tokens in an input string.
+// TODO: Make Norm compliant
 static size_t	get_token_count(char *input)
 {
 	size_t	i;
@@ -89,6 +91,7 @@ static size_t	get_token_count(char *input)
 	return (token_count);
 }
 
+// Returns tokens from a given string.
 // TODO: Make norm compliant
 static t_token	*get_tokens(char *input, size_t token_count)
 {
@@ -138,6 +141,7 @@ static t_token	*get_tokens(char *input, size_t token_count)
 	return (tokens);
 }
 
+// TODO: Remove this function
 static void	debug_print_tokens(t_token *tokens)
 {
 	int	i;
@@ -162,6 +166,7 @@ static void	debug_print_tokens(t_token *tokens)
 }
 
 // Performs lexical analysis of an input and returns an array of tokens.
+// TODO: Remove debug print statements
 t_token	*lexical_analyze(char *input)
 {
 	size_t	token_count;
