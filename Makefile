@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/17 08:51:27 by yademirk         ###   ########.fr        #
+#    Updated: 2025/11/18 11:50:31 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -46,7 +46,7 @@ SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
 
 ## Lexer
 LEXER_DIR = lexer/
-LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c)
+LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c)
 
 ## Executor
 EXECUTOR_DIR = executor/
