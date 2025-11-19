@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/18 12:05:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/19 11:27:36 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -72,17 +72,14 @@ size_t	get_token_count(char *input)
 	while (i < input_length)
 	{
 		if (input[i] == '"' || input[i] == '\'')
-		{
-			if (quote == '\0')
-				quote = input[i];
-			else if (quote == input[i])
-				quote = '\0';
-		}
-		else if (quote == '\0' && (is_metachar(input[i])
-				|| is_metachar(input[i + 1])))
+			quote = ((quote == '\0') * input[i])
+				+ ((quote != input[i]) * quote);
+		if (quote == '\0' && (is_metachar(input[i])
+				|| (i + 1 < input_length && is_metachar(input[i + 1]))))
 			token_count++;
 		i++;
 	}
-	token_count++;
+	if (i > 0 && !is_metachar(input[i - 1]))
+		token_count++;
 	return (token_count);
 }
