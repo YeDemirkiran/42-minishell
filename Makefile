@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/18 11:50:31 by yademirk         ###   ########.fr        #
+#    Updated: 2025/11/19 19:58:36 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -58,7 +58,7 @@ OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 
 # CONFIGURATION
 CC = cc
-W_FLAGS = -Wall -Wextra -Werror
+W_FLAGS = -Wall -Wextra -Werror -g
 INC_FLAGS = -I$(INC_DIR) -I$(LIBGB_INC_DIR) -I$(LIBFT_INC_DIR)
 LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -lreadline -lft -lgb
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
