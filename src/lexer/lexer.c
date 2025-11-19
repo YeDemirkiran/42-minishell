@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/18 11:47:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/19 20:10:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -22,53 +22,74 @@
 
 #include "lexer_utils.h"
 
+static t_token	get_metachar_token(char c)
+{
+	t_token	token;
+
+	if (c == METACHAR_SPACE || c == METACHAR_TAB)
+		token.type = TOKEN_BLANK;
+	else if (c == METACHAR_NEWLINE)
+		token.type = TOKEN_NEWLINE;
+	else if (c == METACHAR_PIPE)
+		token.type = TOKEN_PIPE;
+	else if (c == METACHAR_REDIR_LEFT || c == METACHAR_REDIR_RIGHT)
+		token.type = TOKEN_REDIR;
+	else if (c == METACHAR_PAREN_LEFT || c == METACHAR_PAREN_RIGHT)
+		token.type = TOKEN_PARENTHESIS;
+	else if (c == METACHAR_AMPERSAND)
+		token.type = TOKEN_AMPERSAND;
+	token.data = NULL;
+	return (token);
+}
+
+static void	save_string_token(t_token *tokens, size_t *index,
+	char *start, char *end)
+{
+	if (tokens == NULL || index == NULL || start == end)
+		return ;
+	tokens[*index].type = TOKEN_STRING;
+	tokens[*index].data = ft_substr(start, 0, (size_t)(end - start));
+	(*index)++;
+}
+
+// Helper function to initialize token parameters.
+inline void	init_token_params(size_t *index, size_t *t_index,
+	size_t *t_start, char *quote)
+{
+	*index = 0;
+	*t_index = 0;
+	*t_start = 0;
+	*quote = '\0';
+}
+
 // Returns tokens from a given string.
 // TODO: Make norm compliant
 static t_token	*get_tokens(char *input, size_t token_count)
 {
 	t_token	*tokens;
 	size_t	i;
-	size_t	token_index;
-	size_t	token_start;
-	char	quote;
+	size_t	t_index;
+	size_t	t_start;
+	char	q;
 
 	tokens = malloc((token_count + 1) * sizeof(t_token));
 	if (!tokens)
 		return (NULL);
-	i = 0;
-	token_index = 0;
-	token_start = 0;
-	quote = '\0';
+	init_token_params(&i, &t_index, &t_start, &q);
 	while (input[i] != '\0')
 	{
 		if (input[i] == '"' || input[i] == '\'')
+			q = ((q == '\0') * input[i]) + ((q != input[i]) * q);
+		if (q == '\0' && is_metachar(input[i]))
 		{
-			if (quote == '\0')
-				quote = input[i];
-			else if (quote == input[i])
-				quote = '\0';
-		}
-		else if (quote == '\0' && is_metachar(input[i]))
-		{
-			if (i != token_start)
-				tokens[token_index++] = create_token(TOKEN_STRING,
-						ft_substr(input, token_start, i - token_start));
-			if (input[i] == METACHAR_PIPE)
-				tokens[token_index].type = TOKEN_PIPE;
-			else if (input[i] == METACHAR_REDIR_LEFT || input[i] == METACHAR_REDIR_RIGHT)
-				tokens[token_index].type = TOKEN_REDIR;
-			else if (input[i] == METACHAR_SPACE || input[i] == METACHAR_TAB)
-				tokens[token_index].type = TOKEN_BLANK;
-			tokens[token_index++].data = "METACHAR";
-			token_start = i + 1;
+			save_string_token(tokens, &t_index, input + t_start, input + i);
+			tokens[t_index++] = get_metachar_token(input[i]);
+			t_start = i + 1;
 		}
 		i++;
 	}
-	if (i != token_start)
-		tokens[token_index++] = create_token(TOKEN_STRING,
-				ft_substr(input, token_start, i - token_start + 1));
-	tokens[token_index].type = TOKEN_EOF;
-	tokens[token_index].data = NULL;
+	save_string_token(tokens, &t_index, input + t_start, input + i);
+	tokens[t_index] = create_token(TOKEN_EOF, NULL);
 	return (tokens);
 }
 
