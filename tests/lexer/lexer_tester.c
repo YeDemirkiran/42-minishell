@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/20 13:17:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:23:56 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -378,7 +378,12 @@ void	test_lexical_analyze(int test_number)
 		}
 	}, NULL);
 
-	printf("\n[DONE: Test %i: lexical_analyze()]\n", test_number);
+	t_test_result	results;
+	conduct_test((t_lexical_test){}, &results);
+
+	printf("\n==================[RESULTS]==================\n\n");
+	printf(COLOR_GREEN "PASS: " COLOR_WHITE "%i/%i\n", results.passed, results.total);
+	printf(COLOR_RED "FAIL: " COLOR_WHITE "%i/%i\n", results.failed, results.passed);
 }
 
 int	main(void)
