@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/20 00:25:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:07:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -100,9 +100,9 @@ static void	conduct_test(t_lexical_test test)
 	int	result;
 
 	printf("Calling lexical_analyze(%c%s%c)...\n", test.input == NULL ? 0 : '"', test.input == NULL ? "NULL" : test.input, test.input == NULL ? 0 : '"');
-	printf("================================\n");
+	printf("=============================================================\n");
 	test.retrieved_tokens = lexical_analyze(test.input);
-	printf("================================\n");
+	printf("=============================================================\n");
 
 	result = tests_match(test) == 1;
 	printf("[EXPECTED]  NULL: %s, Size: %lu, Tokens: ", test.expected_tokens == NULL ? "Yes" : "No", get_tokens_count(test.expected_tokens));
@@ -118,16 +118,18 @@ void	test_lexical_analyze(int test_number)
 {
 	printf("\nTest %i: lexical_analyze()\n", test_number);
 
-	// Test 1
-	printf("\n%i.1: NULL Input\n", test_number);
+	printf("Test %i.1: Basic Words & Spaces\n", test_number);
+
+	// Test 1.1
+	printf("\n%i.1.1: NULL Input\n", test_number);
 	conduct_test((t_lexical_test){
 		.input = NULL,
 		.retrieved_tokens = NULL,
 		.expected_tokens = NULL
 	});
 
-	// Test 2
-	printf("\n%i.2: Empty Input\n", test_number);
+	// Test 1.2
+	printf("\n%i.1.2: Empty Input\n", test_number);
 	conduct_test((t_lexical_test){
 		.input = "",
 		.retrieved_tokens = NULL,
@@ -136,8 +138,8 @@ void	test_lexical_analyze(int test_number)
 		}
 	});
 
-	// Test 3
-	printf("\n%i.3: Single Word\n", test_number);
+	// Test 1.3
+	printf("\n%i.1.3: Single Word\n", test_number);
 	conduct_test((t_lexical_test){
 		.input = "word1",
 		.retrieved_tokens = NULL,
@@ -147,8 +149,8 @@ void	test_lexical_analyze(int test_number)
 		}
 	});
 
-	// Test 4
-	printf("\n%i.3: Two Words\n", test_number);
+	// Test 1.4
+	printf("\n%i.1.4: Two Words\n", test_number);
 	conduct_test((t_lexical_test){
 		.input = "word1 word2",
 		.retrieved_tokens = NULL,
@@ -160,8 +162,8 @@ void	test_lexical_analyze(int test_number)
 		}
 	});
 
-	// Test 4
-	printf("\n%i.3: Multiple Words\n", test_number);
+	// Test 1.5
+	printf("\n%i.1.5: Multiple Words\n", test_number);
 	conduct_test((t_lexical_test){
 		.input = "word1 word2 word3 word4 word5 word6 word7 word8 word9 word10",
 		.retrieved_tokens = NULL,
@@ -185,6 +187,173 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "word9"},
 			{.type = TOKEN_BLANK, .data = NULL},
 			{.type = TOKEN_STRING, .data = "word10"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 1.6
+	printf("\n%i.1.6: Single Space\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = " ",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 1.7
+	printf("\n%i.1.7: Multiple Spaces\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "                    ",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 1.8
+	printf("\n%i.1.8: Single Word Wrapped Between Multiple Spaces\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "          word          ",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "word"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 1.9
+	printf("\n%i.1.9: Multiple Words Wrapped Between Spaces\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "  word1  word2  word3  word4  word5  ",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "word1"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "word2"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "word3"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "word4"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "word5"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	printf("Test %i.2: Single & Double Quotes\n", test_number);
+
+	// Test 2.1
+	printf("\n%i.2.1: One Single Quote\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 2.2
+	printf("\n%i.2.2: One Double Quote\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\""},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 2.3
+	printf("\n%i.2.3: Empty Single Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "''",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "''"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 2.4
+	printf("\n%i.2.4: Empty Double Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"\"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\"\""},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 2.5
+	printf("\n%i.2.5: Single Quotes With Only Spaces\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'          '",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'          '"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	});
+
+	// Test 2.6
+	printf("\n%i.2.6: Double Quotes With Only Spaces\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"          \"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\"          \""},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
 	});
