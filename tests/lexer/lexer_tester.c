@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/20 13:23:56 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/20 16:01:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -374,6 +374,154 @@ void	test_lexical_analyze(int test_number)
 		.retrieved_tokens = NULL,
 		.expected_tokens = (t_token[]){
 			{.type = TOKEN_STRING, .data = "\"          \""},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.7
+	printf("\n%i.2.7: Single Quotes Within Double Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"''''''''''''''''''''''''\"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\"''''''''''''''''''''''''\""},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.8
+	printf("\n%i.2.8: Double Quotes Within Single Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'\"\"\"\"\"\"\"\"\"\"'",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'\"\"\"\"\"\"\"\"\"\"'"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.9
+	printf("\n%i.2.9: Single Word Within Single Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'word'",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'word'"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.10
+	printf("\n%i.2.10: Single Word Within Double Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"word\"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\"word\"",},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.11
+	printf("\n%i.2.11: Multiple Words Within Single Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'word1 word2 word3 word4 word5'",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'word1 word2 word3 word4 word5'"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.12
+	printf("\n%i.2.12: Multiple Words Within Double Quotes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"word1 word2 word3 word4 word5\"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\"word1 word2 word3 word4 word5\""},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.13
+	printf("\n%i.2.13: Mixed Qutoes\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "   \"word1 word2 word3 word4 word5\" 'word6 word7' '' \"\" '     ' \"     \"   ",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "\"word1 word2 word3 word4 word5\""},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "'word6 word7'"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "''"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "\"\""},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "'     '"},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_STRING, .data = "\"     \""},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_BLANK, .data = NULL},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.14
+	printf("\n%i.2.14: Unclosed single quote\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.15
+	printf("\n%i.2.15: Unclosed double quote\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\""},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.16
+	printf("\n%i.2.16: Unclosed single quote with words\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'word1 word2 word3 word4 word5 word6",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "'word1 word2 word3 word4 word5 word6"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.17
+	printf("\n%i.2.17: Unclosed double quote with words\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "\"word1 word2 word3 word4 word5 word6",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\"word1 word2 word3 word4 word5 word6"},
+			{.type = TOKEN_EOF, .data = NULL}
+		}
+	}, NULL);
+
+	// Test 2.18
+	printf("\n%i.2.18: Many Quotes With No Spaces\n", test_number);
+	conduct_test((t_lexical_test){
+		.input = "'word1'word2'word3'word4\"word5\"word6\"word7\"word8'word9\"word10\"word11'word12",
+		.retrieved_tokens = NULL,
+		.expected_tokens = (t_token[]){
+			{.type = TOKEN_STRING, .data = "\'word1'word2'word3'word4\"word5\"word6\"word7\"word8'word9\"word10\"word11'word12"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
 	}, NULL);
