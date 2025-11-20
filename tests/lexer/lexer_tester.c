@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/20 13:07:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:17:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,9 +23,16 @@
 typedef struct s_lexical_test
 {
     char	*input;
-	t_token		*retrieved_tokens;
-	t_token		*expected_tokens;
+	t_token	*retrieved_tokens;
+	t_token	*expected_tokens;
 } 	t_lexical_test;
+
+typedef struct s_test_result
+{
+	int	total;
+	int	passed;
+	int	failed;
+}	t_test_result;
 
 static size_t	get_tokens_count(t_token *tokens)
 {
@@ -95,9 +102,19 @@ static void	debug_print_tokens(t_token *tokens)
 	printf(")\n");
 }
 
-static void	conduct_test(t_lexical_test test)
+static void	conduct_test(t_lexical_test test, t_test_result *current_metrics)
 {
 	int	result;
+	static int	passed;
+	static int	failed;
+
+	if (current_metrics != NULL)
+	{
+		current_metrics->passed = passed;
+		current_metrics->failed = failed;
+		current_metrics->total = passed + failed;
+		return ;
+	}
 
 	printf("Calling lexical_analyze(%c%s%c)...\n", test.input == NULL ? 0 : '"', test.input == NULL ? "NULL" : test.input, test.input == NULL ? 0 : '"');
 	printf("=============================================================\n");
@@ -105,6 +122,9 @@ static void	conduct_test(t_lexical_test test)
 	printf("=============================================================\n");
 
 	result = tests_match(test) == 1;
+	passed += result == 1;
+	failed += result == 0;
+
 	printf("[EXPECTED]  NULL: %s, Size: %lu, Tokens: ", test.expected_tokens == NULL ? "Yes" : "No", get_tokens_count(test.expected_tokens));
 	debug_print_tokens(test.expected_tokens);
 	printf("[RETRIEVED] NULL: %s, Size: %lu, Tokens: ", test.retrieved_tokens == NULL ? "Yes" : "No", get_tokens_count(test.retrieved_tokens));
@@ -126,7 +146,7 @@ void	test_lexical_analyze(int test_number)
 		.input = NULL,
 		.retrieved_tokens = NULL,
 		.expected_tokens = NULL
-	});
+	}, NULL);
 
 	// Test 1.2
 	printf("\n%i.1.2: Empty Input\n", test_number);
@@ -136,7 +156,7 @@ void	test_lexical_analyze(int test_number)
 		.expected_tokens = (t_token[]){
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.3
 	printf("\n%i.1.3: Single Word\n", test_number);
@@ -147,7 +167,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "word1"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.4
 	printf("\n%i.1.4: Two Words\n", test_number);
@@ -160,7 +180,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "word2"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.5
 	printf("\n%i.1.5: Multiple Words\n", test_number);
@@ -189,7 +209,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "word10"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.6
 	printf("\n%i.1.6: Single Space\n", test_number);
@@ -200,7 +220,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_BLANK, .data = NULL},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.7
 	printf("\n%i.1.7: Multiple Spaces\n", test_number);
@@ -230,7 +250,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_BLANK, .data = NULL},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.8
 	printf("\n%i.1.8: Single Word Wrapped Between Multiple Spaces\n", test_number);
@@ -261,7 +281,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_BLANK, .data = NULL},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 1.9
 	printf("\n%i.1.9: Multiple Words Wrapped Between Spaces\n", test_number);
@@ -288,7 +308,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_BLANK, .data = NULL},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	printf("Test %i.2: Single & Double Quotes\n", test_number);
 
@@ -301,7 +321,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "'"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 2.2
 	printf("\n%i.2.2: One Double Quote\n", test_number);
@@ -312,7 +332,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "\""},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 2.3
 	printf("\n%i.2.3: Empty Single Quotes\n", test_number);
@@ -323,7 +343,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "''"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 2.4
 	printf("\n%i.2.4: Empty Double Quotes\n", test_number);
@@ -334,7 +354,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "\"\""},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 2.5
 	printf("\n%i.2.5: Single Quotes With Only Spaces\n", test_number);
@@ -345,7 +365,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "'          '"},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	// Test 2.6
 	printf("\n%i.2.6: Double Quotes With Only Spaces\n", test_number);
@@ -356,7 +376,7 @@ void	test_lexical_analyze(int test_number)
 			{.type = TOKEN_STRING, .data = "\"          \""},
 			{.type = TOKEN_EOF, .data = NULL}
 		}
-	});
+	}, NULL);
 
 	printf("\n[DONE: Test %i: lexical_analyze()]\n", test_number);
 }
