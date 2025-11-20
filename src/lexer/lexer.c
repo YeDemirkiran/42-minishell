@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/19 20:10:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/19 21:13:52 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -53,7 +53,7 @@ static void	save_string_token(t_token *tokens, size_t *index,
 }
 
 // Helper function to initialize token parameters.
-inline void	init_token_params(size_t *index, size_t *t_index,
+static void	init_token_params(size_t *index, size_t *t_index,
 	size_t *t_start, char *quote)
 {
 	*index = 0;
