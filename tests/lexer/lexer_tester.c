@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/20 18:27:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/21 01:01:36 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -614,7 +614,7 @@ int	main(void)
 	test_get_token_count(1);
 
 	// Test 5
-	test_lexical_analyze(5);
+	test_lexical_analyze(2);
 
 	return (EXIT_SUCCESS);
 }
