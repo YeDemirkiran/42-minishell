@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/19 21:13:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/21 13:40:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -98,7 +98,13 @@ static void	debug_print_tokens(t_token *tokens)
 {
 	int	i;
 
+	if (tokens == NULL)
+	{
+		printf("(NULL)\n");
+		return ;
+	}
 	i = 0;
+	printf("(");
 	while (tokens[i].type != TOKEN_EOF)
 	{
 		if (tokens[i].type == TOKEN_BLANK)
@@ -107,6 +113,12 @@ static void	debug_print_tokens(t_token *tokens)
 			printf("[REDIR]");
 		else if (tokens[i].type == TOKEN_PIPE)
 			printf("[PIPE]");
+		else if (tokens[i].type == TOKEN_PARENTHESIS)
+			printf("[PAREN]");
+		else if (tokens[i].type == TOKEN_AMPERSAND)
+			printf("[AMP]");
+		else if (tokens[i].type == TOKEN_NEWLINE)
+			printf("[NEWLINE]");
 		else
 			printf("%s", tokens[i].data);
 		if (tokens[i + 1].type != TOKEN_EOF)
@@ -114,6 +126,8 @@ static void	debug_print_tokens(t_token *tokens)
 		fflush(stdout);
 		i++;
 	}
+	if (i == 0)
+		printf("none");
 	printf(")\n");
 }
 
