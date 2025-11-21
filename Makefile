@@ -1,14 +1,14 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/19 19:58:36 by yademirk         ###   ########.fr        #
+#    Updated: 2025/11/21 15:38:05 by yademirk         ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
 NAME = minishell
 
@@ -30,11 +30,23 @@ LIBGB_INC_DIR = $(LIBGB_DIR)include/
 LIBGB_A = $(LIBGB_DIR)libgb.a
 
 # C FILES
-C_FILES = $(MAIN_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES) $(LEXER_FILES) $(EXECUTOR_FILES)
+C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(EXECUTOR_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
 
 ## Main
 MAIN_DIR = main/
 MAIN_FILES = $(addprefix $(MAIN_DIR), main.c)
+
+## Lexer
+LEXER_DIR = lexer/
+LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c)
+
+## Parser
+PARSER_DIR = parser/
+PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c)
+
+## Executor
+EXECUTOR_DIR = executor/
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
@@ -43,14 +55,6 @@ BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c)
 ## Signals
 SIGNAL_DIR = signal/
 SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
-
-## Lexer
-LEXER_DIR = lexer/
-LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c)
-
-## Executor
-EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
