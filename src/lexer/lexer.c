@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/21 13:40:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/21 15:48:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ static void	debug_print_tokens(t_token *tokens)
 		return ;
 	}
 	i = 0;
-	printf("(");
 	while (tokens[i].type != TOKEN_EOF)
 	{
 		if (tokens[i].type == TOKEN_BLANK)
@@ -128,7 +127,6 @@ static void	debug_print_tokens(t_token *tokens)
 	}
 	if (i == 0)
 		printf("none");
-	printf(")\n");
 }
 
 // Performs lexical analysis of an input and returns an array of tokens.
@@ -149,5 +147,7 @@ t_token	*lexical_analyze(char *input)
 	if (tokens == NULL)
 		return (NULL);
 	debug_print_tokens(tokens);
+	printf(")\n");
+	printf("(DEBUG: Step 1 'Lexical Analysis & Tokenization' completed.)\n");
 	return (tokens);
 }
