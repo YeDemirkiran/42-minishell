@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_tester.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/21 01:01:36 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/21 15:42:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -188,6 +188,7 @@ void	test_get_token_count(int test_number)
 		{ .input = "\"word1\" \"word2\" \"word3\"", .expected_size = 5 },
 		{ .input = "\"word1 word2 word3\"", .expected_size = 1 },
 		{ .input = "\"word1\"\"word2\"\"word3\"", .expected_size = 1 },
+		{ .input = NULL }
 	};
 
 	printf("\nTest %i: get_token_count()\n", test_number);
