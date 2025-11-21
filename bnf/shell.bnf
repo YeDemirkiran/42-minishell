@@ -2,13 +2,22 @@
              A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
 
 <DIGIT> ::= 0|1|2|3|4|5|6|7|8|9
+<NUMBER> ::= <DIGIT> | <NUMBER><DIGIT>
 
-<NUMBER> ::= <DIGIT>
-           | <NUMBER><DIGIT>
+<SYMBOLS> ::= .|
+
+<SPACE> ::= ' '
+<TAB> ::= '  '
+<NEWLINE> ::= \n
+<PIPE> ::= '|'
+<METACHARCTER> ::= <SPACE>|<TAB>|<NEWLINE>|<|>|<PIPE>|&|(|)|;
+
+<SINGLE-QUOTE> ::= '
+<DOUBLE-QUOTE> ::= "
 
 <WORD> ::= <ALPHA>
+         | 
          | <WORD> <ALPHA>
-         | <WORD> '_'
 
 <WORD-LIST> ::= <WORD>
              | <WORD-LIST> <WORD>
