@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/19 11:27:36 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/21 15:29:35 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stddef.h>
 
@@ -16,9 +16,10 @@
 #include <enums/e_metachar.h>
 #include <enums/e_token_type.h>
 #include <structs/s_token.h>
+#include <types/t_bool.h>
 
 // Returns true if a given character is a metacharacter.
-int	is_metachar(unsigned char c)
+t_bool	is_metachar(unsigned char c)
 {
 	size_t		i;
 	const int	metachars[] = {
