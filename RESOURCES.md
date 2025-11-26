@@ -44,6 +44,19 @@ Among these links, GNU Bash Manual and OpenGroup Shell Specifications are the mo
 - Shell Expansion: https://www.spsanderson.com/steveondata/posts/2024-10-18/
 - Special Variables: https://www.tutorialspoint.com/unix/unix-special-variables.htm
 
+### Language Theory
+#### Formal Language
+- Formal Language: https://en.wikipedia.org/wiki/Formal_language
+- Formal Grammar: https://en.wikipedia.org/wiki/Formal_grammar
+- Context-Free Grammar: https://en.wikipedia.org/wiki/Context-free_grammar
+
+#### Backus-Naur Form
+Backus-Naur Form is a notation system for defining the syntax of programming languages and other formal languages. Shell language can be defined using this notation.
+
+- Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+- BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
+- Bash V2 Grammar in BNF: https://cmdse.github.io/pages/appendix/bash-grammar.html
+
 ### Building
 Now it's time to start building this thing! The development process will roughly go like this:
 
@@ -80,60 +93,23 @@ Now it's time to start building this thing! The development process will roughly
 	- Ctrl-D (EOF): Sends an EOF signal. Exits heredoc if it's active. Exits the shell if there is no prompt.
 	- Ctrl-\ (SIGQUIT): Needs to be ignored if no process is running. Otherwise, must be sent to children.
 
-#### Lexer
-The step of analysing and tokenizing input before parsing them to data structures. The very first step in compiler/interpreter design.
-
-##### Programming Language Theory
-To implement your shell interpreter for the Shell Language, you have to gain basic knowledge about what even a language is, at least from a computer science viewpoint.
-
-One thing you have to understand is that, minishell isn't just about developing a CLI program; it's actually about implementing a 'language interpreter'. That is, you're developing a program that takes an already existing language and implements it. This language is the 'Shell Scripting Language'.
-
-- Programming Language Theory: https://en.wikipedia.org/wiki/Programming_language_theory
-- (optional) Formal Language: https://en.wikipedia.org/wiki/Formal_language
-
-###### Formal Language
-- (optional) Formal Grammar: https://en.wikipedia.org/wiki/Formal_grammar
-- (optional) Regular Grammar: https://en.wikipedia.org/wiki/Regular_grammar
-
-###### Regular Language
-- (optional) Regular Expression: https://en.wikipedia.org/wiki/Regular_expression
-- (optional) Regular Language: https://en.wikipedia.org/wiki/Regular_language
-
-###### Context-Free Language
-- (optional) Context-Free Grammar: https://en.wikipedia.org/wiki/Context-free_grammar
-- (optional) Context-Free Language: https://en.wikipedia.org/wiki/Context-free_language
-- (optional) Context-Sensitive Grammar: https://en.wikipedia.org/wiki/Context-sensitive_grammar
-- (optional) Context-Sensitive Language: https://en.wikipedia.org/wiki/Context-sensitive_language
-
-##### Backus-Naur Form
-Backus-Naur Form is how rules of formal languages are defined. These include programming and scripting languages, such as Shell language.
-
-This section is optional. However, you can try to implement your own BNF file for organization, or simply fun.
-
-- (optional) Backus-Naur Form: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
-- (optional) BNF Notation in Compiler Design: https://www.geeksforgeeks.org/compiler-design/bnf-notation-in-compiler-design/
-- (optional) Bash V2 Grammar in BNF: https://cmdse.github.io/pages/appendix/bash-grammar.html
-- (optional) GNU Bison: https://en.wikipedia.org/wiki/GNU_Bison
-
-##### Lexical Analysis
+##### Lexer
 Also known as tokenizing/tokenizer. This is where you take a meaningless string data and convert it into several pieces of meaningful tokens, to feed them to a parser.
 
 - Lexical Analysis: https://en.wikipedia.org/wiki/Lexical_analysis
-- Lexer Hack: https://en.wikipedia.org/wiki/Lexer_hack
 - Finite State Machine: https://en.wikipedia.org/wiki/Finite-state_machine
-- (optional) Automata Theory: https://en.wikipedia.org/wiki/Automata_theory
-- (optional) Deterministic Finite Automaton: https://en.wikipedia.org/wiki/Deterministic_finite_automaton
-- (optional) Non-deterministic Finite Automaton: https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton
+- Deterministic Finite Automaton: https://en.wikipedia.org/wiki/Deterministic_finite_automaton
 
 #### Parser
 The second step. Parser uses the tokens produced by lexer and parses them into meaningful data structures for the executor to use. Quote handling, expansion/substition and all that other stuff usually happen here.
 
 ##### Parsing
 - Parsing: https://en.wikipedia.org/wiki/Parsing
-- Parse Tree: https://en.wikipedia.org/wiki/Parse_tree
-- (optional) Scanerless (Lexerless) Parsing: https://en.wikipedia.org/wiki/Scannerless_parsing
+- Top-down Parsing: https://en.wikipedia.org/wiki/Top-down_parsing
 
 ##### Abstract Syntax Tree
+- Tree Data Structure: https://en.wikipedia.org/wiki/Tree_(abstract_data_type)
+- Parse Tree: https://en.wikipedia.org/wiki/Parse_tree
 - Abstract Syntax: https://en.wikipedia.org/wiki/Abstract_syntax
 - Abstract Syntax Tree: https://en.wikipedia.org/wiki/Abstract_syntax_tree
 
@@ -143,9 +119,9 @@ The third step. Executing, file handling, redirecting and all that stuff happen 
 ##### Operating System
 Optional but recommended if you seek to gain deeper knowledge about processes.
 
+- Computer Program: https://en.wikipedia.org/wiki/Computer_program
 - (optional) System Software: https://en.wikipedia.org/wiki/System_software
 - (optional) Operating System: https://en.wikipedia.org/wiki/Operating_system
-- (optional) Computer Program: https://en.wikipedia.org/wiki/Computer_program
 
 ##### Processes
 You need to learn about them to implement your process-creation logic.
@@ -167,10 +143,10 @@ Understanding how processes exit, and exit status codes is a crucial part of she
 ##### Environment Variables
 Parent processes pass on their environment variables to the child processes they create. Your login shell is responsible for passing on the environment variables to all other processes.
 
-- Login Shells: https://help.gnome.org/users/gnome-terminal/stable/pref-login-shell.html.en
 - Environment Variables: https://en.wikipedia.org/wiki/Environment_variable
 - Unix Environment Variables: https://www.geeksforgeeks.org/linux-unix/environment-variables-in-linux-unix/
 - Using env in C: https://www.geeksforgeeks.org/c/c-program-print-environment-variables/
+- (optional) Login Shells: https://help.gnome.org/users/gnome-terminal/stable/pref-login-shell.html.en
 
 ##### Fork
 You will create your child processes through the Fork system call.
@@ -185,25 +161,6 @@ Exec system call is how you use other programs in your child processes.
 - Exec family in C: https://www.geeksforgeeks.org/c/exec-family-of-functions-in-c/
 - Execve: https://man7.org/linux/man-pages/man2/execve.2.html
 
-##### Unix Signals
-Signals are used for inter-process communication. You will mostly use it to handle CTRL-C, CTRL-D and CTRL-\\.
-
-- Inter-process Communication: https://en.wikipedia.org/wiki/Inter-process_communication
-- Signal: https://en.wikipedia.org/wiki/Signal_(IPC)
-- Kill: https://en.wikipedia.org/wiki/Kill_(command)
-- Unix Signals: https://www.math.stonybrook.edu/~ccc/dfc/dfc/signals.html
-- Signal Codes: https://dsa.cs.tsinghua.edu.cn/oj/static/unix_signal.html
-- Signals in C: https://www.geeksforgeeks.org/c/signals-c-language/
-
-##### Pipes & Redirections
-Pipes and redirections are another example of inter-process communication.
-
-- Redirection:  https://en.wikipedia.org/wiki/Redirection_(computing)
-- Pipeline: https://en.wikipedia.org/wiki/Pipeline_(Unix)
-- Unix Pipes: https://wiki.osdev.org/Unix_Pipes
-- Pipes in C: https://www.geeksforgeeks.org/c/pipe-system-call/
-- (optional) Message Passing: https://en.wikipedia.org/wiki/Message_passing
-
 ##### Files
 Extra information about files. Recommended for a better understanding of pipes.
 
@@ -211,7 +168,28 @@ Extra information about files. Recommended for a better understanding of pipes.
 - Computer File: https://en.wikipedia.org/wiki/Computer_file
 - File Descriptors: https://en.wikipedia.org/wiki/File_descriptor
 - File Permissions: https://en.wikipedia.org/wiki/File-system_permissions
-- Setuid: https://en.wikipedia.org/wiki/Setuid
+- (optional) Setuid: https://en.wikipedia.org/wiki/Setuid
+
+##### Redirections
+- Redirection: https://en.wikipedia.org/wiki/Redirection_(computing)
+
+##### Pipes
+Pipes are another example of inter-process communication.
+
+- Pipeline: https://en.wikipedia.org/wiki/Pipeline_(Unix)
+- Unix Pipes: https://wiki.osdev.org/Unix_Pipes
+- Pipes in C: https://www.geeksforgeeks.org/c/pipe-system-call/
+- (optional) Message Passing: https://en.wikipedia.org/wiki/Message_passing
+
+##### Signals
+Signals are used for inter-process communication. You will mostly use it to handle CTRL-C, CTRL-D and CTRL-\\.
+
+- Signal: https://en.wikipedia.org/wiki/Signal_(IPC)
+- Unix Signals: https://www.math.stonybrook.edu/~ccc/dfc/dfc/signals.html
+- Signals in C: https://www.geeksforgeeks.org/c/signals-c-language/
+- Kill: https://en.wikipedia.org/wiki/Kill_(command)
+- Signal Codes: https://dsa.cs.tsinghua.edu.cn/oj/static/unix_signal.html
+- (optional) Inter-process Communication: https://en.wikipedia.org/wiki/Inter-process_communication
 
 #### GNU Readline
 GNU Readline library helps you prompt and read input from the user. It also provides various command-line editing tools and command history utilities.
@@ -235,7 +213,7 @@ This is your opportunity to finally properly learn about software testing, since
 - Software Testing: https://en.wikipedia.org/wiki/Software_testing
 - Unit Testing: https://en.wikipedia.org/wiki/Unit_testing
 - Integration Testing: https://en.wikipedia.org/wiki/Integration_testing
-- Test-Driven Development: https://en.wikipedia.org/wiki/Test-driven_development
+- (optional) Test-Driven Development: https://en.wikipedia.org/wiki/Test-driven_development
 
 #### Tools
 - GNU Debugger: https://en.wikipedia.org/wiki/GNU_Debugger
