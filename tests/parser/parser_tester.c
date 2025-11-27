@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 21:14:15 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/27 21:19:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -46,6 +46,13 @@ typedef struct s_test_result
 
 t_bool	compare_asts(t_ast *expected, t_ast *testee)
 {
+	// Here, we just check if their nullness is different
+	if ((expected == NULL) != (testee == NULL))
+		return (0);
+	// If both are NULL, return 1
+	if (expected == NULL) //
+		return (1);
+
 	// Node-level checks
 	if (expected->e_type != testee->e_type)
 		return (0);
