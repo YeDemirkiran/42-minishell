@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/21 15:48:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/27 18:05:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +22,7 @@
 
 #include "lexer_utils.h"
 
+// Converts char to token
 static t_token	get_metachar_token(char c)
 {
 	t_token	token;
@@ -42,6 +43,7 @@ static t_token	get_metachar_token(char c)
 	return (token);
 }
 
+// Adds a new string token to a token list
 static void	save_string_token(t_token *tokens, size_t *index,
 	char *start, char *end)
 {
