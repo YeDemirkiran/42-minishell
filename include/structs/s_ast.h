@@ -6,14 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 10:18:12 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 15:07:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/27 16:26:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #ifndef S_AST_H
 # define S_AST_H
 
-# include <enums/e_ast_type.h>
 # include <structs/s_linked_list.h>
 
 typedef struct s_ast	t_ast;
@@ -22,12 +21,12 @@ typedef struct s_ast
 {
 	t_ast	*left;
 	t_ast	*right;
-	enum e_ast_type
+	enum
 	{
 		AST_COMMAND,
 		AST_PIPE
-	}	type;
-	union u_ast_data
+	}		e_type;
+	union
 	{
 		struct s_command
 		{
@@ -35,7 +34,7 @@ typedef struct s_ast
 			char			**arguments;
 			t_linked_list	*redirs;
 		}	ast_command;
-	}	data;
+	}		u_data;
 }	t_ast;
 
 #endif
