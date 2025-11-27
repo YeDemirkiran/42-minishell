@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 16:36:40 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/27 21:15:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,6 +23,6 @@ t_ast	*parse(t_token *tokens)
 	printf("(DEBUG: Step 1: Parse AST)\n");
 
 	// TODO: Replace this with a helper free_tokens function that frees data inside
-	free(tokens);
+	(void)tokens;
 	return (NULL);
 }
