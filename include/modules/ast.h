@@ -1,22 +1,22 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   s_linked_list.h                                    :+:      :+:    :+:   */
+/*   ast.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 23:52:48 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/10 23:38:25 by yademirk         ###   ########.fr       */
+/*   Created: 2025/11/28 22:44:24 by yademirk          #+#    #+#             */
+/*   Updated: 2025/11/28 23:59:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef S_LINKED_LIST_H
-# define S_LINKED_LIST_H
+#ifndef AST_H
+# define AST_H
 
-typedef struct s_linked_list
-{
-	struct s_linked_list	*next;
-	void					*content;
-}			t_linked_list;
+# include <structs/s_ast.h>
+# include <stddef.h>
+
+void	ast_traverse_preorder(t_ast *ast, void (*f)(t_ast *));
+void	ast_traverse_postorder(t_ast *ast, void (*f)(t_ast *));
 
 #endif
