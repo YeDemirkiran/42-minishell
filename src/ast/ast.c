@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/28 23:56:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/28 23:59:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -75,5 +75,5 @@ static void	ast_free_node(t_ast *ast)
 // Recursively frees node and its children ith the DFS post-order algorithm.
 void	ast_free_tree(t_ast *ast)
 {
-	postorder_traverse_ast(ast, ast_free_node);
+	ast_traverse_postorder(ast, ast_free_node);
 }
