@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser_tester.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 17:01:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/30 02:39:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -152,6 +152,11 @@ t_test_result	conduct_parser_test(t_parser_test test)
 	test_result.failed += result == 0;
 	test_result.total += 1;
 
+	if (test.expected_ast != NULL)
+		ast_free_tree(test.expected_ast);
+	if (retrieved_ast != NULL)
+		ast_free_tree(retrieved_ast);
+
 	return (test_result);
 }
 
@@ -159,19 +164,16 @@ void	test_parser(int	test_number)
 {
 	t_parser_test	tests[] = {
 		{
-			.name = ft_strdup("ls"),
+			.name = "ls",
 			.major_number = test_number,
 			.minor_number = 1,
-			.tokens = (t_token[]){
-				{ .type = TOKEN_STRING, .data = ft_strdup("ls") },
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_STRING, .data = "ls" },
 				{ .type = TOKEN_EOF, .data = NULL },
 			},
-			.expected_ast = &(t_ast) {
-				.type = AST_COMMAND,
-				.left = NULL,
-				.right = NULL,
-				.data = ast_command_data(ft_strdup("ls"), (char *[]){ "ls", NULL }, NULL)
-			}
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_strdup("ls"), ft_split("ls", ' '), NULL),
+				NULL, NULL)
 		}
 	};
 
