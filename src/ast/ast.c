@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 16:35:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:40:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ static void	ast_free_node(t_ast *ast)
 		free(ast->data->ast_command.arguments);
 		ft_lstclear(&(ast->data->ast_command.redirs), free_redir_struct);
 	}
+	if (ast->data != NULL)
+		free(ast->data);
 	free(ast);
 }
 
