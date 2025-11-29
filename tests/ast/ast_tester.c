@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:34:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 04:38:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 04:58:33 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -72,6 +72,7 @@ void	ast_print_node(t_ast *ast)
 					break;
 			}
 			printf(", fd: %i, path: %s) ", redir->target_fd, redir->path);
+			lst = lst->next;
 		}
 		printf("\n");
 	}
@@ -88,10 +89,26 @@ void	test_ast(void)
 
 	printf("Test 1: ast_command_data()\n");
 	command = ft_strdup("ls");
-	argv = malloc(sizeof(char *) * 2);
+	argv = malloc(sizeof(char *) * 18);
 	argv[0] = command;
-	argv[1] = NULL;
-	redirs = NULL;
+	argv[1] = ft_strdup("-l");
+	argv[2] = ft_strdup("-a");
+	argv[3] = ft_strdup("-a");
+	argv[4] = ft_strdup("-a");
+	argv[5] = ft_strdup("-a");
+	argv[6] = ft_strdup("-a");
+	argv[7] = ft_strdup("-a");
+	argv[8] = ft_strdup("-a");
+	argv[9] = ft_strdup("-a");
+	argv[10] = ft_strdup("-a");
+	argv[11] = ft_strdup("-a");
+	argv[12] = ft_strdup("-a");
+	argv[13] = ft_strdup("-a");
+	argv[14] = ft_strdup("-a");
+	argv[15] = ft_strdup("-a");
+	argv[16] = ft_strdup("-a");
+	argv[17] = NULL;
+	redirs = ft_lstnew((void *)(&(t_redirection){.path = ft_strdup("./Makefile"), .redir_type = REDIR_INPUT, .target_fd = 0}));
 	data = ast_command_data(command, argv, redirs);
 
 	printf("Test 2: ast_new_node()\n");
