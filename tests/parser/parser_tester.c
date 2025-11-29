@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser_tester.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 21:19:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 17:01:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +23,7 @@
 #include <types/t_bool.h>
 
 #include <modules/parser.h>
+#include <modules/ast.h>
 
 #define COLOR_GREEN "\e[0;32m"
 #define COLOR_RED "\e[0;31m"
@@ -54,7 +55,7 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 		return (1);
 
 	// Node-level checks
-	if (expected->e_type != testee->e_type)
+	if (expected->type != testee->type)
 		return (0);
 	else if ((expected->left != NULL) != (testee->left != NULL))
 		return (0);
@@ -62,14 +63,14 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 		return (0);
 
 	// Type checks
-	if (expected->e_type == AST_COMMAND)
+	if (expected->type == AST_COMMAND)
 	{
-		char	**expected_args = expected->u_data.ast_command.arguments;
-		char	**testee_args = testee->u_data.ast_command.arguments;
+		char	**expected_args = expected->data->ast_command.arguments;
+		char	**testee_args = testee->data->ast_command.arguments;
 
 		// Comamnd path
-		if (strcmp(expected->u_data.ast_command.command_path,
-			testee->u_data.ast_command.command_path) != 0)
+		if (strcmp(expected->data->ast_command.command,
+			testee->data->ast_command.command) != 0)
 			return (0);
 
 		// Arguments
@@ -85,9 +86,9 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 			return (0);
 
 		// Redirections
-		t_linked_list	*exp_redirs = expected->u_data.ast_command.redirs;
+		t_list	*exp_redirs = expected->data->ast_command.redirs;
 		t_redirection	*exp_redir;
-		t_linked_list	*t_redirs = testee->u_data.ast_command.redirs;
+		t_list	*t_redirs = testee->data->ast_command.redirs;
 		t_redirection	*t_redir;
 		while (exp_redirs != NULL && t_redirs != NULL)
 		{
@@ -165,18 +166,11 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_STRING, .data = ft_strdup("ls") },
 				{ .type = TOKEN_EOF, .data = NULL },
 			},
-			.expected_ast = &(t_ast){
-				.e_type = AST_COMMAND,
+			.expected_ast = &(t_ast) {
+				.type = AST_COMMAND,
 				.left = NULL,
 				.right = NULL,
-				.u_data.ast_command = {
-					.command_path = ft_strdup("ls"),
-					.arguments = (char *[]) {
-						"ls",
-						NULL
-					},
-					.redirs = NULL
-				}
+				.data = ast_command_data(ft_strdup("ls"), (char *[]){ "ls", NULL }, NULL)
 			}
 		}
 	};
