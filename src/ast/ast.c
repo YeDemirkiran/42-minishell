@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 16:29:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:35:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_ast_data	*ast_command_data(char *command, char **args, t_list *redirs)
 }
 
 // Allocates memory for an AST node and returns it.
-t_ast	*ast_new_node(t_ast_type type, t_ast_data data,
+t_ast	*ast_new_node(t_ast_type type, t_ast_data *data,
 	t_ast *left, t_ast *right)
 {
 	t_ast	*node;
@@ -60,17 +60,17 @@ static void	ast_free_node(t_ast *ast)
 		return ;
 	if (ast->type == AST_COMMAND)
 	{
-		if (ast->data.ast_command.command
-			!= ast->data.ast_command.arguments[0])
-			free(ast->data.ast_command.command);
+		if (ast->data->ast_command.command
+			!= ast->data->ast_command.arguments[0])
+			free(ast->data->ast_command.command);
 		i = 0;
-		while (ast->data.ast_command.arguments[i] != NULL)
+		while (ast->data->ast_command.arguments[i] != NULL)
 		{
-			free(ast->data.ast_command.arguments[i]);
+			free(ast->data->ast_command.arguments[i]);
 			i++;
 		}
-		free(ast->data.ast_command.arguments);
-		ft_lstclear(&(ast->data.ast_command.redirs), free_redir_struct);
+		free(ast->data->ast_command.arguments);
+		ft_lstclear(&(ast->data->ast_command.redirs), free_redir_struct);
 	}
 	free(ast);
 }
