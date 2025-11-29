@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/28 23:59:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 04:05:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -43,7 +43,7 @@ t_ast	*ast_new_node(t_ast_type type, t_ast_data data,
 }
 
 // Takes a void pointer, casts it to t_redirection* and frees its content.
-void	free_redir_struct(void *redir)
+static void	free_redir_struct(void *redir)
 {
 	free(((t_redirection *)redir)->path);
 }
