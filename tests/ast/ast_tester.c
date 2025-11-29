@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ast_tester.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:34:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 04:58:33 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 15:46:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,7 +20,7 @@
 
 void	ast_print_node(t_ast *ast)
 {
-	printf("AST NODE\n");
+	printf("\nAST NODE\n");
 	printf("TYPE: ");
 	if (ast->type == AST_COMMAND)
 		printf("command");
@@ -74,7 +74,7 @@ void	ast_print_node(t_ast *ast)
 			printf(", fd: %i, path: %s) ", redir->target_fd, redir->path);
 			lst = lst->next;
 		}
-		printf("\n");
+		printf("\n\n");
 	}
 }
 
@@ -82,37 +82,42 @@ void	ast_print_node(t_ast *ast)
 void	test_ast(void)
 {
 	t_ast		*tree;
-	t_ast_data	data;
+	t_ast_data	data[3];
 	char		*command;
 	char		**argv;
 	t_list		*redirs;
 
 	printf("Test 1: ast_command_data()\n");
-	command = ft_strdup("ls");
-	argv = malloc(sizeof(char *) * 18);
+	command = ft_strdup("cat");
+	argv = malloc(sizeof(char *) * 2);
+	argv[0] = command;
+	argv[1] = NULL;
+	redirs = ft_lstnew((void *)(&(t_redirection){.path = ft_strdup("./Makefile"), .redir_type = REDIR_INPUT, .target_fd = 0}));
+	data[0] = ast_command_data(command, argv, redirs);
+
+	command = ft_strdup("grep");
+	argv = malloc(sizeof(char *) * 3);
+	argv[0] = command;
+	argv[1] = ft_strdup("c");
+	argv[2] = NULL;
+	redirs = NULL;
+	data[1] = ast_command_data(command, argv, redirs);
+
+	command = ft_strdup("wc");
+	argv = malloc(sizeof(char *) * 3);
 	argv[0] = command;
 	argv[1] = ft_strdup("-l");
-	argv[2] = ft_strdup("-a");
-	argv[3] = ft_strdup("-a");
-	argv[4] = ft_strdup("-a");
-	argv[5] = ft_strdup("-a");
-	argv[6] = ft_strdup("-a");
-	argv[7] = ft_strdup("-a");
-	argv[8] = ft_strdup("-a");
-	argv[9] = ft_strdup("-a");
-	argv[10] = ft_strdup("-a");
-	argv[11] = ft_strdup("-a");
-	argv[12] = ft_strdup("-a");
-	argv[13] = ft_strdup("-a");
-	argv[14] = ft_strdup("-a");
-	argv[15] = ft_strdup("-a");
-	argv[16] = ft_strdup("-a");
-	argv[17] = NULL;
-	redirs = ft_lstnew((void *)(&(t_redirection){.path = ft_strdup("./Makefile"), .redir_type = REDIR_INPUT, .target_fd = 0}));
-	data = ast_command_data(command, argv, redirs);
+	argv[2] = NULL;
+	redirs = NULL;
+	data[2] = ast_command_data(command, argv, redirs);
 
 	printf("Test 2: ast_new_node()\n");
-	tree = ast_new_node(AST_COMMAND, data, NULL, NULL);
+	tree = ast_new_node(AST_PIPE, data[0],
+		ast_new_node(AST_COMMAND, data[0], NULL, NULL),
+		ast_new_node(AST_PIPE, data[0], 
+			ast_new_node(AST_COMMAND, data[1], NULL, NULL),
+			ast_new_node(AST_COMMAND, data[2], NULL, NULL)));
+
 	if (tree == NULL)
 	{
 		printf("FAIL: ast_new_node returned NULL\n");
@@ -122,10 +127,10 @@ void	test_ast(void)
 	printf("Test 3: ast_traverse_preorder() with ast_print_node()\n");
 	ast_traverse_preorder(tree, ast_print_node);
 
-	printf("Test 4: ast_traverse_postorder() with ast_print_node()\n");
+	printf("\nTest 4: ast_traverse_postorder() with ast_print_node()\n");
 	ast_traverse_postorder(tree, ast_print_node);
 
-	printf("Test 5: ast_free_tree\n");
+	printf("\nTest 5: ast_free_tree\n");
 	ast_free_tree(tree);
 }
 
