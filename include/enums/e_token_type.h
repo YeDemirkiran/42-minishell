@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:13:25 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/19 19:25:46 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/30 14:24:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,10 +16,8 @@
 typedef enum e_token_type
 {
 	TOKEN_EOF,
-	TOKEN_CMD,
 	TOKEN_STRING,
 	TOKEN_BLANK,
-	TOKEN_QUOTE,
 	TOKEN_REDIR,
 	TOKEN_PIPE,
 	TOKEN_NEWLINE,
