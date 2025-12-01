@@ -1,31 +1,22 @@
 // MINISHELL BNF
 // BY: Yaşam Ensar Demirkıran (yademirk) && Muhammed Emin Ayna (muayna)
-// Last updated: 25.11.2025
+// Last updated: 1.12.2025
 
-// Letters
 <ALPHA_LOWER> ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
                 | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 <ALPHA_UPPER> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
                 | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
 <ALPHA> ::= <ALPHA_LOWER> | <ALPHA_UPPER>
 
-// Numbers
 <DIGIT> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-<NUMBER> ::= <DIGIT> | <NUMBER> <DIGIT>
+<NUMBER> ::= <DIGIT> | <DIGIT> <NUMBER>
 
-// Non-meta symbols
 <SYMBOL> ::= "!" | "#" | "$" | "%" | "&"
            | "*" | "+" | "," | "-" | "." | "/" | ":" | "="
-           | "?" | "@" | "\" | "^" | "_" | "`" | "~"
+           | "?" | "@" | "\\" | "^" | "_" | "`" | "~"
 
-// Metacharacters
-// Description: Metacharacters are special characters that are used for
-// separating words. They have special meaning in context.
 <METACHARACTER> ::= " " | "  " | "\n" | "<" | ">" | "|" | "&" | "(" | ")" | ";"
 
-// Words
-// Description: Words are anything that are not metacharacters. Metacharacters
-// need to be escaped (either via backslah or quotes) if they are intended to be used as a part of a word.
 <WORD> ::=  <ALPHA> | <ALPHA> <WORD>
             | <NUMBER> | <NUMBER> <WORD>
             | <SYMBOL> | <SYMBOL> <WORD>
@@ -33,55 +24,44 @@
             | <WORD> "\"" <WORD> "\"" <WORD>
             | "'" <WORD> "'"
             | <WORD> "'" <WORD> "'" <WORD>
-            // | <SINGLE_QUOTE> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <DOUBLE_QUOTE>
-            // | <SINGLE_QUOTE> <WORD> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <WORD> <DOUBLE_QUOTE>
-            // | <SINGLE_QUOTE> <METACHARACTER> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <METACHARACTER> <DOUBLE_QUOTE>
-            // | <SINGLE_QUOTE> <WORD> <METACHARACTER> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <WORD> <METACHARACTER> <DOUBLE_QUOTE>
 
-// TOKENS
-// Single characters
 <TOKEN_BLANK> ::= " " | "   "
-<TOKEN_PIPE> ::= "|"
+<BLANKS> ::= <TOKEN_BLANK> | <TOKEN_BLANK> <BLANKS>
+
 <TOKEN_NEWLINE> ::= "\n"
 
-// Redirection
-<TOKEN_REDIR_INPUT> ::= "<"
-<TOKEN_REDIR_OUTPUT> ::= ">"
-<TOKEN_REDIR_HEREDOC> ::= "<<"
-<TOKEN_REDIR_APPEND> ::= ">>"
-<TOKEN_REDIR> ::= <TOKEN_REDIR_INPUT> | <TOKEN_REDIR_OUTPUT> | <TOKEN_REDIR_HEREDOC> | <TOKEN_REDIR_APPEND>
-<TOKEN_IO> ::= <TOKEN_REDIR> | <NUMBER> <TOKEN_REDIR>
+<TOKEN_PIPE> ::= "|"
+
+<OP_REDIR_INPUT> ::= "<"
+<OP_REDIR_OUTPUT> ::= ">"
+<OP_REDIR_HEREDOC> ::= "<<"
+<OP_REDIR_APPEND> ::= ">>"
+<OP_REDIR> ::= <OP_REDIR_INPUT> | <OP_REDIR_OUTPUT> | <OP_REDIR_HEREDOC> | <OP_REDIR_APPEND>
+<TOKEN_IO> ::= <OP_REDIR> | <NUMBER> <OP_REDIR>
 <TOKEN_REDIR_FILE> ::= <WORD>
 
-// If statement
 <TOKEN_IF_AND> ::= "&&"
 <TOKEN_IF_OR> ::= "||"
 
-// Subshells
 <TOKEN_PAREN_LEFT> ::= "("
 <TOKEN_PAREN_RIGHT> ::= ")"
 
-<BLANKS> ::= <TOKEN_BLANK> | <TOKEN_BLANK> <BLANKS>
+<TOKEN> ::= <TOKEN_BLANK> | <TOKEN_NEWLINE>
+            | <TOKEN_PIPE>
+            | <TOKEN_IO> | <TOKEN_REDIR_FILE>
+            | <TOKEN_IF_AND> | <TOKEN_IF_OR>
+            | <TOKEN_PAREN_LEFT> | <TOKEN_PAREN_RIGHT>
 
-// REDIRECTION
-<IO_REDIRECTION> ::= <TOKEN_IO> <TOKEN_REDIR_FILE>
-                    | <TOKEN_IO> <BLANKS> <TOKEN_REDIR_FILE>
-
-// SIMPLE COMMANDS
 <WORDLIST> ::=  <WORD>
                 | <BLANKS>
                 | <BLANKS> <WORDLIST>
                 | <WORD> <WORDLIST>
 
-<COMMAND> ::= <WORDLIST>
-            | <IO_REDIRECTION>
-            | <IO_REDIRECTION> <COMMAND>
-            | <COMMAND> <IO_REDIRECTION>
+<IO_REDIRECTION> ::= <TOKEN_IO> <TOKEN_REDIR_FILE>
+                    | <TOKEN_IO> <BLANKS> <TOKEN_REDIR_FILE>
 
-<TOKEN> ::= <WORD>
-            | <TOKEN_BLANK> | <TOKEN_NEWLINE>
-            | <TOKEN_PIPE>
-            | <TOKEN_REDIR>
-            | <TOKEN_REDIR_FD> | <TOKEN_REDIR_FILE>
-            | <TOKEN_IF_AND> | <TOKEN_IF_OR>
-            | <TOKEN_PAREN_LEFT> | <TOKEN_PAREN_RIGHT>
+<COMMAND> ::= <WORD> | <WORD> <COMMAND> | <BLANKS> <COMMAND>
+            | <IO_REDIRECTION> | <IO_REDIRECTION> <COMMAND>
+
+<PIPELINE> ::=  <COMMAND>
+                | <COMMAND> <TOKEN_PIPE> <PIPELINE>
