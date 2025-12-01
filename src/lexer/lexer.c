@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 18:05:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/01 17:46:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -27,29 +27,29 @@ static t_token	get_metachar_token(char c)
 {
 	t_token	token;
 
-	if (c == METACHAR_SPACE || c == METACHAR_TAB)
-		token.type = TOKEN_BLANK;
-	else if (c == METACHAR_NEWLINE)
+	if (c == METACHAR_NEWLINE)
 		token.type = TOKEN_NEWLINE;
 	else if (c == METACHAR_PIPE)
 		token.type = TOKEN_PIPE;
-	else if (c == METACHAR_REDIR_LEFT || c == METACHAR_REDIR_RIGHT)
-		token.type = TOKEN_REDIR;
-	else if (c == METACHAR_PAREN_LEFT || c == METACHAR_PAREN_RIGHT)
-		token.type = TOKEN_PARENTHESIS;
-	else if (c == METACHAR_AMPERSAND)
-		token.type = TOKEN_AMPERSAND;
+	else if (c == METACHAR_REDIR_LEFT)
+		token.type = TOKEN_REDIR_INPUT;
+	else if (c == METACHAR_REDIR_RIGHT)
+		token.type = TOKEN_REDIR_OUTPUT;
+	else if (c == METACHAR_PAREN_LEFT)
+		token.type = TOKEN_PAREN_LEFT;
+	else if (c == METACHAR_PAREN_RIGHT)
+		token.type = TOKEN_PAREN_RIGHT;
 	token.data = NULL;
 	return (token);
 }
 
 // Adds a new string token to a token list
-static void	save_string_token(t_token *tokens, size_t *index,
+static void	save_word_token(t_token *tokens, size_t *index,
 	char *start, char *end)
 {
 	if (tokens == NULL || index == NULL || start == end)
 		return ;
-	tokens[*index].type = TOKEN_STRING;
+	tokens[*index].type = TOKEN_WORD;
 	tokens[*index].data = ft_substr(start, 0, (size_t)(end - start));
 	(*index)++;
 }
@@ -84,13 +84,13 @@ static t_token	*get_tokens(char *input, size_t token_count)
 			q = ((q == '\0') * input[i]) + ((q != input[i]) * q);
 		if (q == '\0' && is_metachar(input[i]))
 		{
-			save_string_token(tokens, &t_index, input + t_start, input + i);
+			save_word_token(tokens, &t_index, input + t_start, input + i);
 			tokens[t_index++] = get_metachar_token(input[i]);
 			t_start = i + 1;
 		}
 		i++;
 	}
-	save_string_token(tokens, &t_index, input + t_start, input + i);
+	save_word_token(tokens, &t_index, input + t_start, input + i);
 	tokens[t_index] = create_token(TOKEN_EOF, NULL);
 	return (tokens);
 }
@@ -108,20 +108,30 @@ static void	debug_print_tokens(t_token *tokens)
 	i = 0;
 	while (tokens[i].type != TOKEN_EOF)
 	{
-		if (tokens[i].type == TOKEN_BLANK)
-			printf("[BLANK]");
-		else if (tokens[i].type == TOKEN_REDIR)
-			printf("[REDIR]");
+		if (tokens[i].type == TOKEN_REDIR_INPUT)
+			printf("[REDIR_INPUT]");
+		else if (tokens[i].type == TOKEN_REDIR_OUTPUT)
+			printf("[REDIR_OUTPUT]");
+		else if (tokens[i].type == TOKEN_REDIR_APPEND)
+			printf("[REDIR_HEREDOC]");
+		else if (tokens[i].type == TOKEN_REDIR_APPEND)
+			printf("[REDIR_APPEND]");
+		else if (tokens[i].type == TOKEN_REDIR_FILE)
+			printf("[REDIR_FILE]");
 		else if (tokens[i].type == TOKEN_PIPE)
 			printf("[PIPE]");
-		else if (tokens[i].type == TOKEN_PARENTHESIS)
-			printf("[PAREN]");
-		else if (tokens[i].type == TOKEN_AMPERSAND)
-			printf("[AMP]");
+		else if (tokens[i].type == TOKEN_PAREN_LEFT)
+			printf("[PAREN_LEFT]");
+		else if (tokens[i].type == TOKEN_PAREN_RIGHT)
+			printf("[PAREN_RIGHT]");
+		else if (tokens[i].type == TOKEN_IF_AND)
+			printf("[IF_AND]");
+		else if (tokens[i].type == TOKEN_IF_OR)
+			printf("[IF_OR]");
 		else if (tokens[i].type == TOKEN_NEWLINE)
 			printf("[NEWLINE]");
-		else
-			printf("%s", tokens[i].data);
+		else if (tokens[i].type == TOKEN_WORD)
+			printf("[TOKEN_WORD, %s]", tokens[i].data);
 		if (tokens[i + 1].type != TOKEN_EOF)
 			printf(", ");
 		fflush(stdout);
