@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 16:29:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/01 03:06:46 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,6 +17,7 @@
 #include <readline/readline.h>
 
 #include <modules/lexer.h>
+#include <modules/ast.h>
 #include <modules/parser.h>
 #include <modules/executor.h>
 #include <modules/builtin.h>
@@ -64,6 +65,9 @@ int	main(int argc, char **argv, char **envp)
 
 		// STEP 4: Restart
 		// Prepare the shell for the next iteration.
+		// free tokens
+		free(tokens);
+		ast_free_tree(ast);
 	}
 	return (EXIT_SUCCESS);
 }
