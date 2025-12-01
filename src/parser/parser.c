@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/01 02:17:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/01 03:05:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -162,9 +162,7 @@ t_ast	*parse(t_token *tokens)
 	{
 		if (tokens[i].type == TOKEN_PIPE)
 		{
-			tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens[start].data,
-					tokens_strings_to_args(tokens + start, i - start), NULL),
-					NULL, NULL);
+			tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens_strings_to_args(tokens + start, i - start), NULL), NULL, NULL);
 			tmp = ast_new_node(AST_PIPE, NULL, tmp, NULL);
 			if (root == NULL)
 				root = tmp;
@@ -177,15 +175,12 @@ t_ast	*parse(t_token *tokens)
 	}
 	if (i == start)
 		return (NULL);
-	tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens[start].data,
-					tokens_strings_to_args(tokens + start, i - start), NULL),
-					NULL, NULL);
+	tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens_strings_to_args(tokens + start, i - start), NULL), NULL, NULL);
 	if (root == NULL)
 		root = tmp;
 	else
 		current->right = tmp;
 	printf("(DEBUG: Step 1: Printing AST %i)\n", root == NULL);
 	ast_traverse_preorder(root, debug_ast_print_node);
-	// TODO: Use a helper free_tokens here function that frees tokens
 	return (root);
 }
