@@ -13,21 +13,75 @@
 <DIGIT> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 <NUMBER> ::= <DIGIT> | <NUMBER> <DIGIT>
 
+// Non-meta symbols
+<SYMBOL> ::= "!" | "#" | "$" | "%" | "&"
+           | "*" | "+" | "," | "-" | "." | "/" | ":" | "="
+           | "?" | "@" | "\" | "^" | "_" | "`" | "~"
+
 // Metacharacters
-// Description: Metacharacters (mchars) are special characters that are used for
+// Description: Metacharacters are special characters that are used for
 // separating words. They have special meaning in context.
 <METACHARACTER> ::= " " | "  " | "\n" | "<" | ">" | "|" | "&" | "(" | ")" | ";"
-
-// Quotes
-// <SINGLE_QUOTE> ::= "'"
-// <DOUBLE_QUOTE> ::= "\""
 
 // Words
 // Description: Words are anything that are not metacharacters. Metacharacters
 // need to be escaped (either via backslah or quotes) if they are intended to be used as a part of a word.
-<WORD> ::= <ALPHA> | <WORD> <ALPHA>
-            | <DIGIT> | <WORD> <DIGIT>
+<WORD> ::=  <ALPHA> | <ALPHA> <WORD>
+            | <NUMBER> | <NUMBER> <WORD>
+            | <SYMBOL> | <SYMBOL> <WORD>
+            | "\"" <WORD> "\""
+            | <WORD> "\"" <WORD> "\"" <WORD>
+            | "'" <WORD> "'"
+            | <WORD> "'" <WORD> "'" <WORD>
             // | <SINGLE_QUOTE> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <DOUBLE_QUOTE>
             // | <SINGLE_QUOTE> <WORD> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <WORD> <DOUBLE_QUOTE>
             // | <SINGLE_QUOTE> <METACHARACTER> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <METACHARACTER> <DOUBLE_QUOTE>
             // | <SINGLE_QUOTE> <WORD> <METACHARACTER> <SINGLE_QUOTE> | <DOUBLE_QUOTE> <WORD> <METACHARACTER> <DOUBLE_QUOTE>
+
+// TOKENS
+// Single characters
+<TOKEN_BLANK> ::= " " | "   "
+<TOKEN_PIPE> ::= "|"
+<TOKEN_NEWLINE> ::= "\n"
+
+// Redirection
+<TOKEN_REDIR_INPUT> ::= "<"
+<TOKEN_REDIR_OUTPUT> ::= ">"
+<TOKEN_REDIR_HEREDOC> ::= "<<"
+<TOKEN_REDIR_APPEND> ::= ">>"
+<TOKEN_REDIR> ::= <TOKEN_REDIR_INPUT> | <TOKEN_REDIR_OUTPUT> | <TOKEN_REDIR_HEREDOC> | <TOKEN_REDIR_APPEND>
+<TOKEN_IO> ::= <TOKEN_REDIR> | <NUMBER> <TOKEN_REDIR>
+<TOKEN_REDIR_FILE> ::= <WORD>
+
+// If statement
+<TOKEN_IF_AND> ::= "&&"
+<TOKEN_IF_OR> ::= "||"
+
+// Subshells
+<TOKEN_PAREN_LEFT> ::= "("
+<TOKEN_PAREN_RIGHT> ::= ")"
+
+<BLANKS> ::= <TOKEN_BLANK> | <TOKEN_BLANK> <BLANKS>
+
+// REDIRECTION
+<IO_REDIRECTION> ::= <TOKEN_IO> <TOKEN_REDIR_FILE>
+                    | <TOKEN_IO> <BLANKS> <TOKEN_REDIR_FILE>
+
+// SIMPLE COMMANDS
+<WORDLIST> ::=  <WORD>
+                | <BLANKS>
+                | <BLANKS> <WORDLIST>
+                | <WORD> <WORDLIST>
+
+<COMMAND> ::= <WORDLIST>
+            | <IO_REDIRECTION>
+            | <IO_REDIRECTION> <COMMAND>
+            | <COMMAND> <IO_REDIRECTION>
+
+<TOKEN> ::= <WORD>
+            | <TOKEN_BLANK> | <TOKEN_NEWLINE>
+            | <TOKEN_PIPE>
+            | <TOKEN_REDIR>
+            | <TOKEN_REDIR_FD> | <TOKEN_REDIR_FILE>
+            | <TOKEN_IF_AND> | <TOKEN_IF_OR>
+            | <TOKEN_PAREN_LEFT> | <TOKEN_PAREN_RIGHT>
