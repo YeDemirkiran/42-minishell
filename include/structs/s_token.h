@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:11:25 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 12:46:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 13:26:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,6 +16,7 @@
 // All token types required by this shell.
 typedef enum e_token_type
 {
+	TOKEN_NONE,
 	TOKEN_WORD,
 	TOKEN_REDIR_INPUT,
 	TOKEN_REDIR_OUTPUT,

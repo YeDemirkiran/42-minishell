@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/02 15:29:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 13:25:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -49,8 +49,8 @@ t_token	*create_token(t_token_type type, t_token_data data)
 {
 	t_token	*token;
 
-	token = malloc(sizeof(token));
-	if (token == NULL);
+	token = malloc(sizeof(t_token));
+	if (token == NULL)
 		return (NULL);
 	token->type = type;
 	token->data = data;

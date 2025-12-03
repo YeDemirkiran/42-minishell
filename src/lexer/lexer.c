@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 12:45:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 13:52:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -53,32 +53,37 @@ static t_token_type	get_token_type(char *input, size_t *index)
 	t_token_type	type;
 	size_t			i;
 
-	i = *index;
-	while (input[i] != '\0' && !is_metachar(input[i]))
+	i = 1;
+	input += *index;
+	while (input[i - 1] != '\0' && is_metachar(input[i - 1]))
+	{
+		if (ft_strncmp(input, " ", i) == 0 || ft_strncmp(input, "\t", i) == 0)
+			type = TOKEN_NONE;
+		else if (ft_strncmp(input, "<", i) == 0)
+			type = TOKEN_REDIR_INPUT;
+		else if (ft_strncmp(input, ">", i) == 0)
+			type = TOKEN_REDIR_OUTPUT;
+		else if (ft_strncmp(input, "<<", i) == 0)
+			type = TOKEN_REDIR_HEREDOC;
+		else if (ft_strncmp(input, ">>", i) == 0)
+			type = TOKEN_REDIR_APPEND;
+		else if (ft_strncmp(input, "|", i) == 0)
+			type = TOKEN_PIPE;
+		else if (ft_strncmp(input, "(", i) == 0)
+			type = TOKEN_PAREN_LEFT;
+		else if (ft_strncmp(input, ")", i) == 0)
+			type = TOKEN_PAREN_RIGHT;
+		else if (ft_strncmp(input, "&&", i) == 0)
+			type = TOKEN_IF_AND;
+		else if (ft_strncmp(input, "||", i) == 0)
+			type = TOKEN_IF_OR;
+		else if (ft_strncmp(input, "\n", i) == 0)
+			type = TOKEN_NEWLINE;
+		else
+			break ;
 		i++;
-	if (i == *index)
-		type = TOKEN_WORD;
-	else if (ft_strncmp((const)(input + i), "<", i) == 0)
-		type = TOKEN_REDIR_INPUT;
-	else if (ft_strncmp((const)(input + i), ">", i) == 0)
-		type = TOKEN_REDIR_OUTPUT;
-	else if (ft_strncmp((const)(input + i), "<<", i) == 0)
-		type = TOKEN_REDIR_HEREDOC;
-	else if (ft_strncmp((const)(input + i), ">>", i) == 0)
-		type = TOKEN_REDIR_APPEND;
-	else if (ft_strncmp((const)(input + i), "|", i) == 0)
-		type = TOKEN_PIPE;
-	else if (ft_strncmp((const)(input + i), "(", i) == 0)
-		type = TOKEN_PAREN_LEFT;
-	else if (ft_strncmp((const)(input + i), ")", i) == 0)
-		type = TOKEN_PAREN_RIGHT;
-	else if (ft_strncmp((const)(input + i), "&&", i) == 0)
-		type = TOKEN_IF_AND;
-	else if (ft_strncmp((const)(input + i), "||", i) == 0)
-		type = TOKEN_IF_OR;
-	else if (ft_strncmp((const)(input + i), "\n", i) == 0)
-		type = TOKEN_NEWLINE;
-	*index = i;
+	}
+	*index += i - 2;
 	return (type);
 }
 
@@ -86,6 +91,8 @@ static t_token_data	get_token_data(char *input, t_token_type type)
 {
 	t_token_data	data;
 
+	(void)input;
+	(void)type;
 	data.word = NULL;
 	return (data);
 }
@@ -99,12 +106,12 @@ static t_bool	save_metachar_token(t_list **tokens, char *input, size_t *index)
 	t_token			*token;
 	t_token_type	type;
 	t_token_data	data;
-	size_t			start;
 
 	if (tokens == NULL || input == NULL || index == NULL)
 		return (2);
-	start = *index;
-	type = get_token_type(input, *index);
+	type = get_token_type(input, index);
+	if (type == TOKEN_NONE)
+		return (1);
 	data = get_token_data(input, type);
 	token = create_token(type, data);
 	if (token == NULL)
@@ -176,13 +183,13 @@ static t_list	*get_tokens(char *str)
 			handle_quote(&quote, str[i]);
 		if (quote == '\0' && is_metachar(str[i]))
 		{
-			save_word_token(tokens, str + t_start, str + i);
-			save_metachar_token(tokens, str, &i);
+			save_word_token(&tokens, str + t_start, str + i);
+			save_metachar_token(&tokens, str, &i);
 			t_start = i + 1;
 		}
 		i++;
 	}
-	save_word_token(tokens, str + t_start, str + i);
+	save_word_token(&tokens, str + t_start, str + i);
 	return (tokens);
 }
 
