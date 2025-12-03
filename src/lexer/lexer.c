@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 19:32:33 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 22:08:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -91,9 +91,10 @@ static t_bool	save_word_token(t_list **tokens,
 	return (1);
 }
 
-// Returns tokens from a given string.
-//
-// Returns NULL on failure.
+/**
+ * @brief Returns tokens from a given string.
+ * @returns NULL on failure.
+ */
 static t_list	*get_tokens(char *string)
 {
 	t_list	*tokens;
@@ -109,7 +110,8 @@ static t_list	*get_tokens(char *string)
 	{
 		if (string[i] == '"' || string[i] == '\'')
 			set_quote(&quote, string[i]);
-		if (quote == '\0' && is_metachar(string[i]))
+		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
+			&& is_metachar(string[i]))
 		{
 			save_word_token(&tokens, string + t_start, string + i);
 			save_metachar_token(&tokens, string, &i);
