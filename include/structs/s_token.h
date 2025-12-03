@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:11:25 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/02 11:59:24 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 12:46:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,13 +16,11 @@
 // All token types required by this shell.
 typedef enum e_token_type
 {
-	TOKEN_EOF,
 	TOKEN_WORD,
 	TOKEN_REDIR_INPUT,
 	TOKEN_REDIR_OUTPUT,
 	TOKEN_REDIR_HEREDOC,
 	TOKEN_REDIR_APPEND,
-	TOKEN_REDIR_FILE,
 	TOKEN_PIPE,
 	TOKEN_NEWLINE,
 	TOKEN_PAREN_LEFT,
@@ -31,14 +29,11 @@ typedef enum e_token_type
 	TOKEN_IF_OR
 }	t_token_type;
 
+// Tagged union data for tokens.
 typedef union u_token_data
 {
-	char		*word;
-	struct s_io_data
-	{
-		char	*file;
-		int		fd;
-	}	io_data;
+	char	*word;
+	int		number;
 }	t_token_data;
 
 // A token is a sequence of characters considered a single unit by the shell.
@@ -46,7 +41,7 @@ typedef union u_token_data
 typedef struct s_token
 {
 	t_token_type	type;
-	t_token_data	*data;
+	t_token_data	data;
 }	t_token;
 
 

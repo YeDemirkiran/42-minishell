@@ -1,20 +1,19 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/21 15:29:35 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/02 15:29:49 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
-#include <stddef.h>
+#include <stdlib.h>
 
 #include <libft/string.h>
 #include <enums/e_metachar.h>
-#include <enums/e_token_type.h>
 #include <structs/s_token.h>
 #include <types/t_bool.h>
 
@@ -46,41 +45,14 @@ t_bool	is_metachar(unsigned char c)
 }
 
 // Creates a token of type and with data.
-t_token	create_token(t_token_type type, char *data)
+t_token	*create_token(t_token_type type, t_token_data data)
 {
-	t_token	token;
+	t_token	*token;
 
-	token.type = type;
-	token.data = data;
+	token = malloc(sizeof(token));
+	if (token == NULL);
+		return (NULL);
+	token->type = type;
+	token->data = data;
 	return (token);
-}
-
-// Returns the count of tokens in an input string.
-// TODO: Make Norm compliant
-size_t	get_token_count(char *input)
-{
-	size_t	i;
-	size_t	input_length;
-	size_t	token_count;
-	char	quote;
-
-	i = 0;
-	input_length = ft_strlen(input);
-	if (input_length == 0)
-		return (0);
-	token_count = 0;
-	quote = '\0';
-	while (i < input_length)
-	{
-		if (input[i] == '"' || input[i] == '\'')
-			quote = ((quote == '\0') * input[i])
-				+ ((quote != input[i]) * quote);
-		if (quote == '\0' && (is_metachar(input[i])
-				|| (i + 1 < input_length && is_metachar(input[i + 1]))))
-			token_count++;
-		i++;
-	}
-	if (i > 0 && !is_metachar(input[i - 1]))
-		token_count++;
-	return (token_count);
 }

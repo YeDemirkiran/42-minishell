@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/01 17:46:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 12:45:49 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,149 +15,230 @@
 
 #include <libft/predicate.h>
 #include <libft/string.h>
+#include <libft/linked_list.h>
 
-#include <enums/e_metachar.h>
-#include <enums/e_token_type.h>
-#include <structs/s_token.h>
-
+#include "enums/e_metachar.h"
+#include "structs/s_token.h"
 #include "lexer_utils.h"
 
-// Converts char to token
-static t_token	get_metachar_token(char c)
+/**
+ * @brief Frees a token and its data.
+ */
+static void	free_token(t_token *token)
 {
-	t_token	token;
-
-	if (c == METACHAR_NEWLINE)
-		token.type = TOKEN_NEWLINE;
-	else if (c == METACHAR_PIPE)
-		token.type = TOKEN_PIPE;
-	else if (c == METACHAR_REDIR_LEFT)
-		token.type = TOKEN_REDIR_INPUT;
-	else if (c == METACHAR_REDIR_RIGHT)
-		token.type = TOKEN_REDIR_OUTPUT;
-	else if (c == METACHAR_PAREN_LEFT)
-		token.type = TOKEN_PAREN_LEFT;
-	else if (c == METACHAR_PAREN_RIGHT)
-		token.type = TOKEN_PAREN_RIGHT;
-	token.data = NULL;
-	return (token);
+	if (token->type == TOKEN_WORD && token->data.word != NULL)
+		free(token->data.word);
+	free(token);
 }
 
-// Adds a new string token to a token list
-static void	save_word_token(t_token *tokens, size_t *index,
+/**
+ * @brief Adds the retrieved token to the end of a linked list.
+ * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
+ */
+static t_bool	save_token_to_list(t_list **tokens, t_token *token)
+{
+	t_list	*new_node;
+
+	if (tokens == NULL || token == NULL)
+		return (2);
+	new_node = ft_lstnew((void *)token);
+	if (new_node == NULL)
+		return (0);
+	ft_lstadd_back(tokens, new_node);
+	return (1);
+}
+
+static t_token_type	get_token_type(char *input, size_t *index)
+{
+	t_token_type	type;
+	size_t			i;
+
+	i = *index;
+	while (input[i] != '\0' && !is_metachar(input[i]))
+		i++;
+	if (i == *index)
+		type = TOKEN_WORD;
+	else if (ft_strncmp((const)(input + i), "<", i) == 0)
+		type = TOKEN_REDIR_INPUT;
+	else if (ft_strncmp((const)(input + i), ">", i) == 0)
+		type = TOKEN_REDIR_OUTPUT;
+	else if (ft_strncmp((const)(input + i), "<<", i) == 0)
+		type = TOKEN_REDIR_HEREDOC;
+	else if (ft_strncmp((const)(input + i), ">>", i) == 0)
+		type = TOKEN_REDIR_APPEND;
+	else if (ft_strncmp((const)(input + i), "|", i) == 0)
+		type = TOKEN_PIPE;
+	else if (ft_strncmp((const)(input + i), "(", i) == 0)
+		type = TOKEN_PAREN_LEFT;
+	else if (ft_strncmp((const)(input + i), ")", i) == 0)
+		type = TOKEN_PAREN_RIGHT;
+	else if (ft_strncmp((const)(input + i), "&&", i) == 0)
+		type = TOKEN_IF_AND;
+	else if (ft_strncmp((const)(input + i), "||", i) == 0)
+		type = TOKEN_IF_OR;
+	else if (ft_strncmp((const)(input + i), "\n", i) == 0)
+		type = TOKEN_NEWLINE;
+	*index = i;
+	return (type);
+}
+
+static t_token_data	get_token_data(char *input, t_token_type type)
+{
+	t_token_data	data;
+
+	data.word = NULL;
+	return (data);
+}
+
+/**
+ * @brief Converts an input stream to token, starting from index.
+ * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
+ */
+static t_bool	save_metachar_token(t_list **tokens, char *input, size_t *index)
+{
+	t_token			*token;
+	t_token_type	type;
+	t_token_data	data;
+	size_t			start;
+
+	if (tokens == NULL || input == NULL || index == NULL)
+		return (2);
+	start = *index;
+	type = get_token_type(input, *index);
+	data = get_token_data(input, type);
+	token = create_token(type, data);
+	if (token == NULL)
+		return (0);
+	if (save_token_to_list(tokens, token) != 1)
+	{
+		free_token(token);
+		return (0);
+	}
+	return (1);
+}
+
+/**
+ * @brief Converts an input stream to word token, starting from index.
+ * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
+ */
+static t_bool	save_word_token(t_list **tokens,
 	char *start, char *end)
 {
-	if (tokens == NULL || index == NULL || start == end)
-		return ;
-	tokens[*index].type = TOKEN_WORD;
-	tokens[*index].data = ft_substr(start, 0, (size_t)(end - start));
-	(*index)++;
+	t_token			*token;
+	t_token_data	data;
+
+	if (tokens == NULL || start == end)
+		return (2);
+	data.word = ft_substr(start, 0, (size_t)(end - start));
+	if (data.word == NULL)
+		return (0);
+	token = create_token(TOKEN_WORD, data);
+	if (token == NULL)
+	{
+		free(data.word);
+		return (0);
+	}
+	if (save_token_to_list(tokens, token) != 1)
+	{
+		free_token(token);
+		return (0);
+	}
+	return (1);
 }
 
-// Helper function to initialize token parameters.
-static void	init_token_params(size_t *index, size_t *t_index,
-	size_t *t_start, char *quote)
+static void	handle_quote(char *quote_char, char quote)
 {
-	*index = 0;
-	*t_index = 0;
-	*t_start = 0;
-	*quote = '\0';
+	if (quote_char == NULL)
+		return ;
+	if (*quote_char == '\0')
+		*quote_char = quote;
+	else if (*quote_char == quote)
+		*quote_char = '\0';
 }
 
 // Returns tokens from a given string.
-// TODO: Make norm compliant
-static t_token	*get_tokens(char *input, size_t token_count)
+//
+// Returns NULL on failure.
+static t_list	*get_tokens(char *str)
 {
-	t_token	*tokens;
+	t_list	*tokens;
 	size_t	i;
-	size_t	t_index;
 	size_t	t_start;
-	char	q;
+	char	quote;
 
-	tokens = malloc((token_count + 1) * sizeof(t_token));
-	if (!tokens)
-		return (NULL);
-	init_token_params(&i, &t_index, &t_start, &q);
-	while (input[i] != '\0')
+	tokens = NULL;
+	i = 0;
+	t_start = 0;
+	quote = '\0';
+	while (str[i] != '\0')
 	{
-		if (input[i] == '"' || input[i] == '\'')
-			q = ((q == '\0') * input[i]) + ((q != input[i]) * q);
-		if (q == '\0' && is_metachar(input[i]))
+		if (str[i] == '"' || str[i] == '\'')
+			handle_quote(&quote, str[i]);
+		if (quote == '\0' && is_metachar(str[i]))
 		{
-			save_word_token(tokens, &t_index, input + t_start, input + i);
-			tokens[t_index++] = get_metachar_token(input[i]);
+			save_word_token(tokens, str + t_start, str + i);
+			save_metachar_token(tokens, str, &i);
 			t_start = i + 1;
 		}
 		i++;
 	}
-	save_word_token(tokens, &t_index, input + t_start, input + i);
-	tokens[t_index] = create_token(TOKEN_EOF, NULL);
+	save_word_token(tokens, str + t_start, str + i);
 	return (tokens);
 }
 
 // TODO: Remove this function
-static void	debug_print_tokens(t_token *tokens)
+static void	debug_print_tokens(t_list *tokens)
 {
-	int	i;
+	t_token	*token;
 
-	if (tokens == NULL)
+	while (tokens != NULL)
 	{
-		printf("(NULL)\n");
-		return ;
-	}
-	i = 0;
-	while (tokens[i].type != TOKEN_EOF)
-	{
-		if (tokens[i].type == TOKEN_REDIR_INPUT)
+		token = (t_token *)(tokens->content);
+		if (token->type == TOKEN_REDIR_INPUT)
 			printf("[REDIR_INPUT]");
-		else if (tokens[i].type == TOKEN_REDIR_OUTPUT)
+		else if (token->type == TOKEN_REDIR_OUTPUT)
 			printf("[REDIR_OUTPUT]");
-		else if (tokens[i].type == TOKEN_REDIR_APPEND)
+		else if (token->type == TOKEN_REDIR_APPEND)
 			printf("[REDIR_HEREDOC]");
-		else if (tokens[i].type == TOKEN_REDIR_APPEND)
+		else if (token->type == TOKEN_REDIR_APPEND)
 			printf("[REDIR_APPEND]");
-		else if (tokens[i].type == TOKEN_REDIR_FILE)
-			printf("[REDIR_FILE]");
-		else if (tokens[i].type == TOKEN_PIPE)
+		else if (token->type == TOKEN_PIPE)
 			printf("[PIPE]");
-		else if (tokens[i].type == TOKEN_PAREN_LEFT)
+		else if (token->type == TOKEN_PAREN_LEFT)
 			printf("[PAREN_LEFT]");
-		else if (tokens[i].type == TOKEN_PAREN_RIGHT)
+		else if (token->type == TOKEN_PAREN_RIGHT)
 			printf("[PAREN_RIGHT]");
-		else if (tokens[i].type == TOKEN_IF_AND)
+		else if (token->type == TOKEN_IF_AND)
 			printf("[IF_AND]");
-		else if (tokens[i].type == TOKEN_IF_OR)
+		else if (token->type == TOKEN_IF_OR)
 			printf("[IF_OR]");
-		else if (tokens[i].type == TOKEN_NEWLINE)
+		else if (token->type == TOKEN_NEWLINE)
 			printf("[NEWLINE]");
-		else if (tokens[i].type == TOKEN_WORD)
-			printf("[TOKEN_WORD, %s]", tokens[i].data);
-		if (tokens[i + 1].type != TOKEN_EOF)
+		else if (token->type == TOKEN_WORD)
+			printf("[TOKEN_WORD, %s]", token->data.word);
+		if (tokens->next != NULL)
 			printf(", ");
-		fflush(stdout);
-		i++;
+		tokens = tokens->next;
 	}
-	if (i == 0)
-		printf("none");
 }
 
 // Performs lexical analysis of an input and returns an array of tokens.
 // TODO: Remove debug print statements
-t_token	*lexical_analyze(char *input)
+t_list	*lexical_analyze(char *input)
 {
-	size_t	token_count;
-	t_token	*tokens;
+	t_list	*tokens;
 
 	printf("(DEBUG: Starting shell step 1: Lexical Analysis & Tokenization)\n");
 	printf("(DEBUG: Step 1: Given input: %s)\n", input);
 	if (input == NULL)
 		return (NULL);
-	token_count = get_token_count(input);
-	printf("(DEBUG: Step 1.1: Lexer token count: %lu)\n", token_count);
-	printf("(DEBUG: Step 1.2: Retrieved tokens: ");
-	tokens = get_tokens(input, token_count);
+	printf("(DEBUG: Step 1.1: Retrieved tokens: ");
+	tokens = get_tokens(input);
 	if (tokens == NULL)
+	{
+		printf("NULL)\n");
 		return (NULL);
+	}
 	debug_print_tokens(tokens);
 	printf(")\n");
 	printf("(DEBUG: Step 1 'Lexical Analysis & Tokenization' completed.)\n");
