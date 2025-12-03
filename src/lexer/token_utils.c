@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:22:02 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 19:24:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 23:01:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -41,6 +41,22 @@ void	free_token(t_token *token)
 	if (token->type == TOKEN_WORD && token->data.word != NULL)
 		free(token->data.word);
 	free(token);
+}
+
+static void	free_token_void(void *token)
+{
+	t_token	*token_real;
+
+	token_real = (t_token *)token;
+	free_token(token_real);
+}
+
+/**
+ * @brief Frees a list of tokens.
+ */
+void	free_tokens(t_list **tokens)
+{
+	ft_lstclear(tokens, free_token_void);
 }
 
 /**

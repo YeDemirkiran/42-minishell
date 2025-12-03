@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 19:30:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 23:01:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -29,6 +29,11 @@ t_token	*create_token(t_token_type type, t_token_data data);
 * @brief Frees a token and its data.
 */
 void	free_token(t_token *token);
+
+/**
+ * @brief Frees a list of tokens.
+ */
+void	free_tokens(t_list **tokens);
 
 /**
  * @brief Adds the retrieved token to the end of a linked list.
