@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 22:08:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 22:53:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,13 +23,16 @@
 #include "lexer_utils.h"
 #include "token_utils.h"
 
+// TODO: Make it so number is a dynamic FD
 static t_token_data	get_token_data(char *string, t_token_type type)
 {
 	t_token_data	data;
 
 	(void)string;
-	(void)type;
-	data.word = NULL;
+	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_OUTPUT)
+		data.number = 1;
+	else if (type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_INPUT)
+		data.number = 0;
 	return (data);
 }
 
@@ -133,13 +136,13 @@ static void	debug_print_tokens(t_list *tokens)
 	{
 		token = (t_token *)(tokens->content);
 		if (token->type == TOKEN_REDIR_INPUT)
-			printf("[REDIR_INPUT]");
+			printf("[REDIR_INPUT, FD: %i]", token->data.number);
 		else if (token->type == TOKEN_REDIR_OUTPUT)
-			printf("[REDIR_OUTPUT]");
+			printf("[REDIR_OUTPUT, FD: %i]", token->data.number);
 		else if (token->type == TOKEN_REDIR_HEREDOC)
-			printf("[REDIR_HEREDOC]");
+			printf("[REDIR_HEREDOC, FD: %i]", token->data.number);
 		else if (token->type == TOKEN_REDIR_APPEND)
-			printf("[REDIR_APPEND]");
+			printf("[REDIR_APPEND, FD: %i]", token->data.number);
 		else if (token->type == TOKEN_PIPE)
 			printf("[PIPE]");
 		else if (token->type == TOKEN_PAREN_LEFT)
