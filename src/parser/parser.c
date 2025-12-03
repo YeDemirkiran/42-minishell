@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/01 03:05:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/04 00:24:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -46,7 +46,7 @@ static char	**linked_list_to_string_arr(t_list *list)
 
 // Searches the tokens until LENGTH, and retrieves strings in char** format.
 // (Ignores non-string)
-static char	**tokens_strings_to_args(t_token *tokens, size_t length)
+static char	**tokens_strings_to_args(t_list *tokens, size_t length)
 {
 	size_t	i;
 	t_list	*list;
@@ -57,12 +57,11 @@ static char	**tokens_strings_to_args(t_token *tokens, size_t length)
 		return (NULL);
 	list = NULL;
 	i = 0;
-	while (i < length)
+	while (i < length && tokens != NULL)
 	{
-		if ((i == 0 || tokens[i - 1].type != TOKEN_REDIR)
-			&& tokens[i].type == TOKEN_STRING)
+		if (((t_token *)tokens->content)->type == TOKEN_WORD)
 		{
-			current = ft_lstnew(tokens[i].data);
+			current = ft_lstnew(((t_token *)tokens->content)->data.word);
 			if (current == NULL)
 			{
 				ft_lstclear(&list, free);
@@ -71,6 +70,7 @@ static char	**tokens_strings_to_args(t_token *tokens, size_t length)
 			ft_lstadd_back(&list, current);
 		}
 		i++;
+		tokens = tokens->next;
 	}
 	args = linked_list_to_string_arr(list);
 	ft_lstclear(&list, NULL);
@@ -140,47 +140,52 @@ static void	debug_ast_print_node(t_ast *ast)
 
 // Uses tokens from a lexer and converts them into a full AST
 // TODO: Remove debug logs
-t_ast	*parse(t_token *tokens)
+t_ast	*parse(t_list *tokens)
 {
 	size_t	i;
-	size_t	start;
 	t_ast	*root;
 	t_ast	*current;
 	t_ast	*tmp;
+	t_token	*start_token;
+	t_token	*current_token;
 
-	// todo: remove
+	// todo: remove printf logs
 	printf("(DEBUG: Starting shell step 2: Parser)\n");
 	printf("(DEBUG: Step 1: Parse AST)\n");
 
 	if (tokens == NULL)
 		return (NULL);
 	i = 0;
-	start = 0;
 	root = NULL;
 	current = NULL;
-	while (tokens[i].type != TOKEN_EOF)
+	current_token = NULL;
+	start_token = NULL;
+	while (tokens != NULL)
 	{
-		if (tokens[i].type == TOKEN_PIPE)
+		current_token = (t_token *)(tokens->content);
+		if (start_token == NULL)
+			start_token = current_token;
+		if (current_token->type == TOKEN_PIPE)
 		{
-			tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens_strings_to_args(tokens + start, i - start), NULL), NULL, NULL);
+			tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens_strings_to_args(tokens, i - start), NULL), NULL, NULL);
 			tmp = ast_new_node(AST_PIPE, NULL, tmp, NULL);
 			if (root == NULL)
 				root = tmp;
 			if (current != NULL)
 				current->right = tmp;
 			current = tmp;
-			start = i + 1;
+			i = 0;
+			start_token = current_token;
 		}
-		i++;
+		else
+			i++;
+		tokens = tokens->next;
 	}
-	if (i == start)
-		return (NULL);
-	tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens_strings_to_args(tokens + start, i - start), NULL), NULL, NULL);
 	if (root == NULL)
 		root = tmp;
 	else
 		current->right = tmp;
-	printf("(DEBUG: Step 1: Printing AST %i)\n", root == NULL);
+	printf("(DEBUG: Step 1: Printing AST)\n");
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
