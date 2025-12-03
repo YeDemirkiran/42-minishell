@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 13:25:40 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 19:35:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,7 +17,10 @@
 #include <structs/s_token.h>
 #include <types/t_bool.h>
 
-// Returns true if a given character is a metacharacter.
+/**
+* @brief Checks whether if a given character is a metacharacter.
+* @returns 0 if the character is not a metacharacter, 1 if it is.
+*/
 t_bool	is_metachar(unsigned char c)
 {
 	size_t		i;
@@ -44,15 +47,78 @@ t_bool	is_metachar(unsigned char c)
 	return (0);
 }
 
-// Creates a token of type and with data.
-t_token	*create_token(t_token_type type, t_token_data data)
+/**
+ * @brief Sets the quote char.
+*/
+void	set_quote(char *quote_char, char quote_target)
 {
-	t_token	*token;
+	if (quote_char == NULL)
+		return ;
+	if (*quote_char == '\0')
+		*quote_char = quote_target;
+	else if (*quote_char == quote_target)
+		*quote_char = '\0';
+}
 
-	token = malloc(sizeof(t_token));
-	if (token == NULL)
-		return (NULL);
-	token->type = type;
-	token->data = data;
-	return (token);
+/**
+ * @brief Returns the one-character token type of a string, or TOKEN_NONE.
+*/
+static t_token_type	get_token_type_one_char(char c)
+{
+	t_token_type	type;
+
+	if (c == '<')
+		type = TOKEN_REDIR_INPUT;
+	else if (c == '>')
+		type = TOKEN_REDIR_OUTPUT;
+	else if (c == '\n')
+		type = TOKEN_NEWLINE;
+	else if (c == '|')
+		type = TOKEN_PIPE;
+	else if (c == '(')
+		type = TOKEN_PAREN_LEFT;
+	else if (c == ')')
+		type = TOKEN_PAREN_RIGHT;
+	else
+		type = TOKEN_NONE;
+	return (type);
+}
+
+/**
+ * @brief Returns the two-characters token type of a string, or TOKEN_NONE.
+*/
+static t_token_type	get_token_type_two_char(char *string)
+{
+	t_token_type	type;
+
+	if (ft_strncmp(string, "<<", 2) == 0)
+		type = TOKEN_REDIR_HEREDOC;
+	else if (ft_strncmp(string, ">>", 2) == 0)
+		type = TOKEN_REDIR_APPEND;
+	else if (ft_strncmp(string, "&&", 2) == 0)
+		type = TOKEN_IF_AND;
+	else if (ft_strncmp(string, "||", 2) == 0)
+		type = TOKEN_IF_OR;
+	else
+		type = TOKEN_NONE;
+	return (type);
+}
+
+/**
+ * @brief Returns the token type of a string.
+*/
+t_token_type	get_token_type(char *string, size_t *index)
+{
+	t_token_type	type;
+
+	string += *index;
+	type = get_token_type_two_char(string);
+	if (type != TOKEN_NONE)
+	{
+		*index += 2;
+		return (type);
+	}
+	type = get_token_type_one_char(*string);
+	*index += 1;
+	return (type);
 }

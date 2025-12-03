@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 19:12:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 19:32:33 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,88 +19,9 @@
 
 #include "enums/e_metachar.h"
 #include "structs/s_token.h"
+
 #include "lexer_utils.h"
-
-/**
- * @brief Frees a token and its data.
- */
-static void	free_token(t_token *token)
-{
-	if (token->type == TOKEN_WORD && token->data.word != NULL)
-		free(token->data.word);
-	free(token);
-}
-
-/**
- * @brief Adds the retrieved token to the end of a linked list.
- * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
- */
-static t_bool	save_token_to_list(t_list **tokens, t_token *token)
-{
-	t_list	*new_node;
-
-	if (tokens == NULL || token == NULL)
-		return (2);
-	new_node = ft_lstnew((void *)token);
-	if (new_node == NULL)
-		return (0);
-	ft_lstadd_back(tokens, new_node);
-	return (1);
-}
-
-static t_token_type get_token_type_one_char(char c)
-{
-	t_token_type	type;
-
-	if (c == '<')
-		type = TOKEN_REDIR_INPUT;
-	else if (c == '>')
-		type = TOKEN_REDIR_OUTPUT;
-	else if (c == '\n')
-		type = TOKEN_NEWLINE;
-	else if (c == '|')
-		type = TOKEN_PIPE;
-	else if (c == '(')
-		type = TOKEN_PAREN_LEFT;
-	else if (c == ')')
-		type = TOKEN_PAREN_RIGHT;
-	else
-		type = TOKEN_NONE;
-	return (type);
-}
-
-static t_token_type get_token_type_two_char(char *string)
-{
-	t_token_type	type;
-
-	if (ft_strncmp(string, "<<", 2) == 0)
-		type = TOKEN_REDIR_HEREDOC;
-	else if (ft_strncmp(string, ">>", 2) == 0)
-		type = TOKEN_REDIR_APPEND;
-	else if (ft_strncmp(string, "&&", 2) == 0)
-		type = TOKEN_IF_AND;
-	else if (ft_strncmp(string, "||", 2) == 0)
-		type = TOKEN_IF_OR;
-	else
-		type = TOKEN_NONE;
-	return (type);
-}
-
-static t_token_type	get_token_type(char *string, size_t *index)
-{
-	t_token_type	type;
-
-	string += *index;
-	type = get_token_type_two_char(string);
-	if (type != TOKEN_NONE)
-	{
-		*index += 2;
-		return (type);
-	}
-	type = get_token_type_one_char(*string);
-	*index += 1;
-	return (type);
-}
+#include "token_utils.h"
 
 static t_token_data	get_token_data(char *string, t_token_type type)
 {
@@ -168,16 +89,6 @@ static t_bool	save_word_token(t_list **tokens,
 		return (0);
 	}
 	return (1);
-}
-
-static void	set_quote(char *quote_char, char quote_target)
-{
-	if (quote_char == NULL)
-		return ;
-	if (*quote_char == '\0')
-		*quote_char = quote_target;
-	else if (*quote_char == quote_target)
-		*quote_char = '\0';
 }
 
 // Returns tokens from a given string.
