@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 23:02:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 23:57:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -60,13 +60,11 @@ int	main(int argc, char **argv, char **envp)
 		// STEP 1: Lexical Analysis
 		// Analyze and tokenize the input.
 		tokens = lexical_analyze(input);
-		(void)tokens;
-		(void)ast;
 
 		// STEP 2: Parser
 		// Use the tokens from lexer and parse them to usable commands by the executor.
-		// ast = parse(tokens);
-		// (void)ast;
+		ast = parse(tokens);
+		(void)ast;
 
 		// STEP 3: Execution
 		// Execute the parsed commands here. Provide envp for them.
@@ -76,7 +74,7 @@ int	main(int argc, char **argv, char **envp)
 		// Prepare the shell for the next iteration.
 		// free tokens
 		free_tokens(&tokens);
-		//ast_free_tree(ast);
+		ast_free_tree(ast);
 	}
 	return (EXIT_SUCCESS);
 }
