@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 13:52:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 19:12:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -48,71 +48,87 @@ static t_bool	save_token_to_list(t_list **tokens, t_token *token)
 	return (1);
 }
 
-static t_token_type	get_token_type(char *input, size_t *index)
+static t_token_type get_token_type_one_char(char c)
 {
 	t_token_type	type;
-	size_t			i;
 
-	i = 1;
-	input += *index;
-	while (input[i - 1] != '\0' && is_metachar(input[i - 1]))
-	{
-		if (ft_strncmp(input, " ", i) == 0 || ft_strncmp(input, "\t", i) == 0)
-			type = TOKEN_NONE;
-		else if (ft_strncmp(input, "<", i) == 0)
-			type = TOKEN_REDIR_INPUT;
-		else if (ft_strncmp(input, ">", i) == 0)
-			type = TOKEN_REDIR_OUTPUT;
-		else if (ft_strncmp(input, "<<", i) == 0)
-			type = TOKEN_REDIR_HEREDOC;
-		else if (ft_strncmp(input, ">>", i) == 0)
-			type = TOKEN_REDIR_APPEND;
-		else if (ft_strncmp(input, "|", i) == 0)
-			type = TOKEN_PIPE;
-		else if (ft_strncmp(input, "(", i) == 0)
-			type = TOKEN_PAREN_LEFT;
-		else if (ft_strncmp(input, ")", i) == 0)
-			type = TOKEN_PAREN_RIGHT;
-		else if (ft_strncmp(input, "&&", i) == 0)
-			type = TOKEN_IF_AND;
-		else if (ft_strncmp(input, "||", i) == 0)
-			type = TOKEN_IF_OR;
-		else if (ft_strncmp(input, "\n", i) == 0)
-			type = TOKEN_NEWLINE;
-		else
-			break ;
-		i++;
-	}
-	*index += i - 2;
+	if (c == '<')
+		type = TOKEN_REDIR_INPUT;
+	else if (c == '>')
+		type = TOKEN_REDIR_OUTPUT;
+	else if (c == '\n')
+		type = TOKEN_NEWLINE;
+	else if (c == '|')
+		type = TOKEN_PIPE;
+	else if (c == '(')
+		type = TOKEN_PAREN_LEFT;
+	else if (c == ')')
+		type = TOKEN_PAREN_RIGHT;
+	else
+		type = TOKEN_NONE;
 	return (type);
 }
 
-static t_token_data	get_token_data(char *input, t_token_type type)
+static t_token_type get_token_type_two_char(char *string)
+{
+	t_token_type	type;
+
+	if (ft_strncmp(string, "<<", 2) == 0)
+		type = TOKEN_REDIR_HEREDOC;
+	else if (ft_strncmp(string, ">>", 2) == 0)
+		type = TOKEN_REDIR_APPEND;
+	else if (ft_strncmp(string, "&&", 2) == 0)
+		type = TOKEN_IF_AND;
+	else if (ft_strncmp(string, "||", 2) == 0)
+		type = TOKEN_IF_OR;
+	else
+		type = TOKEN_NONE;
+	return (type);
+}
+
+static t_token_type	get_token_type(char *string, size_t *index)
+{
+	t_token_type	type;
+
+	string += *index;
+	type = get_token_type_two_char(string);
+	if (type != TOKEN_NONE)
+	{
+		*index += 2;
+		return (type);
+	}
+	type = get_token_type_one_char(*string);
+	*index += 1;
+	return (type);
+}
+
+static t_token_data	get_token_data(char *string, t_token_type type)
 {
 	t_token_data	data;
 
-	(void)input;
+	(void)string;
 	(void)type;
 	data.word = NULL;
 	return (data);
 }
 
 /**
- * @brief Converts an input stream to token, starting from index.
+ * @brief Converts a string stream to token, starting from index.
  * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
  */
-static t_bool	save_metachar_token(t_list **tokens, char *input, size_t *index)
+static t_bool	save_metachar_token(t_list **tokens,
+		char *string, size_t *index)
 {
 	t_token			*token;
 	t_token_type	type;
 	t_token_data	data;
 
-	if (tokens == NULL || input == NULL || index == NULL)
+	if (tokens == NULL || string == NULL || index == NULL)
 		return (2);
-	type = get_token_type(input, index);
+	type = get_token_type(string, index);
 	if (type == TOKEN_NONE)
 		return (1);
-	data = get_token_data(input, type);
+	data = get_token_data(string, type);
 	token = create_token(type, data);
 	if (token == NULL)
 		return (0);
@@ -125,8 +141,9 @@ static t_bool	save_metachar_token(t_list **tokens, char *input, size_t *index)
 }
 
 /**
- * @brief Converts an input stream to word token, starting from index.
- * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
+ * @brief Converts a string stream to word token, starting from index.
+ * @returns 0 on failure, 1 on success,
+ * 2 if any parameter is NULL or START == END.
  */
 static t_bool	save_word_token(t_list **tokens,
 	char *start, char *end)
@@ -153,20 +170,20 @@ static t_bool	save_word_token(t_list **tokens,
 	return (1);
 }
 
-static void	handle_quote(char *quote_char, char quote)
+static void	set_quote(char *quote_char, char quote_target)
 {
 	if (quote_char == NULL)
 		return ;
 	if (*quote_char == '\0')
-		*quote_char = quote;
-	else if (*quote_char == quote)
+		*quote_char = quote_target;
+	else if (*quote_char == quote_target)
 		*quote_char = '\0';
 }
 
 // Returns tokens from a given string.
 //
 // Returns NULL on failure.
-static t_list	*get_tokens(char *str)
+static t_list	*get_tokens(char *string)
 {
 	t_list	*tokens;
 	size_t	i;
@@ -177,19 +194,20 @@ static t_list	*get_tokens(char *str)
 	i = 0;
 	t_start = 0;
 	quote = '\0';
-	while (str[i] != '\0')
+	while (string[i] != '\0')
 	{
-		if (str[i] == '"' || str[i] == '\'')
-			handle_quote(&quote, str[i]);
-		if (quote == '\0' && is_metachar(str[i]))
+		if (string[i] == '"' || string[i] == '\'')
+			set_quote(&quote, string[i]);
+		if (quote == '\0' && is_metachar(string[i]))
 		{
-			save_word_token(&tokens, str + t_start, str + i);
-			save_metachar_token(&tokens, str, &i);
-			t_start = i + 1;
+			save_word_token(&tokens, string + t_start, string + i);
+			save_metachar_token(&tokens, string, &i);
+			t_start = i;
 		}
-		i++;
+		else
+			i++;
 	}
-	save_word_token(&tokens, str + t_start, str + i);
+	save_word_token(&tokens, string + t_start, string + i);
 	return (tokens);
 }
 
@@ -205,7 +223,7 @@ static void	debug_print_tokens(t_list *tokens)
 			printf("[REDIR_INPUT]");
 		else if (token->type == TOKEN_REDIR_OUTPUT)
 			printf("[REDIR_OUTPUT]");
-		else if (token->type == TOKEN_REDIR_APPEND)
+		else if (token->type == TOKEN_REDIR_HEREDOC)
 			printf("[REDIR_HEREDOC]");
 		else if (token->type == TOKEN_REDIR_APPEND)
 			printf("[REDIR_APPEND]");
@@ -229,18 +247,18 @@ static void	debug_print_tokens(t_list *tokens)
 	}
 }
 
-// Performs lexical analysis of an input and returns an array of tokens.
+// Performs lexical analysis of a string and returns an array of tokens.
 // TODO: Remove debug print statements
-t_list	*lexical_analyze(char *input)
+t_list	*lexical_analyze(char *string)
 {
 	t_list	*tokens;
 
 	printf("(DEBUG: Starting shell step 1: Lexical Analysis & Tokenization)\n");
-	printf("(DEBUG: Step 1: Given input: %s)\n", input);
-	if (input == NULL)
+	printf("(DEBUG: Step 1: Given string: %s)\n", string);
+	if (string == NULL)
 		return (NULL);
 	printf("(DEBUG: Step 1.1: Retrieved tokens: ");
-	tokens = get_tokens(input);
+	tokens = get_tokens(string);
 	if (tokens == NULL)
 	{
 		printf("NULL)\n");

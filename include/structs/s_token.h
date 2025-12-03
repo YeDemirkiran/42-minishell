@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:11:25 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 13:26:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/03 19:08:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,12 +18,12 @@ typedef enum e_token_type
 {
 	TOKEN_NONE,
 	TOKEN_WORD,
+	TOKEN_NEWLINE,
+	TOKEN_PIPE,
 	TOKEN_REDIR_INPUT,
 	TOKEN_REDIR_OUTPUT,
 	TOKEN_REDIR_HEREDOC,
 	TOKEN_REDIR_APPEND,
-	TOKEN_PIPE,
-	TOKEN_NEWLINE,
 	TOKEN_PAREN_LEFT,
 	TOKEN_PAREN_RIGHT,
 	TOKEN_IF_AND,
