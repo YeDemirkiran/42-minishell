@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/04 16:06:20 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/04 18:34:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -34,34 +34,6 @@ static t_token_data	get_token_data(char *string, t_token_type type)
 	else if (type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_INPUT)
 		data.number = 0;
 	return (data);
-}
-
-/**
- * @brief Converts a string stream to token, starting from index.
- * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
- */
-static t_bool	save_metachar_token(t_list **tokens,
-		char *string, size_t *index)
-{
-	t_token			*token;
-	t_token_type	type;
-	t_token_data	data;
-
-	if (tokens == NULL || string == NULL)
-		return (2);
-	type = get_token_type(string, index);
-	if (type == TOKEN_NONE)
-		return (1);
-	data = get_token_data(string, type);
-	token = create_token(type, data);
-	if (token == NULL)
-		return (0);
-	if (save_token_to_list(tokens, token) != 1)
-	{
-		free_token(token);
-		return (0);
-	}
-	return (1);
 }
 
 /**
@@ -95,6 +67,37 @@ static t_bool	save_word_token(t_list **tokens,
 }
 
 /**
+ * @brief Converts a string stream to token, starting from index.
+ * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
+ */
+static t_bool	save_metachar_token(t_list **tokens,
+		char *string, size_t *index)
+{
+	t_token			*token;
+	size_t			token_length;
+	t_token_type	type;
+	t_token_data	data;
+
+	if (tokens == NULL || string == NULL || index == NULL)
+		return (2);
+	token_length = 0;
+	type = get_token_type(string + *index, &token_length);
+	*index += token_length;
+	if (type == TOKEN_NONE)
+		return (1);
+	data = get_token_data(string, type);
+	token = create_token(type, data);
+	if (token == NULL)
+		return (0);
+	if (save_token_to_list(tokens, token) != 1)
+	{
+		free_token(token);
+		return (0);
+	}
+	return (1);
+}
+
+/**
  * @brief Returns tokens from a given string.
  * @returns NULL on failure.
  */
@@ -111,10 +114,10 @@ static t_list	*get_tokens(char *string)
 	quote = '\0';
 	while (string[i] != '\0')
 	{
-		if (string[i] == '"' || string[i] == '\'')
-			set_quote(&quote, string[i]);
-		if (quote == '\0' && string[i] == '#')
+		if (string[i] == '#' && quote == '\0')
 			break ;
+		else if (string[i] == '"' || string[i] == '\'')
+			set_quote(&quote, string[i]);
 		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
 			&& is_metachar(string[i]))
 		{
@@ -126,7 +129,6 @@ static t_list	*get_tokens(char *string)
 			i++;
 	}
 	save_word_token(&tokens, string + t_start, string + i);
-	save_metachar_token(&tokens, "\n", NULL);
 	return (tokens);
 }
 
