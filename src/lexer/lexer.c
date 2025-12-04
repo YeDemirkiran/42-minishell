@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 22:53:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/04 16:06:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -47,7 +47,7 @@ static t_bool	save_metachar_token(t_list **tokens,
 	t_token_type	type;
 	t_token_data	data;
 
-	if (tokens == NULL || string == NULL || index == NULL)
+	if (tokens == NULL || string == NULL)
 		return (2);
 	type = get_token_type(string, index);
 	if (type == TOKEN_NONE)
@@ -113,6 +113,8 @@ static t_list	*get_tokens(char *string)
 	{
 		if (string[i] == '"' || string[i] == '\'')
 			set_quote(&quote, string[i]);
+		if (quote == '\0' && string[i] == '#')
+			break ;
 		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
 			&& is_metachar(string[i]))
 		{
@@ -124,6 +126,7 @@ static t_list	*get_tokens(char *string)
 			i++;
 	}
 	save_word_token(&tokens, string + t_start, string + i);
+	save_metachar_token(&tokens, "\n", NULL);
 	return (tokens);
 }
 
