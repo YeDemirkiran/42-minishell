@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/04 16:05:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/04 18:29:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -107,21 +107,19 @@ static t_token_type	get_token_type_two_char(char *string)
 /**
  * @brief Returns the token type of a string.
 */
-t_token_type	get_token_type(char *string, size_t *index)
+t_token_type	get_token_type(char *string, size_t *token_length)
 {
 	t_token_type	type;
 
-	if (index != NULL)
-		string += *index;
 	type = get_token_type_two_char(string);
 	if (type != TOKEN_NONE)
 	{
-		if (index != NULL)
-			*index += 2;
+		if (token_length != NULL)
+			*token_length += 2;
 		return (type);
 	}
 	type = get_token_type_one_char(*string);
-	if (index != NULL)
-		*index += 1;
+	if (token_length != NULL)
+		*token_length += 1;
 	return (type);
 }
