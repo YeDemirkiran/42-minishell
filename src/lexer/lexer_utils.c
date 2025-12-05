@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/04 18:29:22 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:21:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -115,11 +115,11 @@ t_token_type	get_token_type(char *string, size_t *token_length)
 	if (type != TOKEN_NONE)
 	{
 		if (token_length != NULL)
-			*token_length += 2;
+			*token_length = 2;
 		return (type);
 	}
 	type = get_token_type_one_char(*string);
 	if (token_length != NULL)
-		*token_length += 1;
+		*token_length = 1;
 	return (type);
 }

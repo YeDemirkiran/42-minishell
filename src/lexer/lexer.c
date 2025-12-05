@@ -6,12 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/04 18:34:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:59:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include <libft/predicate.h>
 #include <libft/string.h>
@@ -23,17 +24,31 @@
 #include "lexer_utils.h"
 #include "token_utils.h"
 
-// TODO: Make it so number is a dynamic FD
-static t_token_data	get_token_data(char *string, t_token_type type)
+/**
+ * @brief Turns a string to a valid file descriptor number.
+ * @returns The resulted file descriptor or,
+ * @returns -1 if the resulted number is not a valid file descriptor.
+ */
+static int	get_valid_fd_from_string(char *string)
 {
-	t_token_data	data;
+	size_t	i;
+	size_t	fd;
 
-	(void)string;
-	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_OUTPUT)
-		data.number = 1;
-	else if (type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_INPUT)
-		data.number = 0;
-	return (data);
+	if (string == NULL || string[0] == '\0' || ft_strlen(string) > 10)
+		return (-1);
+	fd = 0;
+	i = 0;
+	while (string[i] != '\0')
+	{
+		if (ft_isdigit(string[i]) != 1)
+			return (-1);
+		fd *= 10;
+		fd += string[i] - '0';
+		i++;
+	}
+	if (fd > INT_MAX)
+		return (-1);
+	return (fd);
 }
 
 /**
@@ -41,17 +56,14 @@ static t_token_data	get_token_data(char *string, t_token_type type)
  * @returns 0 on failure, 1 on success,
  * 2 if any parameter is NULL or START == END.
  */
-static t_bool	save_word_token(t_list **tokens,
-	char *start, char *end)
+static t_bool	save_word_token(t_list **tokens, char *string)
 {
 	t_token			*token;
 	t_token_data	data;
 
-	if (tokens == NULL || start == end)
+	if (tokens == NULL || string == NULL)
 		return (2);
-	data.word = ft_substr(start, 0, (size_t)(end - start));
-	if (data.word == NULL)
-		return (0);
+	data.word = string;
 	token = create_token(TOKEN_WORD, data);
 	if (token == NULL)
 	{
@@ -71,21 +83,40 @@ static t_bool	save_word_token(t_list **tokens,
  * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
  */
 static t_bool	save_metachar_token(t_list **tokens,
-		char *string, size_t *index)
+		char *string, size_t word_start, size_t *index)
 {
 	t_token			*token;
 	size_t			token_length;
 	t_token_type	type;
 	t_token_data	data;
+	char			*word;
 
 	if (tokens == NULL || string == NULL || index == NULL)
 		return (2);
-	token_length = 0;
+	word = NULL;
+	if (*index > word_start)
+	{
+		word = ft_substr(string, word_start, *index - word_start);
+		if (word == NULL)
+			return (0);
+	}
 	type = get_token_type(string + *index, &token_length);
 	*index += token_length;
+	if (type == TOKEN_REDIR_INPUT || type == TOKEN_REDIR_OUTPUT || type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_APPEND)
+	{
+		data.number = get_valid_fd_from_string(word);
+		if (data.number == -1)
+			save_word_token(tokens, word);
+		else
+			free(word);
+	}
+	else
+	{
+		save_word_token(tokens, word);
+		data.word = NULL;
+	}
 	if (type == TOKEN_NONE)
 		return (1);
-	data = get_token_data(string, type);
 	token = create_token(type, data);
 	if (token == NULL)
 		return (0);
@@ -121,14 +152,12 @@ static t_list	*get_tokens(char *string)
 		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
 			&& is_metachar(string[i]))
 		{
-			save_word_token(&tokens, string + t_start, string + i);
-			save_metachar_token(&tokens, string, &i);
+			save_metachar_token(&tokens, string, t_start, &i);
 			t_start = i;
 		}
 		else
 			i++;
 	}
-	save_word_token(&tokens, string + t_start, string + i);
 	return (tokens);
 }
 
