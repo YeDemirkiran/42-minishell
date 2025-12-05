@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/05 02:59:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/05 03:06:56 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -34,10 +34,14 @@ static int	get_valid_fd_from_string(char *string)
 	size_t	i;
 	size_t	fd;
 
-	if (string == NULL || string[0] == '\0' || ft_strlen(string) > 10)
+	if (string == NULL || string[0] == '\0')
 		return (-1);
 	fd = 0;
 	i = 0;
+	while (string[i] == '0')
+		i++;
+	if (ft_strlen(string + i) > 10)
+		return (-1);
 	while (string[i] != '\0')
 	{
 		if (ft_isdigit(string[i]) != 1)
