@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/04 00:24:37 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/04 16:00:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -22,60 +22,30 @@
 
 #include <modules/ast.h>
 
-static char	**linked_list_to_string_arr(t_list *list)
-{
-	size_t	length;
-	size_t	i;
-	char	**args;
+/**
+ * @brief Converts a linked list of strings to string array.
+ */
+// static char	**linked_list_to_string_arr(t_list *list)
+// {
+// 	size_t	length;
+// 	size_t	i;
+// 	char	**arr;
 
-	if (list == NULL)
-		return (NULL);
-	length = ft_lstsize(list);
-	args = malloc(sizeof(char *) * (length + 1));
-	if (args == NULL)
-		return (NULL);
-	i = 0;
-	while (list)
-	{
-		args[i++] = list->content;
-		list = list->next;
-	}
-	args[i] = NULL;
-	return (args);
-}
-
-// Searches the tokens until LENGTH, and retrieves strings in char** format.
-// (Ignores non-string)
-static char	**tokens_strings_to_args(t_list *tokens, size_t length)
-{
-	size_t	i;
-	t_list	*list;
-	t_list	*current;
-	char	**args;
-
-	if (tokens == NULL)
-		return (NULL);
-	list = NULL;
-	i = 0;
-	while (i < length && tokens != NULL)
-	{
-		if (((t_token *)tokens->content)->type == TOKEN_WORD)
-		{
-			current = ft_lstnew(((t_token *)tokens->content)->data.word);
-			if (current == NULL)
-			{
-				ft_lstclear(&list, free);
-				return (NULL);
-			}
-			ft_lstadd_back(&list, current);
-		}
-		i++;
-		tokens = tokens->next;
-	}
-	args = linked_list_to_string_arr(list);
-	ft_lstclear(&list, NULL);
-	return (args);
-}
+// 	if (list == NULL)
+// 		return (NULL);
+// 	length = ft_lstsize(list);
+// 	arr = malloc(sizeof(char *) * (length + 1));
+// 	if (arr == NULL)
+// 		return (NULL);
+// 	i = 0;
+// 	while (list)
+// 	{
+// 		arr[i++] = list->content;
+// 		list = list->next;
+// 	}
+// 	arr[i] = NULL;
+// 	return (arr);
+// }
 
 // TODO: remove
 static void	debug_ast_print_node(t_ast *ast)
@@ -142,12 +112,7 @@ static void	debug_ast_print_node(t_ast *ast)
 // TODO: Remove debug logs
 t_ast	*parse(t_list *tokens)
 {
-	size_t	i;
 	t_ast	*root;
-	t_ast	*current;
-	t_ast	*tmp;
-	t_token	*start_token;
-	t_token	*current_token;
 
 	// todo: remove printf logs
 	printf("(DEBUG: Starting shell step 2: Parser)\n");
@@ -155,36 +120,7 @@ t_ast	*parse(t_list *tokens)
 
 	if (tokens == NULL)
 		return (NULL);
-	i = 0;
 	root = NULL;
-	current = NULL;
-	current_token = NULL;
-	start_token = NULL;
-	while (tokens != NULL)
-	{
-		current_token = (t_token *)(tokens->content);
-		if (start_token == NULL)
-			start_token = current_token;
-		if (current_token->type == TOKEN_PIPE)
-		{
-			tmp = ast_new_node(AST_COMMAND, ast_command_data(tokens_strings_to_args(tokens, i - start), NULL), NULL, NULL);
-			tmp = ast_new_node(AST_PIPE, NULL, tmp, NULL);
-			if (root == NULL)
-				root = tmp;
-			if (current != NULL)
-				current->right = tmp;
-			current = tmp;
-			i = 0;
-			start_token = current_token;
-		}
-		else
-			i++;
-		tokens = tokens->next;
-	}
-	if (root == NULL)
-		root = tmp;
-	else
-		current->right = tmp;
 	printf("(DEBUG: Step 1: Printing AST)\n");
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
