@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:22:02 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 23:01:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/06 00:42:04 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -63,7 +63,7 @@ void	free_tokens(t_list **tokens)
  * @brief Adds the retrieved token to the end of a linked list.
  * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
  */
-t_bool	save_token_to_list(t_list **tokens, t_token *token)
+int	save_token_to_list(t_list **tokens, t_token *token)
 {
 	t_list	*new_node;
 
