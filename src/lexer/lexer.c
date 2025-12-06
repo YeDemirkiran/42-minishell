@@ -6,130 +6,29 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 22:06:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/06 23:38:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
+/* ================================ HEADERS ================================ */
 
-#include <libft/predicate.h>
+// External libraries
+#include <stdlib.h>
+
+// Internal libraries
 #include <libft/string.h>
 #include <libft/linked_list.h>
 
+// Project headers
 #include "enums/e_metachar.h"
 #include "structs/s_token.h"
 
+// Local headers
 #include "lexer_utils.h"
+#include "lexer_token.h"
 #include "token_utils.h"
 
-/**
- * @brief Turns a string to a valid file descriptor number.
- * @returns The resulted file descriptor or,
- * @returns -1 if the resulted number is not a valid file descriptor.
- */
-static int	get_valid_fd_from_string(char *string)
-{
-	size_t	i;
-	size_t	fd;
-
-	if (string == NULL || string[0] == '\0')
-		return (-1);
-	fd = 0;
-	i = 0;
-	while (string[i] == '0')
-		i++;
-	if (ft_strlen(string + i) > 10)
-		return (-1);
-	while (string[i] != '\0')
-	{
-		if (ft_isdigit(string[i]) != 1)
-			return (-1);
-		fd *= 10;
-		fd += string[i] - '0';
-		i++;
-	}
-	if (fd > INT_MAX)
-		return (-1);
-	return (fd);
-}
-
-/**
- * @brief Converts a string stream to word token, starting from index.
- * @returns 0 on failure, 1 on success,
- * 2 if any parameter is NULL or START == END.
- */
-static int	save_word_token(t_list **tokens, char *string)
-{
-	t_token			*token;
-	t_token_data	data;
-
-	if (tokens == NULL || string == NULL)
-		return (2);
-	data.word = string;
-	token = create_token(TOKEN_WORD, data);
-	if (token == NULL)
-	{
-		free(data.word);
-		return (0);
-	}
-	if (save_token_to_list(tokens, token) != 1)
-	{
-		free_token(token);
-		return (0);
-	}
-	return (1);
-}
-
-static t_bool	is_token_redir(t_token_type type)
-{
-	if (type == TOKEN_REDIR_INPUT || type == TOKEN_REDIR_OUTPUT
-		|| type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_APPEND)
-	{
-		return (1);
-	}
-	else
-	{
-		return (0);
-	}
-}
-
-static t_bool	set_redir_token_data(t_list **tokens,
-		t_token *token_addr, char *word)
-{
-	if (word != NULL)
-	{
-		token_addr->data.number = get_valid_fd_from_string(word);
-		if (token_addr->data.number == -1)
-		{
-			if (save_word_token(tokens, word) != 1)
-				return (0);
-		}
-		else
-			free(word);
-	}
-	else
-		token_addr->data.number = -1;
-	return (1);
-}
-
-static int	set_token_data(t_list **tokens, t_token *token_addr, char *word)
-{
-	if (is_token_redir(token_addr->type))
-	{
-		if (set_redir_token_data(tokens, token_addr, word) != 1)
-			return (0);
-	}
-	else
-	{
-		if (word != NULL)
-			if (save_word_token(tokens, word) != 1)
-				return (0);
-		token_addr->data.word = NULL;
-	}
-	return (1);
-}
+/* =============================== FUNCTIONS =============================== */
 
 static int	set_word(char **word, char *string,
 	size_t start, size_t end)
@@ -175,7 +74,7 @@ static int	save_metachar_token(t_list **tokens,
 	return (1);
 }
 
-static void	scanner_init(t_list **tokens, size_t *index, size_t *token_start, char *quote_char)
+static void	lexer_init(t_list **tokens, size_t *index, size_t *token_start, char *quote_char)
 {
 	*tokens = NULL;
 	*index = 0;
@@ -194,7 +93,7 @@ static t_list	*get_tokens(char *string)
 	size_t	token_start;
 	char	quote;
 
-	scanner_init(&tokens, &i, &token_start, &quote);
+	lexer_init(&tokens, &i, &token_start, &quote);
 	while (string[i] != '\0')
 	{
 		if (string[i] == '#' && quote == '\0' && token_start == i)
@@ -217,6 +116,7 @@ static t_list	*get_tokens(char *string)
 }
 
 // TODO: Remove this function
+#include "stdio.h"
 static void	debug_print_tokens(t_list *tokens)
 {
 	t_token	*token;
