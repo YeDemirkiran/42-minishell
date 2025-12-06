@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 14:29:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/06 21:53:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -95,6 +95,55 @@ static t_bool	is_token_redir(t_token_type type)
 	}
 }
 
+static t_bool	set_redir_token_data(t_list **tokens,
+		t_token *token_addr, char *word)
+{
+	if (word != NULL)
+	{
+		token_addr->data.number = get_valid_fd_from_string(word);
+		if (token_addr->data.number == -1)
+		{
+			if (save_word_token(tokens, word) != 1)
+				return (0);
+		}
+		else
+			free(word);
+	}
+	else
+		token_addr->data.number = -1;
+	return (1);
+}
+
+static int	set_token_data(t_list **tokens, t_token *token_addr, char *word)
+{
+	if (is_token_redir(token_addr->type))
+	{
+		if (set_redir_token_data(tokens, token_addr, word) != 1)
+			return (0);
+	}
+	else
+	{
+		if (word != NULL)
+			if (save_word_token(tokens, word) != 1)
+				return (0);
+		token_addr->data.word = NULL;
+	}
+	return (1);
+}
+
+static int	set_word(char **word, char *string,
+	size_t start, size_t end)
+{
+	*word = NULL;
+	if (end > start)
+	{
+		*word = ft_substr(string, start, end - start);
+		if (*word == NULL)
+			return (0);
+	}
+	return (1);
+}
+
 /**
  * @brief Converts a string stream to token, starting from index.
  * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
@@ -102,60 +151,25 @@ static t_bool	is_token_redir(t_token_type type)
 static int	save_metachar_token(t_list **tokens,
 		char *string, size_t word_start, size_t *index)
 {
-	t_token			*token;
-	size_t			token_length;
-	t_token_type	type;
-	t_token_data	data;
-	char			*word;
+	t_token	token;
+	t_token	*token_addr;
+	size_t	token_length;
+	char	*word;
 
-	if (tokens == NULL || string == NULL || index == NULL)
-		return (2);
-	word = NULL;
-	if (*index > word_start)
-	{
-		word = ft_substr(string, word_start, *index - word_start);
-		if (word == NULL)
-			return (0);
-	}
-	type = get_token_type(string + *index, &token_length);
-	*index += token_length;
-	if (is_token_redir(type))
-	{
-		if (word != NULL)
-		{
-			data.number = get_valid_fd_from_string(word);
-			if (data.number == -1)
-			{
-				if (save_word_token(tokens, word) != 1)
-					return (0);
-			}
-			else
-			{
-				free(word);
-			}
-		}
-		else
-		{
-			data.number = -1;
-		}
-	}
-	else
-	{
-		if (word != NULL)
-		{
-			if (save_word_token(tokens, word) != 1)
-				return (0);
-		}
-		data.word = NULL;
-	}
-	if (type == TOKEN_NONE)
-		return (1);
-	token = create_token(type, data);
-	if (token == NULL)
+	if (set_word(&word, string, word_start, *index) != 1)
 		return (0);
-	if (save_token_to_list(tokens, token) != 1)
+	token.type = get_token_type(string + *index, &token_length);
+	*index += token_length;
+	if (set_token_data(tokens, &token, word) != 1)
+		return (0);
+	if (token.type == TOKEN_NONE)
+		return (1);
+	token_addr = create_token(token.type, token.data);
+	if (token_addr == NULL)
+		return (0);
+	if (save_token_to_list(tokens, token_addr) != 1)
 	{
-		free_token(token);
+		free_token(token_addr);
 		return (0);
 	}
 	return (1);
@@ -172,22 +186,19 @@ static t_list	*get_tokens(char *string)
 	size_t	token_start;
 	char	quote;
 
-	if (string == NULL)
-		return (NULL);
 	tokens = NULL;
 	i = 0;
 	token_start = 0;
 	quote = '\0';
 	while (string[i] != '\0')
 	{
-		if (string[i] == '#' && quote == '\0')
+		if (string[i] == '#' && quote == '\0' && token_start == i)
 			break ;
 		if (string[i] == '"' || string[i] == '\'')
 			set_quote(&quote, string[i]);
 		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
 			&& is_metachar(string[i]))
 		{
-			//save_metachar_token(&tokens, string, token_start, &i);
 			if (save_metachar_token(&tokens, string, token_start, &i) != 1)
 			{
 				free_tokens(&tokens);
