@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 21:53:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/06 22:06:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -175,6 +175,14 @@ static int	save_metachar_token(t_list **tokens,
 	return (1);
 }
 
+static void	scanner_init(t_list **tokens, size_t *index, size_t *token_start, char *quote_char)
+{
+	*tokens = NULL;
+	*index = 0;
+	*token_start = 0;
+	*quote_char = '\0';
+}
+
 /**
  * @brief Returns tokens from a given string.
  * @returns NULL on failure.
@@ -186,18 +194,14 @@ static t_list	*get_tokens(char *string)
 	size_t	token_start;
 	char	quote;
 
-	tokens = NULL;
-	i = 0;
-	token_start = 0;
-	quote = '\0';
+	scanner_init(&tokens, &i, &token_start, &quote);
 	while (string[i] != '\0')
 	{
 		if (string[i] == '#' && quote == '\0' && token_start == i)
 			break ;
 		if (string[i] == '"' || string[i] == '\'')
 			set_quote(&quote, string[i]);
-		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
-			&& is_metachar(string[i]))
+		if (quote == '\0' && is_metachar(string[i]))
 		{
 			if (save_metachar_token(&tokens, string, token_start, &i) != 1)
 			{
