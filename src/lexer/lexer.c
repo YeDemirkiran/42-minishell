@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/05 03:06:56 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/06 14:29:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -60,7 +60,7 @@ static int	get_valid_fd_from_string(char *string)
  * @returns 0 on failure, 1 on success,
  * 2 if any parameter is NULL or START == END.
  */
-static t_bool	save_word_token(t_list **tokens, char *string)
+static int	save_word_token(t_list **tokens, char *string)
 {
 	t_token			*token;
 	t_token_data	data;
@@ -82,11 +82,24 @@ static t_bool	save_word_token(t_list **tokens, char *string)
 	return (1);
 }
 
+static t_bool	is_token_redir(t_token_type type)
+{
+	if (type == TOKEN_REDIR_INPUT || type == TOKEN_REDIR_OUTPUT
+		|| type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_APPEND)
+	{
+		return (1);
+	}
+	else
+	{
+		return (0);
+	}
+}
+
 /**
  * @brief Converts a string stream to token, starting from index.
  * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
  */
-static t_bool	save_metachar_token(t_list **tokens,
+static int	save_metachar_token(t_list **tokens,
 		char *string, size_t word_start, size_t *index)
 {
 	t_token			*token;
@@ -106,17 +119,33 @@ static t_bool	save_metachar_token(t_list **tokens,
 	}
 	type = get_token_type(string + *index, &token_length);
 	*index += token_length;
-	if (type == TOKEN_REDIR_INPUT || type == TOKEN_REDIR_OUTPUT || type == TOKEN_REDIR_HEREDOC || type == TOKEN_REDIR_APPEND)
+	if (is_token_redir(type))
 	{
-		data.number = get_valid_fd_from_string(word);
-		if (data.number == -1)
-			save_word_token(tokens, word);
+		if (word != NULL)
+		{
+			data.number = get_valid_fd_from_string(word);
+			if (data.number == -1)
+			{
+				if (save_word_token(tokens, word) != 1)
+					return (0);
+			}
+			else
+			{
+				free(word);
+			}
+		}
 		else
-			free(word);
+		{
+			data.number = -1;
+		}
 	}
 	else
 	{
-		save_word_token(tokens, word);
+		if (word != NULL)
+		{
+			if (save_word_token(tokens, word) != 1)
+				return (0);
+		}
 		data.word = NULL;
 	}
 	if (type == TOKEN_NONE)
@@ -140,24 +169,31 @@ static t_list	*get_tokens(char *string)
 {
 	t_list	*tokens;
 	size_t	i;
-	size_t	t_start;
+	size_t	token_start;
 	char	quote;
 
+	if (string == NULL)
+		return (NULL);
 	tokens = NULL;
 	i = 0;
-	t_start = 0;
+	token_start = 0;
 	quote = '\0';
 	while (string[i] != '\0')
 	{
 		if (string[i] == '#' && quote == '\0')
 			break ;
-		else if (string[i] == '"' || string[i] == '\'')
+		if (string[i] == '"' || string[i] == '\'')
 			set_quote(&quote, string[i]);
 		if (quote == '\0' && !(string[i] == '&' && string[i + 1] != '&')
 			&& is_metachar(string[i]))
 		{
-			save_metachar_token(&tokens, string, t_start, &i);
-			t_start = i;
+			//save_metachar_token(&tokens, string, token_start, &i);
+			if (save_metachar_token(&tokens, string, token_start, &i) != 1)
+			{
+				free_tokens(&tokens);
+				return (NULL);
+			}
+			token_start = i;
 		}
 		else
 			i++;
