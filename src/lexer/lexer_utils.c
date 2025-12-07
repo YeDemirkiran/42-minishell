@@ -6,16 +6,24 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/05 02:21:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 18:19:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// External libraries
 #include <stdlib.h>
 
+// Internal libraries
 #include <libft/string.h>
-#include <enums/e_metachar.h>
-#include <structs/s_token.h>
-#include <types/t_bool.h>
+
+// Project headers
+#include "enums/e_metachar.h"
+#include "structs/s_token.h"
+#include "types/t_bool.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
 * @brief Checks whether if a given character is a metacharacter.
@@ -123,3 +131,5 @@ t_token_type	get_token_type(char *string, size_t *token_length)
 		*token_length = 1;
 	return (type);
 }
+
+/* ================================== END ================================== */

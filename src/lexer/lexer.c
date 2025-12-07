@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 23:38:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 18:07:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -20,7 +20,6 @@
 #include <libft/linked_list.h>
 
 // Project headers
-#include "enums/e_metachar.h"
 #include "structs/s_token.h"
 
 // Local headers
@@ -30,6 +29,10 @@
 
 /* =============================== FUNCTIONS =============================== */
 
+/**
+ * @brief Takes the word pointer and sets it to the substring of string.
+ * @returns 0 on failure, 1 on success.
+ */
 static int	set_word(char **word, char *string,
 	size_t start, size_t end)
 {
@@ -74,7 +77,11 @@ static int	save_metachar_token(t_list **tokens,
 	return (1);
 }
 
-static void	lexer_init(t_list **tokens, size_t *index, size_t *token_start, char *quote_char)
+/**
+ * Initializes the lexer parameters.
+ */
+static void	lexer_init(t_list **tokens, size_t *index,
+	size_t *token_start, char *quote_char)
 {
 	*tokens = NULL;
 	*index = 0;
@@ -152,8 +159,10 @@ static void	debug_print_tokens(t_list *tokens)
 	}
 }
 
-// Performs lexical analysis of a string and returns an array of tokens.
-// TODO: Remove debug print statements
+/**
+ * @brief Performs lexical analysis on a given string and returns tokens.
+ * @returns A linked list of tokens on success, NULL on failure.
+ */
 t_list	*lexical_analyze(char *string)
 {
 	t_list	*tokens;
@@ -174,3 +183,5 @@ t_list	*lexical_analyze(char *string)
 	printf("(DEBUG: Step 1 'Lexical Analysis & Tokenization' completed.)\n");
 	return (tokens);
 }
+
+/* ================================== END ================================== */

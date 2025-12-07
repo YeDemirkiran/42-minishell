@@ -6,18 +6,25 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 23:13:53 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 23:38:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 18:25:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// External libraries
 #include <stdlib.h>
 #include <limits.h>
 
-#include <libft/linked_list.h>
-#include <libft/predicate.h>
-#include <libft/string.h>
+// Internal libraries
+#include "libft/linked_list.h"
+#include "libft/predicate.h"
+#include "libft/string.h"
 
+// Local headers
 #include "token_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Turns a string to a valid file descriptor number.
@@ -77,6 +84,9 @@ static int	save_word_token(t_list **tokens, char *string)
 	return (1);
 }
 
+/**
+ * @brief Checks whether the type parameter is a redirection token.
+ */
 static t_bool	is_token_redir(t_token_type type)
 {
 	if (type == TOKEN_REDIR_INPUT || type == TOKEN_REDIR_OUTPUT
@@ -90,6 +100,15 @@ static t_bool	is_token_redir(t_token_type type)
 	}
 }
 
+/**
+ * @brief Sets redirection token on certain conditions.
+ * @param tokens Is used if the word is going to be used as a word token.
+ * @param token_addr Pointer to the local token struct that will be filled.
+ * @param word Is checked if it contains a valid FD number.
+ * @returns 0 on failure, 1 on success.
+ * @note If the word parameter doesn't contain a valid file descriptor number,
+ * it is saved as a normal word token instead.
+ */
 static t_bool	set_redir_token_data(t_list **tokens,
 		t_token *token_addr, char *word)
 {
@@ -134,3 +153,5 @@ int	set_token_data(t_list **tokens, t_token *token_addr, char *word)
 	}
 	return (1);
 }
+
+/* ================================== END ================================== */

@@ -6,15 +6,23 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:22:02 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 00:42:04 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 18:10:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// External libraries
 #include <stdlib.h>
+
+// Internal libraries
 #include <libft/linked_list.h>
 
+// Project headers
 #include "structs/s_token.h"
 #include "types/t_bool.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
 * @brief Creates a token of type and with data.
@@ -43,6 +51,9 @@ void	free_token(t_token *token)
 	free(token);
 }
 
+/**
+ * @brief Accepts void pointer, casts it to t_token and calls free_token on it.
+ */
 static void	free_token_void(void *token)
 {
 	t_token	*token_real;
@@ -75,3 +86,5 @@ int	save_token_to_list(t_list **tokens, t_token *token)
 	ft_lstadd_back(tokens, new_node);
 	return (1);
 }
+
+/* ================================== END ================================== */
