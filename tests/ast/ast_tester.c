@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:34:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 15:46:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:42:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,19 @@ void	ast_print_node(t_ast *ast)
 	if (ast->type == AST_COMMAND)
 	{
 		printf("COMMAND DATA\n");
-		printf("Command: %s\n", ast->data.ast_command.command);
+		printf("Command: %s\n", ast->data->ast_command.command);
 
 		printf("Arguments: ");
-		for (size_t i = 0; ast->data.ast_command.arguments[i] != NULL; i++)
+		for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
 		{
-			printf("%s", ast->data.ast_command.arguments[i]);
-			if (ast->data.ast_command.arguments[i + 1] != NULL)
+			printf("%s", ast->data->ast_command.arguments[i]);
+			if (ast->data->ast_command.arguments[i + 1] != NULL)
 				printf(", ");
 		}
 		printf("\n");
 
 		printf("Redirs: ");
-		t_list	*lst = ast->data.ast_command.redirs;
+		t_list	*lst = ast->data->ast_command.redirs;
 		if (lst == NULL)
 		{
 			printf("(none)\n");
@@ -82,7 +82,7 @@ void	ast_print_node(t_ast *ast)
 void	test_ast(void)
 {
 	t_ast		*tree;
-	t_ast_data	data[3];
+	t_ast_data	*data[3];
 	char		*command;
 	char		**argv;
 	t_list		*redirs;
@@ -112,9 +112,9 @@ void	test_ast(void)
 	data[2] = ast_command_data(command, argv, redirs);
 
 	printf("Test 2: ast_new_node()\n");
-	tree = ast_new_node(AST_PIPE, data[0],
+	tree = ast_new_node(AST_PIPE, NULL,
 		ast_new_node(AST_COMMAND, data[0], NULL, NULL),
-		ast_new_node(AST_PIPE, data[0], 
+		ast_new_node(AST_PIPE, NULL, 
 			ast_new_node(AST_COMMAND, data[1], NULL, NULL),
 			ast_new_node(AST_COMMAND, data[2], NULL, NULL)));
 
