@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 16:40:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/01 02:55:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 #include <structs/s_ast.h>
@@ -16,14 +16,16 @@
 #include <modules/ast.h>
 
 // Initializes and returns a data union with command struct values.
-t_ast_data	*ast_command_data(char *command, char **args, t_list *redirs)
+t_ast_data	*ast_command_data(char **args, t_list *redirs)
 {
 	t_ast_data	*data;
 
+	if (args == NULL)
+		return (NULL);
 	data = malloc(sizeof(t_ast_data));
 	if (data == NULL)
 		return (NULL);
-	data->ast_command.command = command;
+	data->ast_command.command = args[0];
 	data->ast_command.arguments = args;
 	data->ast_command.redirs = redirs;
 	return (data);

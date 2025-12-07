@@ -1,24 +1,34 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/21 15:29:35 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 18:19:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
-#include <stddef.h>
+/* ================================ HEADERS ================================ */
 
+// External libraries
+#include <stdlib.h>
+
+// Internal libraries
 #include <libft/string.h>
-#include <enums/e_metachar.h>
-#include <enums/e_token_type.h>
-#include <structs/s_token.h>
-#include <types/t_bool.h>
 
-// Returns true if a given character is a metacharacter.
+// Project headers
+#include "enums/e_metachar.h"
+#include "structs/s_token.h"
+#include "types/t_bool.h"
+
+/* =============================== FUNCTIONS =============================== */
+
+/**
+* @brief Checks whether if a given character is a metacharacter.
+* @returns 0 if the character is not a metacharacter, 1 if it is.
+*/
 t_bool	is_metachar(unsigned char c)
 {
 	size_t		i;
@@ -45,42 +55,81 @@ t_bool	is_metachar(unsigned char c)
 	return (0);
 }
 
-// Creates a token of type and with data.
-t_token	create_token(t_token_type type, char *data)
+/**
+ * @brief Sets the quote char.
+*/
+void	set_quote(char *quote_char, char quote_target)
 {
-	t_token	token;
-
-	token.type = type;
-	token.data = data;
-	return (token);
+	if (quote_char == NULL)
+		return ;
+	if (*quote_char == '\0')
+		*quote_char = quote_target;
+	else if (*quote_char == quote_target)
+		*quote_char = '\0';
 }
 
-// Returns the count of tokens in an input string.
-// TODO: Make Norm compliant
-size_t	get_token_count(char *input)
+/**
+ * @brief Returns the one-character token type of a string, or TOKEN_NONE.
+*/
+static t_token_type	get_token_type_one_char(char c)
 {
-	size_t	i;
-	size_t	input_length;
-	size_t	token_count;
-	char	quote;
+	t_token_type	type;
 
-	i = 0;
-	input_length = ft_strlen(input);
-	if (input_length == 0)
-		return (0);
-	token_count = 0;
-	quote = '\0';
-	while (i < input_length)
+	if (c == '<')
+		type = TOKEN_REDIR_INPUT;
+	else if (c == '>')
+		type = TOKEN_REDIR_OUTPUT;
+	else if (c == '\n')
+		type = TOKEN_NEWLINE;
+	else if (c == '|')
+		type = TOKEN_PIPE;
+	else if (c == '(')
+		type = TOKEN_PAREN_LEFT;
+	else if (c == ')')
+		type = TOKEN_PAREN_RIGHT;
+	else
+		type = TOKEN_NONE;
+	return (type);
+}
+
+/**
+ * @brief Returns the two-characters token type of a string, or TOKEN_NONE.
+*/
+static t_token_type	get_token_type_two_char(char *string)
+{
+	t_token_type	type;
+
+	if (ft_strncmp(string, "<<", 2) == 0)
+		type = TOKEN_REDIR_HEREDOC;
+	else if (ft_strncmp(string, ">>", 2) == 0)
+		type = TOKEN_REDIR_APPEND;
+	else if (ft_strncmp(string, "&&", 2) == 0)
+		type = TOKEN_IF_AND;
+	else if (ft_strncmp(string, "||", 2) == 0)
+		type = TOKEN_IF_OR;
+	else
+		type = TOKEN_NONE;
+	return (type);
+}
+
+/**
+ * @brief Returns the token type of a string.
+*/
+t_token_type	get_token_type(char *string, size_t *token_length)
+{
+	t_token_type	type;
+
+	type = get_token_type_two_char(string);
+	if (type != TOKEN_NONE)
 	{
-		if (input[i] == '"' || input[i] == '\'')
-			quote = ((quote == '\0') * input[i])
-				+ ((quote != input[i]) * quote);
-		if (quote == '\0' && (is_metachar(input[i])
-				|| (i + 1 < input_length && is_metachar(input[i + 1]))))
-			token_count++;
-		i++;
+		if (token_length != NULL)
+			*token_length = 2;
+		return (type);
 	}
-	if (i > 0 && !is_metachar(input[i - 1]))
-		token_count++;
-	return (token_count);
+	type = get_token_type_one_char(*string);
+	if (token_length != NULL)
+		*token_length = 1;
+	return (type);
 }
+
+/* ================================== END ================================== */

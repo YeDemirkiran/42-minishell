@@ -6,150 +6,182 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 18:05:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 18:07:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stdio.h>
+/* ================================ HEADERS ================================ */
+
+// External libraries
 #include <stdlib.h>
 
-#include <libft/predicate.h>
+// Internal libraries
 #include <libft/string.h>
+#include <libft/linked_list.h>
 
-#include <enums/e_metachar.h>
-#include <enums/e_token_type.h>
-#include <structs/s_token.h>
+// Project headers
+#include "structs/s_token.h"
 
+// Local headers
 #include "lexer_utils.h"
+#include "lexer_token.h"
+#include "token_utils.h"
 
-// Converts char to token
-static t_token	get_metachar_token(char c)
+/* =============================== FUNCTIONS =============================== */
+
+/**
+ * @brief Takes the word pointer and sets it to the substring of string.
+ * @returns 0 on failure, 1 on success.
+ */
+static int	set_word(char **word, char *string,
+	size_t start, size_t end)
+{
+	*word = NULL;
+	if (end > start)
+	{
+		*word = ft_substr(string, start, end - start);
+		if (*word == NULL)
+			return (0);
+	}
+	return (1);
+}
+
+/**
+ * @brief Converts a string stream to token, starting from index.
+ * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
+ */
+static int	save_metachar_token(t_list **tokens,
+		char *string, size_t word_start, size_t *index)
 {
 	t_token	token;
+	t_token	*token_addr;
+	size_t	token_length;
+	char	*word;
 
-	if (c == METACHAR_SPACE || c == METACHAR_TAB)
-		token.type = TOKEN_BLANK;
-	else if (c == METACHAR_NEWLINE)
-		token.type = TOKEN_NEWLINE;
-	else if (c == METACHAR_PIPE)
-		token.type = TOKEN_PIPE;
-	else if (c == METACHAR_REDIR_LEFT || c == METACHAR_REDIR_RIGHT)
-		token.type = TOKEN_REDIR;
-	else if (c == METACHAR_PAREN_LEFT || c == METACHAR_PAREN_RIGHT)
-		token.type = TOKEN_PARENTHESIS;
-	else if (c == METACHAR_AMPERSAND)
-		token.type = TOKEN_AMPERSAND;
-	token.data = NULL;
-	return (token);
-}
-
-// Adds a new string token to a token list
-static void	save_string_token(t_token *tokens, size_t *index,
-	char *start, char *end)
-{
-	if (tokens == NULL || index == NULL || start == end)
-		return ;
-	tokens[*index].type = TOKEN_STRING;
-	tokens[*index].data = ft_substr(start, 0, (size_t)(end - start));
-	(*index)++;
-}
-
-// Helper function to initialize token parameters.
-static void	init_token_params(size_t *index, size_t *t_index,
-	size_t *t_start, char *quote)
-{
-	*index = 0;
-	*t_index = 0;
-	*t_start = 0;
-	*quote = '\0';
-}
-
-// Returns tokens from a given string.
-// TODO: Make norm compliant
-static t_token	*get_tokens(char *input, size_t token_count)
-{
-	t_token	*tokens;
-	size_t	i;
-	size_t	t_index;
-	size_t	t_start;
-	char	q;
-
-	tokens = malloc((token_count + 1) * sizeof(t_token));
-	if (!tokens)
-		return (NULL);
-	init_token_params(&i, &t_index, &t_start, &q);
-	while (input[i] != '\0')
+	if (set_word(&word, string, word_start, *index) != 1)
+		return (0);
+	token.type = get_token_type(string + *index, &token_length);
+	*index += token_length;
+	if (set_token_data(tokens, &token, word) != 1)
+		return (0);
+	if (token.type == TOKEN_NONE)
+		return (1);
+	token_addr = create_token(token.type, token.data);
+	if (token_addr == NULL)
+		return (0);
+	if (save_token_to_list(tokens, token_addr) != 1)
 	{
-		if (input[i] == '"' || input[i] == '\'')
-			q = ((q == '\0') * input[i]) + ((q != input[i]) * q);
-		if (q == '\0' && is_metachar(input[i]))
-		{
-			save_string_token(tokens, &t_index, input + t_start, input + i);
-			tokens[t_index++] = get_metachar_token(input[i]);
-			t_start = i + 1;
-		}
-		i++;
+		free_token(token_addr);
+		return (0);
 	}
-	save_string_token(tokens, &t_index, input + t_start, input + i);
-	tokens[t_index] = create_token(TOKEN_EOF, NULL);
+	return (1);
+}
+
+/**
+ * Initializes the lexer parameters.
+ */
+static void	lexer_init(t_list **tokens, size_t *index,
+	size_t *token_start, char *quote_char)
+{
+	*tokens = NULL;
+	*index = 0;
+	*token_start = 0;
+	*quote_char = '\0';
+}
+
+/**
+ * @brief Returns tokens from a given string.
+ * @returns NULL on failure.
+ */
+static t_list	*get_tokens(char *string)
+{
+	t_list	*tokens;
+	size_t	i;
+	size_t	token_start;
+	char	quote;
+
+	lexer_init(&tokens, &i, &token_start, &quote);
+	while (string[i] != '\0')
+	{
+		if (string[i] == '#' && quote == '\0' && token_start == i)
+			break ;
+		if (string[i] == '"' || string[i] == '\'')
+			set_quote(&quote, string[i]);
+		if (quote == '\0' && is_metachar(string[i]))
+		{
+			if (save_metachar_token(&tokens, string, token_start, &i) != 1)
+			{
+				free_tokens(&tokens);
+				return (NULL);
+			}
+			token_start = i;
+		}
+		else
+			i++;
+	}
 	return (tokens);
 }
 
 // TODO: Remove this function
-static void	debug_print_tokens(t_token *tokens)
+#include "stdio.h"
+static void	debug_print_tokens(t_list *tokens)
 {
-	int	i;
+	t_token	*token;
 
-	if (tokens == NULL)
+	while (tokens != NULL)
 	{
-		printf("(NULL)\n");
-		return ;
-	}
-	i = 0;
-	while (tokens[i].type != TOKEN_EOF)
-	{
-		if (tokens[i].type == TOKEN_BLANK)
-			printf("[BLANK]");
-		else if (tokens[i].type == TOKEN_REDIR)
-			printf("[REDIR]");
-		else if (tokens[i].type == TOKEN_PIPE)
+		token = (t_token *)(tokens->content);
+		if (token->type == TOKEN_REDIR_INPUT)
+			printf("[REDIR_INPUT, FD: %i]", token->data.number);
+		else if (token->type == TOKEN_REDIR_OUTPUT)
+			printf("[REDIR_OUTPUT, FD: %i]", token->data.number);
+		else if (token->type == TOKEN_REDIR_HEREDOC)
+			printf("[REDIR_HEREDOC, FD: %i]", token->data.number);
+		else if (token->type == TOKEN_REDIR_APPEND)
+			printf("[REDIR_APPEND, FD: %i]", token->data.number);
+		else if (token->type == TOKEN_PIPE)
 			printf("[PIPE]");
-		else if (tokens[i].type == TOKEN_PARENTHESIS)
-			printf("[PAREN]");
-		else if (tokens[i].type == TOKEN_AMPERSAND)
-			printf("[AMP]");
-		else if (tokens[i].type == TOKEN_NEWLINE)
+		else if (token->type == TOKEN_PAREN_LEFT)
+			printf("[PAREN_LEFT]");
+		else if (token->type == TOKEN_PAREN_RIGHT)
+			printf("[PAREN_RIGHT]");
+		else if (token->type == TOKEN_IF_AND)
+			printf("[IF_AND]");
+		else if (token->type == TOKEN_IF_OR)
+			printf("[IF_OR]");
+		else if (token->type == TOKEN_NEWLINE)
 			printf("[NEWLINE]");
-		else
-			printf("%s", tokens[i].data);
-		if (tokens[i + 1].type != TOKEN_EOF)
+		else if (token->type == TOKEN_WORD)
+			printf("[TOKEN_WORD, %s]", token->data.word);
+		if (tokens->next != NULL)
 			printf(", ");
-		fflush(stdout);
-		i++;
+		tokens = tokens->next;
 	}
-	if (i == 0)
-		printf("none");
 }
 
-// Performs lexical analysis of an input and returns an array of tokens.
-// TODO: Remove debug print statements
-t_token	*lexical_analyze(char *input)
+/**
+ * @brief Performs lexical analysis on a given string and returns tokens.
+ * @returns A linked list of tokens on success, NULL on failure.
+ */
+t_list	*lexical_analyze(char *string)
 {
-	size_t	token_count;
-	t_token	*tokens;
+	t_list	*tokens;
 
 	printf("(DEBUG: Starting shell step 1: Lexical Analysis & Tokenization)\n");
-	printf("(DEBUG: Step 1: Given input: %s)\n", input);
-	if (input == NULL)
+	printf("(DEBUG: Step 1: Given string: %s)\n", string);
+	if (string == NULL)
 		return (NULL);
-	token_count = get_token_count(input);
-	printf("(DEBUG: Step 1.1: Lexer token count: %lu)\n", token_count);
-	printf("(DEBUG: Step 1.2: Retrieved tokens: ");
-	tokens = get_tokens(input, token_count);
+	printf("(DEBUG: Step 1.1: Retrieved tokens: ");
+	tokens = get_tokens(string);
 	if (tokens == NULL)
+	{
+		printf("NULL)\n");
 		return (NULL);
+	}
 	debug_print_tokens(tokens);
 	printf(")\n");
 	printf("(DEBUG: Step 1 'Lexical Analysis & Tokenization' completed.)\n");
 	return (tokens);
 }
+
+/* ================================== END ================================== */
