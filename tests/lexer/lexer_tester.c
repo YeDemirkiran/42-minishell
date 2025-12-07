@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/07 20:55:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/07 21:43:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -128,34 +128,28 @@ static void	debug_print_tokens(t_token *tokens, size_t length)
 			printf("[NEWLINE]");
 		else if (token->type == TOKEN_WORD)
 			printf("[TOKEN_WORD, %s]", token->data.word);
-		if (i != length)
+		if (i + 1 != length)
 			printf(", ");
+		i++;
 	}
+	printf("\n");
 }
 
 
-static void	conduct_lexical_analysis_test(t_lexical_test test, t_test_result *current_metrics)
+static t_test_result	conduct_lexical_analysis_test(t_lexical_test test)
 {
-	int	result;
-	static int	passed;
-	static int	failed;
+	static t_test_result	results;
+	int						result;
 
-	if (current_metrics != NULL)
-	{
-		current_metrics->passed = passed;
-		current_metrics->failed = failed;
-		current_metrics->total = passed + failed;
-		return ;
-	}
-
-	printf("Calling lexical_analyze(%c%s%c)...\n", test.input == NULL ? 0 : '"', test.input == NULL ? "NULL" : test.input, test.input == NULL ? 0 : '"');
+	printf("\nlexical_analyze(%c%s%c)\n", test.input == NULL ? 0 : '"', test.input == NULL ? "NULL" : test.input, test.input == NULL ? 0 : '"');
 	printf("=============================================================\n");
 	test.retrieved_tokens = linked_list_to_token_array(lexical_analyze(test.input), &(test.retrieved_length));
 	printf("=============================================================\n");
 
 	result = tests_match(test) == 1;
-	passed += result == 1;
-	failed += result == 0;
+	results.passed += result == 1;
+	results.failed += result == 0;
+	results.total += 1;
 
 	printf("[EXPECTED]  NULL: %s, Size: %lu, Tokens: ", test.expected_tokens == NULL ? "Yes" : "No", test.expected_length);
 	debug_print_tokens(test.expected_tokens, test.expected_length);
@@ -164,6 +158,8 @@ static void	conduct_lexical_analysis_test(t_lexical_test test, t_test_result *cu
 	printf("%s[%s]" COLOR_WHITE"\n", result ? COLOR_GREEN : COLOR_RED, result ? "OK" : "KO");
 
 	free(test.retrieved_tokens);
+
+	return (results);
 }
 
 void	test_lexical_analyze(int test_number)
@@ -175,308 +171,211 @@ void	test_lexical_analyze(int test_number)
 			.expected_length = 0
 		},
 		{
+			.input = "",
+			.expected_tokens = NULL,
+			.expected_length = 0
+		},
+		{
 			.input = "word1",
 			.expected_tokens = (t_token[]) {
-				{.type = TOKEN_WORD, .data.word = NULL}
+				{.type = TOKEN_WORD, .data.word = "word1"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "word1 word2",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "word1"},
+				{.type = TOKEN_WORD, .data.word = "word2"},
+			},
+			.expected_length = 2
+		},
+		{
+			.input = "word1 word2 word3 word4 word5 word6 word7 word8 word9 word10",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "word1"},
+				{.type = TOKEN_WORD, .data.word = "word2"},
+				{.type = TOKEN_WORD, .data.word = "word3"},
+				{.type = TOKEN_WORD, .data.word = "word4"},
+				{.type = TOKEN_WORD, .data.word = "word5"},
+				{.type = TOKEN_WORD, .data.word = "word6"},
+				{.type = TOKEN_WORD, .data.word = "word7"},
+				{.type = TOKEN_WORD, .data.word = "word8"},
+				{.type = TOKEN_WORD, .data.word = "word9"},
+				{.type = TOKEN_WORD, .data.word = "word10"},
+			},
+			.expected_length = 10
+		},
+		{
+			.input = " ",
+			.expected_tokens = NULL,
+		},
+		{
+			.input = "                           ",
+			.expected_tokens = NULL,
+		},
+		{
+			.input = "         word1                  ",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "word1"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "    word1     word2     word3    word4   word5  ",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "word1"},
+				{.type = TOKEN_WORD, .data.word = "word2"},
+				{.type = TOKEN_WORD, .data.word = "word3"},
+				{.type = TOKEN_WORD, .data.word = "word4"},
+				{.type = TOKEN_WORD, .data.word = "word5"},
+			},
+			.expected_length = 5
+		},
+		{
+			.input = "'",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "''",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "''"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"\"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"\""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "'                '",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'                '"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"                \"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"                \""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"''''''''''''''''''''\"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"''''''''''''''''''''\""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "'\"\"\"\"\"\"\"\"\"\"'",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'\"\"\"\"\"\"\"\"\"\"'"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "'word'",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'word'"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"word\"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"word\""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "'word1 word2 word3 word4 word5'",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'word1 word2 word3 word4 word5'"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"word1 word2 word3 word4 word5\"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"word1 word2 word3 word4 word5\""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "   \"word1 word2 word3 word4 word5\" 'word6 word7' '' \"\" '     ' \"     \"   ",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"word1 word2 word3 word4 word5\""},
+				{.type = TOKEN_WORD, .data.word = "'word6 word7'"},
+				{.type = TOKEN_WORD, .data.word = "''"},
+				{.type = TOKEN_WORD, .data.word = "\"\""},
+				{.type = TOKEN_WORD, .data.word = "'     '"},
+				{.type = TOKEN_WORD, .data.word = "\"     \""},
+			},
+			.expected_length = 6
+		},
+		{
+			.input = "'",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\""},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "'word1 word2 word3 word4 word5",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'word1 word2 word3 word4 word5"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\"word1 word2 word3 word4 word5",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "\"word1 word2 word3 word4 word5"},
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "'word1'word2'word3'word4\"word5\"word6\"word7\"word8'word9\"word10\"word11'word12",
+			.expected_tokens = (t_token[]) {
+				{.type = TOKEN_WORD, .data.word = "'word1'word2'word3'word4\"word5\"word6\"word7\"word8'word9\"word10\"word11'word12"},
 			},
 			.expected_length = 1
 		},
 	};
-
-	(void)tests;
+	t_test_result	results;
 
 	printf("\nTest %i: lexical_analyze()\n", test_number);
 
-	printf("Test %i.1: Basic Words & Spaces\n", test_number);
-
-	// Test 1.1
-	printf("\n%i.1.1: NULL Input\n", test_number);
-	conduct_lexical_analysis_test((t_lexical_test){
-		.input = NULL,
-		.expected_tokens = NULL,
-		.expected_length = 0,
-	}, NULL);
-
-	// Test 1.2
-	printf("\n%i.1.2: Empty Input\n", test_number);
-	conduct_lexical_analysis_test((t_lexical_test){
-		.input = "",
-		.expected_tokens = NULL,
-		.expected_length = 0,
-	}, NULL);
-
-	// // Test 1.3
-	// printf("\n%i.1.3: Single Word\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = 0, .data = "word1"},
-	// 	}
-
-	// }, NULL);
-
-	// // Test 1.4
-	// printf("\n%i.1.4: Two Words\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "word1 word2",
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "word1"},
-	// 		{.type = TOKEN_WORD, .data = "word2"}
-	// 	},
-	// 	.expected_length = 2
-	// }, NULL);
-
-	// // Test 1.5
-	// printf("\n%i.1.5: Multiple Words\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "word1 word2 word3 word4 word5 word6 word7 word8 word9 word10",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "word1"},
-	// 		{.type = TOKEN_WORD, .data = "word2"},
-	// 		{.type = TOKEN_WORD, .data = "word3"},
-	// 		{.type = TOKEN_WORD, .data = "word4"},
-	// 		{.type = TOKEN_WORD, .data = "word5"},
-	// 		{.type = TOKEN_WORD, .data = "word6"},
-	// 		{.type = TOKEN_WORD, .data = "word7"},
-	// 		{.type = TOKEN_WORD, .data = "word8"},
-	// 		{.type = TOKEN_WORD, .data = "word9"},
-	// 		{.type = TOKEN_WORD, .data = "word10"},
-	// 	}
-	// }, NULL);
-
-	// // Test 1.6
-	// printf("\n%i.1.6: Single Space\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = " ",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = NULL
-	// }, NULL);
-
-	// // Test 1.7
-	// printf("\n%i.1.7: Multiple Spaces\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "                    ",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = NULL
-	// }, NULL);
-
-	// // Test 1.8
-	// printf("\n%i.1.8: Single Word Wrapped Between Multiple Spaces\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "          word          ",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "word"},
-	// 	}
-	// }, NULL);
-
-	// // Test 1.9
-	// printf("\n%i.1.9: Multiple Words Wrapped Between Spaces\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "  word1  word2  word3  word4  word5  ",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "word1"},
-	// 		{.type = TOKEN_WORD, .data = "word2"},
-	// 		{.type = TOKEN_WORD, .data = "word3"},
-	// 		{.type = TOKEN_WORD, .data = "word4"},
-	// 		{.type = TOKEN_WORD, .data = "word5"},
-	// 	}
-	// }, NULL);
-
-	// printf("Test %i.2: Single & Double Quotes\n", test_number);
-
-	// // Test 2.1
-	// printf("\n%i.2.1: One Single Quote\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.2
-	// printf("\n%i.2.2: One Double Quote\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.3
-	// printf("\n%i.2.3: Empty Single Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "''",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "''"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.4
-	// printf("\n%i.2.4: Empty Double Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"\"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"\""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.5
-	// printf("\n%i.2.5: Single Quotes With Only Spaces\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'          '",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'          '"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.6
-	// printf("\n%i.2.6: Double Quotes With Only Spaces\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"          \"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"          \""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.7
-	// printf("\n%i.2.7: Single Quotes Within Double Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"''''''''''''''''''''''''\"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"''''''''''''''''''''''''\""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.8
-	// printf("\n%i.2.8: Double Quotes Within Single Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'\"\"\"\"\"\"\"\"\"\"'",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'\"\"\"\"\"\"\"\"\"\"'"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.9
-	// printf("\n%i.2.9: Single Word Within Single Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'word'",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'word'"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.10
-	// printf("\n%i.2.10: Single Word Within Double Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"word\"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"word\"",},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.11
-	// printf("\n%i.2.11: Multiple Words Within Single Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'word1 word2 word3 word4 word5'",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'word1 word2 word3 word4 word5'"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.12
-	// printf("\n%i.2.12: Multiple Words Within Double Quotes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"word1 word2 word3 word4 word5\"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"word1 word2 word3 word4 word5\""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.13
-	// printf("\n%i.2.13: Mixed Qutoes\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "   \"word1 word2 word3 word4 word5\" 'word6 word7' '' \"\" '     ' \"     \"   ",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"word1 word2 word3 word4 word5\""},
-	// 		{.type = TOKEN_WORD, .data = "'word6 word7'"},
-	// 		{.type = TOKEN_WORD, .data = "''"},
-	// 		{.type = TOKEN_WORD, .data = "\"\""},
-	// 		{.type = TOKEN_WORD, .data = "'     '"},
-	// 		{.type = TOKEN_WORD, .data = "\"     \""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.14
-	// printf("\n%i.2.14: Unclosed single quote\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.15
-	// printf("\n%i.2.15: Unclosed double quote\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\""},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.16
-	// printf("\n%i.2.16: Unclosed single quote with words\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'word1 word2 word3 word4 word5 word6",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "'word1 word2 word3 word4 word5 word6"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.17
-	// printf("\n%i.2.17: Unclosed double quote with words\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "\"word1 word2 word3 word4 word5 word6",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\"word1 word2 word3 word4 word5 word6"},
-	// 	}
-	// }, NULL);
-
-	// // Test 2.18
-	// printf("\n%i.2.18: Many Quotes With No Spaces\n", test_number);
-	// conduct_lexical_analysis_test((t_lexical_test){
-	// 	.input = "'word1'word2'word3'word4\"word5\"word6\"word7\"word8'word9\"word10\"word11'word12",
-	// 	.retrieved_tokens = NULL,
-	// 	.expected_tokens = (t_token[]){
-	// 		{.type = TOKEN_WORD, .data = "\'word1'word2'word3'word4\"word5\"word6\"word7\"word8'word9\"word10\"word11'word12"},
-	// 	}
-	// }, NULL);
-
-	t_test_result	results;
-	conduct_lexical_analysis_test((t_lexical_test){}, &results);
+	for (size_t i = 0; i < (sizeof(tests) / sizeof(t_lexical_test)); i++)
+	{
+		results = conduct_lexical_analysis_test(tests[i]);
+	}
 
 	printf("\n==================[RESULTS]==================\n\n");
 	printf(COLOR_GREEN "PASS: " COLOR_WHITE "%i/%i\n", results.passed, results.total);
-	printf(COLOR_RED "FAIL: " COLOR_WHITE "%i/%i\n", results.failed, results.passed);
+	printf(COLOR_RED "FAIL: " COLOR_WHITE "%i/%i\n", results.failed, results.total);
 	printf("\n[TEST %i DONE]\n", test_number);
 }
 
