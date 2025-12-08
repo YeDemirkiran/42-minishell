@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 14:48:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 15:15:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -865,6 +865,76 @@ void	test_lexical_analyze(int test_number)
 				{ .type = TOKEN_WORD, .data.word = "word5" },
 			},
 			.expected_length = 9
+		},
+
+		// MIXED
+		{
+			.input = "ls -l | cat 124<Makefile 1235125>>out && sort -r || sleep 5 | (git log -n 5)",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_WORD, .data.word = "-l" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = 124 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_REDIR_APPEND, .data.number = 1235125 },
+				{ .type = TOKEN_WORD, .data.word = "out" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_WORD, .data.word = "-r" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "sleep" },
+				{ .type = TOKEN_WORD, .data.word = "5" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "git" },
+				{ .type = TOKEN_WORD, .data.word = "log" },
+				{ .type = TOKEN_WORD, .data.word = "-n" },
+				{ .type = TOKEN_WORD, .data.word = "5" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.expected_length = 21
+		},
+
+		{
+			.input = "( echo \"user:$USER\" | tr 'a-z' \"A-Z\" ) 3< in.txt && printf '%s\n' 'home:'\"$HOME\" \"$PWD\" | sed 's/x/'\"$XVAR\"'/g' || ( echo \"double:$VAR\" | echo 'single:$VAR' ) 2>err.log 1>out.txt 4>>append.log <<EOF",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "echo" },
+				{ .type = TOKEN_WORD, .data.word = "\"user:$USER\"" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "tr" },
+				{ .type = TOKEN_WORD, .data.word = "'a-z'" },
+				{ .type = TOKEN_WORD, .data.word = "\"A-Z\"" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = 3 },
+				{ .type = TOKEN_WORD, .data.word = "in.txt" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "printf" },
+				{ .type = TOKEN_WORD, .data.word = "'%s\n'" },
+				{ .type = TOKEN_WORD, .data.word = "'home:'\"$HOME\"" },
+				{ .type = TOKEN_WORD, .data.word = "\"$PWD\"" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sed" },
+				{ .type = TOKEN_WORD, .data.word = "'s/x/'\"$XVAR\"'/g'" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "echo" },
+				{ .type = TOKEN_WORD, .data.word = "\"double:$VAR\"" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "echo" },
+				{ .type = TOKEN_WORD, .data.word = "'single:$VAR'" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = 2 },
+				{ .type = TOKEN_WORD, .data.word = "err.log" },
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = 1 },
+				{ .type = TOKEN_WORD, .data.word = "out.txt" },
+				{ .type = TOKEN_REDIR_APPEND, .data.number = 4 },
+				{ .type = TOKEN_WORD, .data.word = "append.log" },
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "EOF" },
+			},
+			.expected_length = 33
 		}
 	};
 	t_test_result	results;
