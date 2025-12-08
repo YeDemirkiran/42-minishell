@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/12/06 23:32:49 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/08 17:25:47 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -38,7 +38,7 @@ MAIN_FILES = $(addprefix $(MAIN_DIR), main.c)
 
 ## Lexer
 LEXER_DIR = lexer/
-LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_token.c token_utils.c)
+LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_misc.c token.c token_utils.c)
 
 ## Parser
 PARSER_DIR = parser/

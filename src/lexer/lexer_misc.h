@@ -1,21 +1,33 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_token.h                                      :+:      :+:    :+:   */
+/*   lexer_misc.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 23:26:32 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 17:05:37 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:22:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef LEXER_TOKEN_H
-# define LEXER_TOKEN_H
+#ifndef LEXER_MISC_H
+# define LEXER_MISC_H
 
 # include <libft/linked_list.h>
-
 # include "structs/s_token.h"
+
+/**
+ * @brief Turns a string to a valid file descriptor number.
+ * @returns The resulted file descriptor or,
+ * @returns -1 if the resulted number is not a valid file descriptor.
+ */
+int	get_valid_fd_from_string(char *string);
+
+/**
+ * @brief Takes the word pointer and sets it to the substring of string.
+ * @returns 0 on failure, 1 on success.
+ */
+int	set_word(char **word, char *string, size_t start, size_t end);
 
 /**
  * @brief Converts a string stream to word token, starting from index.

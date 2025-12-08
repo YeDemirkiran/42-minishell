@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 00:42:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:25:10 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,29 +16,31 @@
 # include <libft/linked_list.h>
 
 # include "structs/s_token.h"
-# include "types/t_bool.h"
 
 /**
-* @brief Creates a token of type and with data.
-* @returns NULL on memory allocation failure,
-* and a pointer to the new token on success.
-*/
-t_token	*create_token(t_token_type type, t_token_data data);
-
-/**
-* @brief Frees a token and its data.
-*/
-void	free_token(t_token *token);
-
-/**
- * @brief Frees a list of tokens.
+ * @brief Converts a string stream to word token, starting from index.
+ * @returns 0 on failure, 1 on success,
+ * 2 if any parameter is NULL or START == END.
+ * @note The string parameter is automatically freed on failure.
  */
-void	free_tokens(t_list **tokens);
+int	save_word_token(t_list **tokens, char *string);
 
 /**
- * @brief Adds the retrieved token to the end of a linked list.
+ * @brief Sets the token data according to the token type.
+ * @param tokens Used for word token saving if no type is suitable.
+ * @param token_addr Pointer to the local token struct that will be filled.
+ * @param word The string that will be used as the source of the data.
+ * @returns 0 on failure, 1 on success.
+ * @note - If the word doesn't fit any token type, it is saved as a word.
+ * @note - Currently only checks for redirections.
+ */
+int	set_token_data(t_list **tokens, t_token *token_addr, char *word);
+
+/**
+ * @brief Converts a string stream to token, starting from index.
  * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
  */
-int		save_token_to_list(t_list **tokens, t_token *token);
+int	save_metachar_token(t_list **tokens,
+		char *string, size_t word_start, size_t *index);
 
 #endif

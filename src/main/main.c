@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/05 01:32:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:31:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -29,7 +29,7 @@
 #include "modules/builtin.h"
 #include "modules/signal.h"
 
-#include "../lexer/token_utils.h"
+#include "../lexer/token.h"
 
 #define SHELL_NAME "babashell"
 #define RL_START "\001"

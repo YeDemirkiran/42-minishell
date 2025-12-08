@@ -6,14 +6,11 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 17:04:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:28:36 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 /* ================================ HEADERS ================================ */
-
-// External libraries
-#include <stdlib.h>
 
 // Internal libraries
 #include <libft/string.h>
@@ -24,58 +21,11 @@
 
 // Local headers
 #include "lexer_utils.h"
-#include "lexer_token.h"
+#include "lexer_misc.h"
+#include "token.h"
 #include "token_utils.h"
 
 /* =============================== FUNCTIONS =============================== */
-
-/**
- * @brief Takes the word pointer and sets it to the substring of string.
- * @returns 0 on failure, 1 on success.
- */
-static int	set_word(char **word, char *string,
-	size_t start, size_t end)
-{
-	*word = NULL;
-	if (end > start)
-	{
-		*word = ft_substr(string, start, end - start);
-		if (*word == NULL)
-			return (0);
-	}
-	return (1);
-}
-
-/**
- * @brief Converts a string stream to token, starting from index.
- * @returns 0 on failure, 1 on success, 2 if any parameter is NULL.
- */
-static int	save_metachar_token(t_list **tokens,
-		char *string, size_t word_start, size_t *index)
-{
-	t_token	token;
-	t_token	*token_addr;
-	size_t	token_length;
-	char	*word;
-
-	if (set_word(&word, string, word_start, *index) != 1)
-		return (0);
-	token.type = get_token_type(string + *index, &token_length);
-	*index += token_length;
-	if (set_token_data(tokens, &token, word) != 1)
-		return (0);
-	if (token.type == TOKEN_NONE)
-		return (1);
-	token_addr = create_token(token.type, token.data);
-	if (token_addr == NULL)
-		return (0);
-	if (save_token_to_list(tokens, token_addr) != 1)
-	{
-		free_token(token_addr);
-		return (0);
-	}
-	return (1);
-}
 
 /**
  * Initializes the lexer parameters.
