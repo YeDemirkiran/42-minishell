@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 14:32:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 14:48:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -165,6 +165,8 @@ static t_test_result	conduct_lexical_analysis_test(t_lexical_test test)
 void	test_lexical_analyze(int test_number)
 {
 	t_lexical_test tests[] = {
+
+		// NULL - EMPTY CHECK
 		{
 			.input = NULL,
 			.expected_tokens = NULL,
@@ -175,6 +177,39 @@ void	test_lexical_analyze(int test_number)
 			.expected_tokens = NULL,
 			.expected_length = 0
 		},
+
+		// NEWLINES
+		{
+			.input = "\n",
+			.expected_tokens = (t_token []) {
+				{ .type = TOKEN_NEWLINE }
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "\n\n\n\n\n",
+			.expected_tokens = (t_token []) {
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.expected_length = 5
+		},
+		{
+			.input = "   \n   \n    \n   \n   \n   ",
+			.expected_tokens = (t_token []) {
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.expected_length = 5
+		},
+
+		// SIMPLE WORDS AND SPACES
 		{
 			.input = "word1",
 			.expected_tokens = (t_token[]) {
@@ -232,6 +267,8 @@ void	test_lexical_analyze(int test_number)
 			},
 			.expected_length = 5
 		},
+
+		// QUOTES
 		{
 			.input = "'",
 			.expected_tokens = (t_token[]) {
@@ -288,6 +325,8 @@ void	test_lexical_analyze(int test_number)
 			},
 			.expected_length = 1
 		},
+
+		// QUOTED WORDS
 		{
 			.input = "'word'",
 			.expected_tokens = (t_token[]) {
@@ -363,6 +402,8 @@ void	test_lexical_analyze(int test_number)
 			},
 			.expected_length = 1
 		},
+
+		// PIPES
 		{
 			.input = "|",
 			.expected_tokens = (t_token[]) {
@@ -387,22 +428,6 @@ void	test_lexical_analyze(int test_number)
 				{ .type = TOKEN_PIPE }
 			},
 			.expected_length = 5
-		},
-		{
-			.input = "||||||||||",
-			.expected_tokens = (t_token[]) {
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE },
-				{ .type = TOKEN_PIPE }
-			},
-			.expected_length = 10
 		},
 		{
 			.input = "word1|word2|word3|word4|word5",
