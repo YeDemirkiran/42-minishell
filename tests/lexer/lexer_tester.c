@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 14:02:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 14:21:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -434,6 +434,8 @@ void	test_lexical_analyze(int test_number)
 			},
 			.expected_length = 9
 		},
+
+		// REDIRECTIONS WITHOUT FD
 		{
 			.input = "<",
 			.expected_tokens = (t_token[]) {
@@ -490,6 +492,8 @@ void	test_lexical_analyze(int test_number)
 			},
 			.expected_length = 1
 		},
+
+		// REDIRECTIONS WITH FD
 		{
 			.input = "1<",
 			.expected_tokens = (t_token[]) {
@@ -548,6 +552,154 @@ void	test_lexical_analyze(int test_number)
 				{ .type = TOKEN_REDIR_INPUT, .data.number = 123 },
 			},
 			.expected_length = 1
+		},
+		{
+			.input = "\"0\"<",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "\"0\"" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+			},
+			.expected_length = 2
+		},
+
+		// TOKEN &&
+		{
+			.input = "&&",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_AND },
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "   &&       ",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_AND },
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "&&&&",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND }
+			},
+			.expected_length = 2
+		},
+		{
+			.input = "&&&&&&&&&&&&&&&&&&&&",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND }
+			},
+			.expected_length = 10
+		},
+		{
+			.input = "word1&&word2&&word3&&word4&&word5",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "word1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word3" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word4" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word5" },
+			},
+			.expected_length = 9
+		},
+		{
+			.input = "   word1   &&   word2   &&   word3   &&   word4   &&   word5",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "word1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word3" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word4" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "word5" },
+			},
+			.expected_length = 9
+		},
+
+		// TOKEN ||
+		{
+			.input = "||",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_OR },
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "   ||       ",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_OR },
+			},
+			.expected_length = 1
+		},
+		{
+			.input = "||||",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR }
+			},
+			.expected_length = 2
+		},
+		{
+			.input = "||||||||||||||||||||",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR }
+			},
+			.expected_length = 10
+		},
+		{
+			.input = "word1||word2||word3||word4||word5",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "word1" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word2" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word3" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word4" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word5" },
+			},
+			.expected_length = 9
+		},
+		{
+			.input = "   word1   ||   word2   ||   word3   ||   word4   ||   word5",
+			.expected_tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "word1" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word2" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word3" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word4" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "word5" },
+			},
+			.expected_length = 9
 		}
 	};
 	t_test_result	results;
