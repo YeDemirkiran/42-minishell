@@ -6,16 +6,24 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 23:26:32 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/06 23:32:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:05:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #ifndef LEXER_TOKEN_H
 # define LEXER_TOKEN_H
 
-#include <libft/linked_list.h>
+# include <libft/linked_list.h>
 
-#include "structs/s_token.h"
+# include "structs/s_token.h"
+
+/**
+ * @brief Converts a string stream to word token, starting from index.
+ * @returns 0 on failure, 1 on success,
+ * 2 if any parameter is NULL or START == END.
+ * @note The string parameter is automatically freed on failure.
+ */
+int	save_word_token(t_list **tokens, char *string);
 
 /**
  * @brief Sets the token data according to the token type.

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 23:13:53 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/07 18:25:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 16:53:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -61,8 +61,9 @@ static int	get_valid_fd_from_string(char *string)
  * @brief Converts a string stream to word token, starting from index.
  * @returns 0 on failure, 1 on success,
  * 2 if any parameter is NULL or START == END.
+ * @note The string parameter is automatically freed on failure.
  */
-static int	save_word_token(t_list **tokens, char *string)
+int	save_word_token(t_list **tokens, char *string)
 {
 	t_token			*token;
 	t_token_data	data;

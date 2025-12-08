@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/07 18:07:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:04:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -90,6 +90,41 @@ static void	lexer_init(t_list **tokens, size_t *index,
 }
 
 /**
+ * @brief Is called when the current character is a metachar.
+ * @return 0 on failure, 1 on success.
+ * @note Sets token_start to index on success.
+ * @note Automatically frees the whole tokens list on failure.
+ */
+static int	on_metachar(t_list **tokens, char *string,
+	size_t *token_start_ptr, size_t *index_ptr)
+{
+	if (save_metachar_token(tokens, string, *token_start_ptr, index_ptr) != 1)
+	{
+		free_tokens(tokens);
+		return (0);
+	}
+	*token_start_ptr = *index_ptr;
+	return (1);
+}
+
+/**
+ * @brief Generates and saves a word in a token list.
+ * @returns 0 on failure, 1 on success.
+ */
+static int	save_word(t_list **tokens, char *string, size_t start, size_t end)
+{
+	char	*word;
+
+	if (set_word(&word, string, start, end) != 1)
+		return (0);
+	if (word == NULL)
+		return (1);
+	if (save_word_token(tokens, word) != 1)
+		return (0);
+	return (1);
+}
+
+/**
  * @brief Returns tokens from a given string.
  * @returns NULL on failure.
  */
@@ -109,16 +144,14 @@ static t_list	*get_tokens(char *string)
 			set_quote(&quote, string[i]);
 		if (quote == '\0' && is_metachar(string[i]))
 		{
-			if (save_metachar_token(&tokens, string, token_start, &i) != 1)
-			{
-				free_tokens(&tokens);
+			if (on_metachar(&tokens, string, &token_start, &i) != 1)
 				return (NULL);
-			}
-			token_start = i;
 		}
 		else
 			i++;
 	}
+	if (save_word(&tokens, string, token_start, i) != 1)
+		free_tokens(&tokens);
 	return (tokens);
 }
 
