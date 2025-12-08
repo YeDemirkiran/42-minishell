@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/30 02:39:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 18:31:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,7 +19,6 @@
 #include <structs/s_ast.h>
 #include <structs/s_token.h>
 #include <structs/s_redirection.h>
-#include <enums/e_token_type.h>
 #include <types/t_bool.h>
 
 #include <modules/parser.h>
@@ -35,6 +34,7 @@ typedef struct s_parser_test
 	int		major_number;
 	int		minor_number;
 	t_token	*tokens;
+	size_t	token_length;
 	t_ast	*expected_ast;
 }				t_parser_test;
 
@@ -44,6 +44,23 @@ typedef struct s_test_result
 	int	passed;
 	int	failed;
 }	t_test_result;
+
+t_list	*token_list_to_linked_list(t_token *tokens, size_t length)
+{
+	t_list	*list;
+	size_t	i;
+
+	if (tokens == NULL)
+		return (NULL);
+	i = 0;
+	list = NULL;
+	while (i < length)
+	{
+		ft_lstadd_back(&list ,ft_lstnew((void *)tokens + i));
+		i++;
+	}
+	return (list);
+}
 
 t_bool	compare_asts(t_ast *expected, t_ast *testee)
 {
@@ -144,7 +161,7 @@ t_test_result	conduct_parser_test(t_parser_test test)
 
 	printf("Calling parse()...\n");
 	printf("=============================================================\n");
-	retrieved_ast = parse(test.tokens);
+	retrieved_ast = parse(token_list_to_linked_list(test.tokens, test.token_length));
 	printf("=============================================================\n");
 
 	result = compare_asts(test.expected_ast, retrieved_ast);
@@ -168,11 +185,11 @@ void	test_parser(int	test_number)
 			.major_number = test_number,
 			.minor_number = 1,
 			.tokens = (t_token[]) {
-				{ .type = TOKEN_STRING, .data = "ls" },
-				{ .type = TOKEN_EOF, .data = NULL },
+				{ .type = TOKEN_WORD, .data.word = "ls" },
 			},
+			.token_length = 1,
 			.expected_ast = ast_new_node(AST_COMMAND,
-				ast_command_data(ft_strdup("ls"), ft_split("ls", ' '), NULL),
+				ast_command_data(ft_split("ls", ' '), NULL),
 				NULL, NULL)
 		}
 	};

@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ast_tester.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:34:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/29 16:42:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 18:24:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -93,7 +93,7 @@ void	test_ast(void)
 	argv[0] = command;
 	argv[1] = NULL;
 	redirs = ft_lstnew((void *)(&(t_redirection){.path = ft_strdup("./Makefile"), .redir_type = REDIR_INPUT, .target_fd = 0}));
-	data[0] = ast_command_data(command, argv, redirs);
+	data[0] = ast_command_data(argv, redirs);
 
 	command = ft_strdup("grep");
 	argv = malloc(sizeof(char *) * 3);
@@ -101,7 +101,7 @@ void	test_ast(void)
 	argv[1] = ft_strdup("c");
 	argv[2] = NULL;
 	redirs = NULL;
-	data[1] = ast_command_data(command, argv, redirs);
+	data[1] = ast_command_data(argv, redirs);
 
 	command = ft_strdup("wc");
 	argv = malloc(sizeof(char *) * 3);
@@ -109,12 +109,12 @@ void	test_ast(void)
 	argv[1] = ft_strdup("-l");
 	argv[2] = NULL;
 	redirs = NULL;
-	data[2] = ast_command_data(command, argv, redirs);
+	data[2] = ast_command_data(argv, redirs);
 
 	printf("Test 2: ast_new_node()\n");
 	tree = ast_new_node(AST_PIPE, NULL,
 		ast_new_node(AST_COMMAND, data[0], NULL, NULL),
-		ast_new_node(AST_PIPE, NULL, 
+		ast_new_node(AST_PIPE, NULL,
 			ast_new_node(AST_COMMAND, data[1], NULL, NULL),
 			ast_new_node(AST_COMMAND, data[2], NULL, NULL)));
 
