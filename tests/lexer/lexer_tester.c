@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 17:31:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:34:14 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -934,7 +934,7 @@ void	test_lexical_analyze(int test_number)
 				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "EOF" },
 			},
-			.expected_length = 33
+			.expected_length = 34
 		}
 	};
 	t_test_result	results;
