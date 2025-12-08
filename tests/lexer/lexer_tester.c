@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 20:56:01 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 17:34:14 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 17:38:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,6 +15,7 @@
 
 #include <modules/lexer.h>
 #include <lexer_utils.h>
+#include <token.h>
 
 #include <libft/string.h>
 #include <libft/linked_list.h>
@@ -140,10 +141,12 @@ static t_test_result	conduct_lexical_analysis_test(t_lexical_test test)
 {
 	static t_test_result	results;
 	int						result;
+	t_list					*tokens_list;
 
 	printf("\nlexical_analyze(%c%s%c)\n", test.input == NULL ? 0 : '"', test.input == NULL ? "NULL" : test.input, test.input == NULL ? 0 : '"');
 	printf("=============================================================\n");
-	test.retrieved_tokens = linked_list_to_token_array(lexical_analyze(test.input), &(test.retrieved_length));
+	tokens_list = lexical_analyze(test.input);
+	test.retrieved_tokens = linked_list_to_token_array(tokens_list, &(test.retrieved_length));
 	printf("=============================================================\n");
 
 	result = tests_match(test) == 1;
@@ -157,6 +160,7 @@ static t_test_result	conduct_lexical_analysis_test(t_lexical_test test)
 	debug_print_tokens(test.retrieved_tokens, test.retrieved_length);
 	printf("%s[%s]" COLOR_WHITE"\n", result ? COLOR_GREEN : COLOR_RED, result ? "OK" : "KO");
 
+	free_tokens(&tokens_list);
 	free(test.retrieved_tokens);
 
 	return (results);
