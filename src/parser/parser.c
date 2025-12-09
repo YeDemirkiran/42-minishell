@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/04 16:00:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/08 22:52:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,31 +21,6 @@
 #include <structs/s_redirection.h>
 
 #include <modules/ast.h>
-
-/**
- * @brief Converts a linked list of strings to string array.
- */
-// static char	**linked_list_to_string_arr(t_list *list)
-// {
-// 	size_t	length;
-// 	size_t	i;
-// 	char	**arr;
-
-// 	if (list == NULL)
-// 		return (NULL);
-// 	length = ft_lstsize(list);
-// 	arr = malloc(sizeof(char *) * (length + 1));
-// 	if (arr == NULL)
-// 		return (NULL);
-// 	i = 0;
-// 	while (list)
-// 	{
-// 		arr[i++] = list->content;
-// 		list = list->next;
-// 	}
-// 	arr[i] = NULL;
-// 	return (arr);
-// }
 
 // TODO: remove
 static void	debug_ast_print_node(t_ast *ast)
@@ -108,6 +83,28 @@ static void	debug_ast_print_node(t_ast *ast)
 	}
 }
 
+// Parses a token according to COMMAND grammar.
+// TODO: Remove comments.
+static t_ast	*parse_command(t_token *token)
+{
+	(void)token;
+	return (NULL);
+}
+
+// Takes a pointer to a token and generates a tree, and returns it.
+// Potentially recursively calls itself.
+static t_ast	*parse_token(t_token *token)
+{
+	t_ast	*ast;
+
+	ast = NULL;
+	if (token == NULL)
+		return (NULL);
+	if (token->type == TOKEN_WORD)
+		ast = parse_command(token);
+	return (ast);
+}
+
 // Uses tokens from a lexer and converts them into a full AST
 // TODO: Remove debug logs
 t_ast	*parse(t_list *tokens)
@@ -120,7 +117,7 @@ t_ast	*parse(t_list *tokens)
 
 	if (tokens == NULL)
 		return (NULL);
-	root = NULL;
+	root = parse_token((t_token *)(tokens->content));
 	printf("(DEBUG: Step 1: Printing AST)\n");
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
