@@ -51,10 +51,10 @@ void run_command(t_ast *ast, char **envp)
 	delete_new_line(&ast->data->ast_command.arguments);
 	if(pid == 0)
 	{
-		//execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
-		execve(ft_strjoin("/bin/", ast->data->ast_command.command), ast->data->ast_command.arguments, envp);
+		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
+		exit(1);
 	}
-	pid = wait(NULL);
+	wait(NULL);
 }
 
 void debug_print(t_ast *ast)
