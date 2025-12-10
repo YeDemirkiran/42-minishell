@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/12/16 17:39:15 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/08 17:25:47 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -42,11 +42,11 @@ LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_misc.c token
 
 ## Parser
 PARSER_DIR = parser/
-PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_redirection.c parse_pipeline.c parse_result.c)
+PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c)
 
 ## AST
 AST_DIR = ast/
-AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c ast_helper.c)
+AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c)
 
 ## Executor
 EXECUTOR_DIR = executor/

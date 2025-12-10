@@ -1,0 +1,6 @@
+**/*.out
+**/ft_malloc_test
+
+**/.vscode
+**/obj
+**/*.a

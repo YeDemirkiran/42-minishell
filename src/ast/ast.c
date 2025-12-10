@@ -1,44 +1,31 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:26:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/01 02:55:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
-/* ================================ HEADERS ================================ */
-
-// Standard libraries
 #include <stdlib.h>
-
-// Project headers
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "modules/ast.h"
-
-// Local headers
-#include "ast_helper.h"
-
-/* =============================== FUNCTIONS =============================== */
+#include <structs/s_ast.h>
+#include <structs/s_redirection.h>
+#include <modules/ast.h>
 
 // Initializes and returns a data union with command struct values.
 t_ast_data	*ast_command_data(char **args, t_list *redirs)
 {
 	t_ast_data	*data;
-	char		*command;
 
+	if (args == NULL)
+		return (NULL);
 	data = malloc(sizeof(t_ast_data));
 	if (data == NULL)
 		return (NULL);
-	if (args != NULL)
-		command = args[0];
-	else
-		command = NULL;
-	data->ast_command.command = command;
+	data->ast_command.command = args[0];
 	data->ast_command.arguments = args;
 	data->ast_command.redirs = redirs;
 	return (data);
@@ -60,13 +47,33 @@ t_ast	*ast_new_node(t_ast_type type, t_ast_data *data,
 	return (node);
 }
 
+// Takes a void pointer, casts it to t_redirection* and frees its content.
+static void	free_redir_struct(void *redir)
+{
+	free(((t_redirection *)redir)->path);
+}
+
 // Frees the node without traversal.
 static void	ast_free_node(t_ast *ast)
 {
+	size_t	i;
+
 	if (ast == NULL)
 		return ;
 	if (ast->type == AST_COMMAND)
-		ast_free_command(ast);
+	{
+		if (ast->data->ast_command.command
+			!= ast->data->ast_command.arguments[0])
+			free(ast->data->ast_command.command);
+		i = 0;
+		while (ast->data->ast_command.arguments[i] != NULL)
+		{
+			free(ast->data->ast_command.arguments[i]);
+			i++;
+		}
+		free(ast->data->ast_command.arguments);
+		ft_lstclear(&(ast->data->ast_command.redirs), free_redir_struct);
+	}
 	if (ast->data != NULL)
 		free(ast->data);
 	free(ast);
@@ -77,5 +84,3 @@ void	ast_free_tree(t_ast *ast)
 {
 	ast_traverse_postorder(ast, ast_free_node);
 }
-
-/* ================================== END ================================== */

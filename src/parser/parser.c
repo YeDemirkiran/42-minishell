@@ -1,39 +1,28 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/16 17:39:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:48:00 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
-/* ================================ HEADERS ================================ */
-
-// Standard libraries
-#include <stdio.h> // TODO: Remove
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 
-// Internal libraries
 #include <libft/string.h>
-#include <libft/write.h>
-
-// Project headers
 #include "enums/e_redir_type.h"
+
+
 #include "structs/s_ast.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
 
-#include "modules/ast.h" // TODO: Remove as it's probably not necessary
-
-// Local headers
-#include "parse_command.h"
-#include "parse_pipeline.h"
-
-/* =============================== FUNCTIONS =============================== */
+#include "modules/ast.h"
 
 // TODO: remove
 static void	debug_ast_print_node(t_ast *ast)
@@ -50,19 +39,14 @@ static void	debug_ast_print_node(t_ast *ast)
 		printf("COMMAND DATA\n");
 		printf("Command: %s\n", ast->data->ast_command.command);
 
-		if (ast->data->ast_command.arguments != NULL)
+		printf("Arguments: ");
+		for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
 		{
-			printf("Arguments: ");
-			for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
-			{
-				printf("%s", ast->data->ast_command.arguments[i]);
-				if (ast->data->ast_command.arguments[i + 1] != NULL)
-					printf(", ");
-			}
-			printf("\n");
+			printf("%s", ast->data->ast_command.arguments[i]);
+			if (ast->data->ast_command.arguments[i + 1] != NULL)
+				printf(", ");
 		}
-		else
-			printf("Arguments: (null)\n");
+		printf("\n");
 
 		printf("Redirs: ");
 		t_list	*lst = ast->data->ast_command.redirs;
@@ -97,105 +81,129 @@ static void	debug_ast_print_node(t_ast *ast)
 			printf(", fd: %i, path: %s) ", redir->target_fd, redir->path);
 			lst = lst->next;
 		}
-		printf("\n");
+		printf("\n\n");
 	}
 }
 
-
-static char	*get_token_string(t_token *token)
+// Returns the default FD value for a redirection.
+static int	redir_default_fd(t_redir_type type)
 {
-	if (token == NULL)
+	int	fd;
+
+	fd = -1;
+	if (type == REDIR_INPUT || type == REDIR_HEREDOC)
+		fd = 0;
+	else if (type == REDIR_APPEND || type == REDIR_APPEND)
+		fd = 1;
+	return (fd);
+}
+
+static t_redir_type	get_redir_type(t_token_type type)
+{
+	int	redir;
+
+	redir = -1;
+	if (type == TOKEN_REDIR_INPUT)
+		redir = REDIR_INPUT;
+	else if (type == TOKEN_REDIR_OUTPUT)
+		redir = REDIR_OUTPUT;
+	else if (type == TOKEN_REDIR_HEREDOC)
+		redir = REDIR_HEREDOC;
+	else if (type == TOKEN_REDIR_APPEND)
+		redir = REDIR_APPEND;
+	return (redir);
+}
+
+
+// Parses a token according to COMMAND grammar.
+// TODO: Remove comments.
+static t_ast	*parse_command(t_list *token)
+{
+	t_ast			*command;
+	t_token			*token_obj;
+	t_list			*redirs;
+	t_list			*current_redir;
+	t_list			*args;
+	t_redirection	*redirection;
+	t_redir_type	redir_type;
+	int				skip_next;
+
+	if (token == NULL || token->content == NULL)
 		return (NULL);
-	if (token->type == TOKEN_WORD)
-		return (token->data.word);
-	if (token->type == TOKEN_NEWLINE)
-		return ("newline");
-	if (token->type == TOKEN_PIPE)
-		return ("|");
-	if (token->type == TOKEN_IF_AND)
-		return ("&&");
-	if (token->type == TOKEN_IF_OR)
-		return ("||");
-	if (token->type == TOKEN_PAREN_LEFT)
-		return ("(");
-	if (token->type == TOKEN_PAREN_RIGHT)
-		return (")");
-	if (token->type == TOKEN_REDIR_INPUT)
-		return ("<");
-	if (token->type == TOKEN_REDIR_OUTPUT)
-		return (">");
-	if (token->type == TOKEN_REDIR_HEREDOC)
-		return ("<<");
-	if (token->type == TOKEN_REDIR_APPEND)
-		return (">>");
-	return (NULL);
+	skip_next = 0;
+	current_redir = NULL;
+	redirs = NULL;
+	args = NULL;
+	while (token != NULL)
+	{
+		token_obj = (t_token *)(token->content);
+		if (skip_next == 1)
+		{
+			skip_next = 0;
+			if (token_obj->type == TOKEN_WORD && current_redir != NULL)
+				((t_redirection *)(current_redir->content))->path = ft_strdup(token_obj->data.word);
+				// throw error
+			token = token->next;
+			continue ;
+		}
+		redir_type = get_redir_type(token_obj->type);
+		if (redir_type != (t_redir_type)-1)
+		{
+			redirection = malloc(sizeof(t_redirection));
+			if (token_obj->data.number == -1)
+				redirection->target_fd = redir_default_fd(redir_type);
+			else
+				redirection->target_fd = token_obj->data.number;
+			redirection->redir_type = redir_type;
+			skip_next = 1;
+			current_redir = ft_lstnew((void *)redirection);
+			ft_lstadd_back(&redirs, current_redir);
+		}
+		else if (token_obj->type == TOKEN_WORD)
+		{
+			ft_lstadd_back(&args, ft_lstnew((void *)ft_strdup(token_obj->data.word)));
+		}
+		else
+			break;
+		token = token->next;
+	}
+	if (args == NULL)
+		return (NULL);
+	command = ast_new_node(AST_COMMAND, ast_command_data(ft_lst_to_string_arr(args), redirs), NULL, NULL);
+	ft_lstclear(&args, NULL);
+	return (command);
 }
 
-static void	print_token_error(t_parse_result result)
+// Takes a pointer to a token and generates a tree, and returns it.
+// Potentially recursively calls itself.
+static t_ast	*parse_token(t_list *token)
 {
-	t_token	*token;
-	char	*token_word;
+	t_ast	*ast;
+	t_token	*token_obj;
 
-	if (result.type != PARSE_RESULT_TOKEN_ERROR)
-		return ;
-	if (result.current_token == NULL || result.current_token->content == NULL)
-		token = NULL;
-	else
-		token = (t_token *)(result.current_token->content);
-	ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
-	token_word = get_token_string(token);
-	if (token_word == NULL)
-		ft_putstr_fd("(null)", 2);
-	else
-		ft_putstr_fd(token_word, 2);
-	ft_putstr_fd("'\n", 2);
+	ast = NULL;
+	if (token == NULL || token->content == NULL)
+		return (NULL);
+	token_obj = (t_token *)(token->content);
+	if (token_obj->type == TOKEN_WORD)
+		ast = parse_command(token);
+	return (ast);
 }
 
-/**
- * @brief Main entry point for the parser. Calls the required grammar rules.
- */
-static t_parse_result	parse_token(t_list *tokens)
-{
-	t_parse_result	result;
-
-	if (tokens == NULL || tokens->content == NULL)
-		return (parse_runtime_error(NULL));
-	result = parse_pipeline(tokens);
-	return (result);
-}
-
-/**
- * @brief Takes a list of tokens and parses it as a syntax tree.
- * @returns Full AST on success, NULL on failure.
- * @note Prints the error itself in case of failure.
- */
+// Uses tokens from a lexer and converts them into a full AST
+// TODO: Remove debug logs
 t_ast	*parse(t_list *tokens)
 {
-	t_ast			*root;
-	t_parse_result	result;
+	t_ast	*root;
 
 	// todo: remove printf logs
 	printf("(DEBUG: Starting shell step 2: Parser)\n");
-	printf("(DEBUG: Step 2: Parse AST)\n");
+	printf("(DEBUG: Step 1: Parse AST)\n");
 
-	if (tokens == NULL || tokens->content == NULL)
+	if (tokens == NULL)
 		return (NULL);
-	result = parse_token(tokens);
-	if (result.type != PARSE_RESULT_SUCCESS)
-	{
-		// Time to give an error
-		if (result.type == PARSE_RESULT_TOKEN_ERROR)
-			print_token_error(result);
-		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
-			perror("minishell");
-		else
-			ft_putendl_fd("minishell: unkown error", 2);
-		return (NULL);
-	}
-	root = result.ast;
-	printf("(DEBUG: Step 2.1: Printing AST)\n");
+	root = parse_token(tokens);
+	printf("(DEBUG: Step 1: Printing AST %i)\n", root == NULL);
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
-
-/* ================================== END ================================== */

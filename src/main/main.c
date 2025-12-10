@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 15:24:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/10 17:12:48 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	char	*tmp;
-	t_list	*tokens;
+	//t_list	*tokens;
 	char	first_run;
 	t_ast	*ast;
 
@@ -60,26 +60,11 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		input = ft_strjoin(tmp, "\n");
 		free(tmp);
+		ast = ast_new_node(AST_COMMAND, ast_command_data(ft_split(input, ' '), NULL), NULL , NULL);
+		//printf("DEBUG COMMAND : %s\n", ast->data->ast_command.command);
+		executor(ast, envp);
 		if (input == NULL)
 			break;
-
-		// STEP 1: Lexical Analysis
-		// Analyze and tokenize the input.
-		tokens = lexical_analyze(input);
-
-		// STEP 2: Parser
-		// Use the tokens from lexer and parse them to usable commands by the executor.
-		ast = parse(tokens);
-
-		// STEP 3: Execution
-		// Execute the parsed commands here. Provide envp for them.
-		executor(ast, envp, 0, 1);
-
-		// STEP 4: Restart
-		// Prepare the shell for the next iteration.
-		// free tokens
-		free_tokens(&tokens);
-		ast_free_tree(ast);
 	}
 	return (EXIT_SUCCESS);
 }

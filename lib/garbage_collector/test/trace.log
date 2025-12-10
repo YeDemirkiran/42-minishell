@@ -1,0 +1,10 @@
+03.31 16/11/2025
+==10483==
+==10483== HEAP SUMMARY:
+==10483==     in use at exit: 0 bytes in 0 blocks
+==10483==   total heap usage: 200,001 allocs, 200,001 frees, 80,001,601,024 bytes allocated
+==10483==
+==10483== All heap blocks were freed -- no leaks are possible
+==10483==
+==10483== For lists of detected and suppressed errors, rerun with: -s
+==10483== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

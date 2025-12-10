@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/14 15:25:22 by yademirk         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "stdio.h" 
+#include "stdio.h"
 #include <libft.h>
 #include "stdlib.h"
 #include "unistd.h"
@@ -19,12 +7,8 @@
 #include "sys/wait.h"
 #include "../../lib/garbage_collector/gb.h"
 
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "enums/e_redir_type.h"
+#include <structs/s_ast.h>
 
-
-/*This function cut \n and \r in char* of end of the line */
 char  *cut_wrong_chracter(const char *s1)
 {
     int i;
@@ -58,64 +42,43 @@ void delete_new_line(char ***s1)
 		i++;
 	}
 }
-void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
+void run_command(t_ast *ast, char **envp)
 {
+	(void)ast;
 	pid_t pid;
-	t_redirection	*redir;
 
-	
 	pid = fork();
 	delete_new_line(&ast->data->ast_command.arguments);
 	if(pid == 0)
 	{
-		dup2(fd_in, 0);
-		dup2(fd_out, 1);
-		t_list *redirs = ast->data->ast_command.redirs;
-		printf("REDIRS NULL: %i\n", redirs == NULL);
-		while (redirs != NULL)
-		{
-			int fd = -1;
-			redir = (t_redirection *)redirs->content;
-			if (redir->redir_type == REDIR_INPUT)
-				fd = open(redir->path, O_RDONLY);
-			else if (redir->redir_type == REDIR_OUTPUT)
-				fd = open(redir->path, O_WRONLY | O_CREAT, 0777);
-			if (fd >= 0)
-			{
-				dup2(fd, redir->target_fd);
-			}		
-			redirs = redirs->next;
-		}
-		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
-		exit(1);
+		//execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
+		execve(ft_strjoin("/bin/", ast->data->ast_command.command), ast->data->ast_command.arguments, envp);
 	}
-	wait(NULL);
+	pid = wait(NULL);
 }
 
 void debug_print(t_ast *ast)
 {
-	printf("DEBUG ROOT LEG TYPE : %d\n", ast->type);
-	printf("DEBUG LEFT LEG TYPE : %d\n", ast->left->type);
-	printf("DEBUG LEFT LEG COMMAND : %s\n", ast->left->data->ast_command.command);
-	printf("DEBUG RIHT LEG TYPE : %d\n", ast->right->type);
-	printf("DEBUG RIHT LEG COMMAND : %s\n", ast->right->data->ast_command.command);
-	printf("DEBUG RIHT LEG ARGUMENT : %s\n", ast->right->data->ast_command.arguments[1]);
+	t_ast *tmp;
+	int i;
+
+	i = 0;
+	tmp = ast; 
+	(void)ast;
+	printf("(DEBUG: Step 4 AST TYPE  : %d)\n", ast->type);
+	while(tmp->data->ast_command.arguments[i] != NULL)
+	{
+		printf("(DEBUG: Step 4 AST ARGUMENTS : %s)\n", tmp->data->ast_command.arguments[i]);
+		i++;
+	}
+	printf("(DEBUG: Step 4 AST COMMAND  : %s)\n", ast->data->ast_command.command);
 }
 
-void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
+void	executor(t_ast *ast, char **envp)
 {
-	int pipefd[2];
-	
 	if(ast->type == AST_COMMAND)
-		run_command(ast, envp, fd_in, fd_out);
-	else if (ast->type == AST_PIPE)
 	{
-		pipe(pipefd);
-		executor(ast->left, envp, fd_in, pipefd[1]);
-		close(pipefd[1]);
-		executor(ast->right, envp, pipefd[0], fd_out);
-		close(pipefd[0]);
+		run_command(ast, envp);
 	}
-	(void)envp;
-	//debug_print(for_debug);
+	debug_print(ast);
 }
