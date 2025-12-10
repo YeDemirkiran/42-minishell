@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/10 17:12:48 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/11 00:30:32 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,11 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		input = ft_strjoin(tmp, "\n");
 		free(tmp);
-		ast = ast_new_node(AST_COMMAND, ast_command_data(ft_split(input, ' '), NULL), NULL , NULL);
+		//ast = ast_new_node(AST_COMMAND, ast_command_data(ft_split(input, ' '), NULL), NULL , NULL);
+		//ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("ls", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL));
+		ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat Makefile", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep a", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL)));
 		//printf("DEBUG COMMAND : %s\n", ast->data->ast_command.command);
-		executor(ast, envp);
+		executor(ast, envp, 0, 1);
 		if (input == NULL)
 			break;
 	}

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
+/*   Updated: 2025/12/11 00:21:38 by muayna           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "stdio.h"
 #include <libft.h>
 #include "stdlib.h"
@@ -42,7 +54,7 @@ void delete_new_line(char ***s1)
 		i++;
 	}
 }
-void run_command(t_ast *ast, char **envp)
+void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 {
 	(void)ast;
 	pid_t pid;
@@ -51,6 +63,8 @@ void run_command(t_ast *ast, char **envp)
 	delete_new_line(&ast->data->ast_command.arguments);
 	if(pid == 0)
 	{
+		dup2(fd_in, 0);
+		dup2(fd_out, 1);
 		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
 		exit(1);
 	}
@@ -59,26 +73,28 @@ void run_command(t_ast *ast, char **envp)
 
 void debug_print(t_ast *ast)
 {
-	t_ast *tmp;
-	int i;
-
-	i = 0;
-	tmp = ast; 
-	(void)ast;
-	printf("(DEBUG: Step 4 AST TYPE  : %d)\n", ast->type);
-	while(tmp->data->ast_command.arguments[i] != NULL)
-	{
-		printf("(DEBUG: Step 4 AST ARGUMENTS : %s)\n", tmp->data->ast_command.arguments[i]);
-		i++;
-	}
-	printf("(DEBUG: Step 4 AST COMMAND  : %s)\n", ast->data->ast_command.command);
+	printf("DEBUG ROOT LEG TYPE : %d\n", ast->type);
+	printf("DEBUG LEFT LEG TYPE : %d\n", ast->left->type);
+	printf("DEBUG LEFT LEG COMMAND : %s\n", ast->left->data->ast_command.command);
+	printf("DEBUG RIHT LEG TYPE : %d\n", ast->right->type);
+	printf("DEBUG RIHT LEG COMMAND : %s\n", ast->right->data->ast_command.command);
+	printf("DEBUG RIHT LEG ARGUMENT : %s\n", ast->right->data->ast_command.arguments[1]);
 }
 
-void	executor(t_ast *ast, char **envp)
+void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
 {
+	int pipefd[2];
+	
 	if(ast->type == AST_COMMAND)
+		run_command(ast, envp, fd_in, fd_out);
+	else if (ast->type == AST_PIPE)
 	{
-		run_command(ast, envp);
+		pipe(pipefd);
+		executor(ast->left, envp, fd_in, pipefd[1]);
+		close(pipefd[1]);
+		executor(ast->right, envp, pipefd[0], fd_out);
+		close(pipefd[0]);
 	}
-	debug_print(ast);
+	(void)envp;
+	//debug_print(for_debug);
 }
