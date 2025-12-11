@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:00:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/10 22:06:56 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 16:54:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,7 +36,7 @@ typedef struct s_parse_result
 {
 	t_parse_result_type	type;
 	t_ast				*ast;
-	t_token				*current_token;
+	t_list				*current_token;
 }	t_parse_result;
 
 #endif
