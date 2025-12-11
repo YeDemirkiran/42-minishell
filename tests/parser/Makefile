@@ -1,14 +1,14 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/19 20:56:36 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/29 18:26:37 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/12 00:18:27 by yademirk         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
+#******************************************************************************#
 
 NAME = parser_tester
 
@@ -20,7 +20,7 @@ LIB_PATH = ../../lib
 LIBFT_PATH = $(LIB_PATH)/libft
 PARSER_PATH = ../../src/parser
 
-SRC = ./parser_tester.c $(PARSER_PATH)/parser.c ../../src/ast/ast.c ../../src/ast/ast_traversal.c
+SRC = ./parser_tester.c $(PARSER_PATH)/*.c ../../src/ast/ast.c ../../src/ast/ast_traversal.c
 INC_FLAGS = -I./ -I../../include/ -I$(LIBFT_PATH)/include
 LIB_FLAGS = -L$(LIBFT_PATH) -lft
 

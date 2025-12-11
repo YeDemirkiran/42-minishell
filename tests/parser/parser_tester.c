@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 18:31:22 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 00:21:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -56,7 +56,7 @@ t_list	*token_list_to_linked_list(t_token *tokens, size_t length)
 	list = NULL;
 	while (i < length)
 	{
-		ft_lstadd_back(&list ,ft_lstnew((void *)tokens + i));
+		ft_lstadd_back(&list, ft_lstnew((void *)tokens + i));
 		i++;
 	}
 	return (list);
@@ -156,12 +156,14 @@ t_test_result	conduct_parser_test(t_parser_test test)
 	t_ast	*retrieved_ast;
 	t_bool	result;
 	static t_test_result test_result;
+	t_list	*list;
 
 	printf("Test %i.%i: %s\n", test.major_number, test.minor_number, test.name);
 
 	printf("Calling parse()...\n");
 	printf("=============================================================\n");
-	retrieved_ast = parse(token_list_to_linked_list(test.tokens, test.token_length));
+	list = token_list_to_linked_list(test.tokens, test.token_length);
+	retrieved_ast = parse(list);
 	printf("=============================================================\n");
 
 	result = compare_asts(test.expected_ast, retrieved_ast);
@@ -173,7 +175,7 @@ t_test_result	conduct_parser_test(t_parser_test test)
 		ast_free_tree(test.expected_ast);
 	if (retrieved_ast != NULL)
 		ast_free_tree(retrieved_ast);
-
+	ft_lstclear(&list, NULL);
 	return (test_result);
 }
 
