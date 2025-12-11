@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 17:29:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 23:25:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,7 +16,6 @@
 
 #include <libft/string.h>
 #include "enums/e_redir_type.h"
-
 
 #include "structs/s_ast.h"
 #include "structs/s_token.h"
@@ -56,8 +55,11 @@ static t_redir_type	get_redir_type(t_token_type type)
 	return (redir);
 }
 
-// Takes a token and saves it in redirections linked list if it's
-// a redirection token.
+
+/**
+ * @brief Takes a token and saves it in redirections linked list if it's
+ * a redirection token.
+ */
 static t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 {
 	t_parse_result	result;
@@ -83,7 +85,7 @@ static t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 		redirection->target_fd = token_obj->data.number;
 	redirection->redir_type = type;
 	redir_node = ft_lstnew((void *)redirection);
-	token_obj = (t_token *)token->next;
+	token_obj = (t_token *)token->next->content;
 	redirection->path = ft_strdup(token_obj->data.word);
 	ft_lstadd_back(redirs, redir_node);
 	result.type = PARSE_RESULT_SUCCESS;
@@ -114,14 +116,11 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 		{
 			//printf("\n\nENTERING REDIR PARSING\n\n");
 			parse_redirection(tokens, &redirs);
-
 		}
 		else if (token_obj->type == TOKEN_WORD)
-		{
 			ft_lstadd_back(&args, ft_lstnew((void *)ft_strdup(token_obj->data.word)));
-		}
 		else
-			break;
+			break ;
 		tokens = tokens->next;
 	}
 	if (args == NULL)
