@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 00:45:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 01:35:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -256,7 +256,7 @@ void	test_parser(int	test_number)
 				NULL, NULL)
 		},
 
-		// CASE 1: SIMPLE COMMANDS WITH REDIRECTIONS
+		// CASE 2: SIMPLE COMMANDS WITH REDIRECTIONS
 		{
 			.name = "cat < Makefile",
 			.major_number = test_number,
@@ -268,7 +268,49 @@ void	test_parser(int	test_number)
 			},
 			.token_length = 3,
 			.expected_ast = ast_new_node(AST_COMMAND,
-				ast_command_data(ft_split("ls -l -a", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))),
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))),
+				NULL, NULL)
+		},
+		{
+			.name = "cat << EOF",
+			.major_number = test_number,
+			.minor_number = 5,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number =- 1 },
+				{ .type = TOKEN_WORD, .data.word = "EOF" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_HEREDOC, 0, ft_strdup("EOF")))),
+				NULL, NULL)
+		},
+		{
+			.name = "cat > File",
+			.major_number = test_number,
+			.minor_number = 5,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number =- 1 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_OUTPUT, 1, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "cat >> File",
+			.major_number = test_number,
+			.minor_number = 5,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_APPEND, .data.number =- 1 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_APPEND, 1, ft_strdup("File")))),
 				NULL, NULL)
 		},
 	};
