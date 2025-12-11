@@ -6,15 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 14:55:14 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 17:30:34 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include <libft/string.h>
+#include <libft/write.h>
+
 #include "enums/e_redir_type.h"
 
 #include "structs/s_ast.h"
@@ -115,15 +118,15 @@ t_ast	*parse(t_list *tokens)
 	if (tokens == NULL)
 		return (NULL);
 	result = parse_token(tokens);
-	if (result.type != PARSE_RESULT_SUCCESS || result.ast == NULL)
+	if (result.type != PARSE_RESULT_SUCCESS)
 	{
 		// Time to give an error
 		if (result.type == PARSE_RESULT_TOKEN_ERROR)
-			printf("minishell: syntax error near unexpected token\n");
-		else if (result.type == PARSE_RESULT_RUNTIME_ERROR)
+			ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
 			perror("minishell");
 		else
-			printf("minishell: unkown error\n");
+			ft_putendl_fd("minishell: unkown error", 2);
 		return (NULL);
 	}
 	root = result.ast;
