@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/10 21:41:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 14:55:14 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -82,30 +82,31 @@ static void	debug_ast_print_node(t_ast *ast)
 			printf(", fd: %i, path: %s) ", redir->target_fd, redir->path);
 			lst = lst->next;
 		}
-		printf("\n\n");
+		printf("\n");
 	}
 }
 
 // Takes a pointer to a token and generates a tree, and returns it.
 // Potentially recursively calls itself.
-static t_ast	*parse_token(t_list *tokens)
+static t_parse_result	parse_token(t_list *tokens)
 {
-	t_ast	*ast;
+	t_parse_result	result;
 
-	ast = NULL;
+	result.ast = NULL;
+	result.type = PARSE_RESULT_RUNTIME_ERROR;
+	result.current_token = NULL;
 	if (tokens == NULL || tokens->content == NULL)
-		return (NULL);
-	ast = parse_command(tokens);
-	if (ast == NULL)
-		printf("bash: syntax error near unexpected token\n");
-	return (ast);
+		return (result);
+	result = parse_command(tokens);
+	return (result);
 }
 
 // Uses tokens from a lexer and converts them into a full AST
 // TODO: Remove debug logs
 t_ast	*parse(t_list *tokens)
 {
-	t_ast	*root;
+	t_ast			*root;
+	t_parse_result	result;
 
 	// todo: remove printf logs
 	printf("(DEBUG: Starting shell step 2: Parser)\n");
@@ -113,7 +114,19 @@ t_ast	*parse(t_list *tokens)
 
 	if (tokens == NULL)
 		return (NULL);
-	root = parse_token(tokens);
+	result = parse_token(tokens);
+	if (result.type != PARSE_RESULT_SUCCESS || result.ast == NULL)
+	{
+		// Time to give an error
+		if (result.type == PARSE_RESULT_TOKEN_ERROR)
+			printf("minishell: syntax error near unexpected token\n");
+		else if (result.type == PARSE_RESULT_RUNTIME_ERROR)
+			perror("minishell");
+		else
+			printf("minishell: unkown error\n");
+		return (NULL);
+	}
+	root = result.ast;
 	printf("(DEBUG: Step 1: Printing AST %i)\n", root == NULL);
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);

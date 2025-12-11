@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/10 22:15:27 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 14:49:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -58,9 +58,9 @@ static t_redir_type	get_redir_type(t_token_type type)
 
 // Parses a token according to COMMAND grammar.
 // TODO: Remove comments.
-static t_ast	*parse_simple_command(t_list *tokens)
+static t_parse_result	parse_simple_command(t_list *tokens)
 {
-	t_ast			*command;
+	t_parse_result	result;
 	t_token			*token_obj;
 	t_list			*redirs;
 	t_list			*current_redir;
@@ -69,8 +69,11 @@ static t_ast	*parse_simple_command(t_list *tokens)
 	t_redir_type	redir_type;
 	int				skip_next;
 
+	result.ast = NULL;
+	result.current_token = NULL;
+	result.type = PARSE_RESULT_RUNTIME_ERROR;
 	if (tokens == NULL || tokens->content == NULL)
-		return (NULL);
+		return (result);
 	skip_next = 0;
 	current_redir = NULL;
 	redirs = NULL;
@@ -109,10 +112,12 @@ static t_ast	*parse_simple_command(t_list *tokens)
 		tokens = tokens->next;
 	}
 	if (args == NULL)
-		return (NULL);
-	command = ast_new_node(AST_COMMAND, ast_command_data(ft_lst_to_string_arr(args), redirs), NULL, NULL);
+		return (result);
+	result.ast = ast_new_node(AST_COMMAND, ast_command_data(ft_lst_to_string_arr(args), redirs), NULL, NULL);
+	if (result.ast != NULL)
+		result.type = PARSE_RESULT_SUCCESS;
 	ft_lstclear(&args, NULL);
-	return (command);
+	return (result);
 }
 
 static t_parse_result	parse_subshell(t_list *tokens)
@@ -122,7 +127,7 @@ static t_parse_result	parse_subshell(t_list *tokens)
 	(void)tokens;
 	result.type = PARSE_RESULT_RUNTIME_ERROR;
 	result.ast = NULL;
-	result.current_token = tokens;
+	result.current_token = NULL;
 	return (result);
 }
 
