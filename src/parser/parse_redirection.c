@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 23:53:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 01:36:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -28,7 +28,7 @@ static int	get_redir_default_fd(t_redir_type type)
 	fd = 0;
 	if (type == REDIR_INPUT || type == REDIR_HEREDOC)
 		fd = 0;
-	else if (type == REDIR_APPEND || type == REDIR_APPEND)
+	else if (type == REDIR_OUTPUT || type == REDIR_APPEND)
 		fd = 1;
 	return (fd);
 }
