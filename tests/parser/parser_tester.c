@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 00:21:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 00:28:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -56,7 +56,7 @@ t_list	*token_list_to_linked_list(t_token *tokens, size_t length)
 	list = NULL;
 	while (i < length)
 	{
-		ft_lstadd_back(&list, ft_lstnew((void *)tokens + i));
+		ft_lstadd_back(&list, ft_lstnew((void *)(tokens + i)));
 		i++;
 	}
 	return (list);
@@ -164,7 +164,7 @@ t_test_result	conduct_parser_test(t_parser_test test)
 	printf("=============================================================\n");
 	list = token_list_to_linked_list(test.tokens, test.token_length);
 	retrieved_ast = parse(list);
-	printf("=============================================================\n");
+	printf("=============================================================\n\n");
 
 	result = compare_asts(test.expected_ast, retrieved_ast);
 	test_result.passed += result == 1;
@@ -193,6 +193,20 @@ void	test_parser(int	test_number)
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(ft_split("ls", ' '), NULL),
 				NULL, NULL)
+		},
+		{
+			.name = "ls -l -a",
+			.major_number = test_number,
+			.minor_number = 2,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_WORD, .data.word = "-l" },
+				{ .type = TOKEN_WORD, .data.word = "-a" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("ls -l -a", ' '), NULL),
+				NULL, NULL)
 		}
 	};
 
@@ -200,14 +214,14 @@ void	test_parser(int	test_number)
 
 	printf("\nTest %i: Testing parser() function\n", test_number);
 
-	for (size_t i = 0; i < 1; i++)
+	for (size_t i = 0; i < sizeof(tests) / sizeof(t_parser_test); i++)
 	{
 		results = conduct_parser_test(tests[i]);
 	}
 
 	printf("\n==================[RESULTS]==================\n\n");
 	printf(COLOR_GREEN "PASS: " COLOR_WHITE "%i/%i\n", results.passed, results.total);
-	printf(COLOR_RED "FAIL: " COLOR_WHITE "%i/%i\n", results.failed, results.passed);
+	printf(COLOR_RED "FAIL: " COLOR_WHITE "%i/%i\n", results.failed, results.total);
 	printf("\n[TEST %i DONE]\n", test_number);
 }
 
