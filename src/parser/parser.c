@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 23:57:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 23:59:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -26,6 +26,8 @@
 #include "structs/s_ast.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
+
+#include "modules/ast.h" // TODO: Remove as it's probably not necessary
 
 // Local headers
 #include "parse_command.h"

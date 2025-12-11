@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 23:58:03 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 00:48:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -51,7 +51,11 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	{
 		token_obj = (t_token *)(tokens->content);
 		if (get_redir_type(token_obj->type) != REDIR_NONE)
-			parse_redirection(tokens, &redirs);
+		{
+			result = parse_redirection(tokens, &redirs);
+			tokens = result.current_token;
+			continue ;
+		}
 		else if (token_obj->type == TOKEN_WORD)
 			ft_lstadd_back(&args, ft_lstnew((void *)ft_strdup(token_obj->data.word)));
 		else
