@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 00:28:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 00:36:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -171,17 +171,25 @@ t_test_result	conduct_parser_test(t_parser_test test)
 	test_result.failed += result == 0;
 	test_result.total += 1;
 
+	printf("[EXPECTED]  NULL: %s\n", test.expected_ast == NULL ? "Yes" : "No");
+	printf("[RETRIEVED] NULL: %s\n", retrieved_ast == NULL ? "Yes" : "No");
+	printf("%s[%s]" COLOR_WHITE"\n", result ? COLOR_GREEN : COLOR_RED, result ? "OK" : "KO");
+
 	if (test.expected_ast != NULL)
 		ast_free_tree(test.expected_ast);
 	if (retrieved_ast != NULL)
 		ast_free_tree(retrieved_ast);
 	ft_lstclear(&list, NULL);
+
+	printf("\n");
 	return (test_result);
 }
 
 void	test_parser(int	test_number)
 {
 	t_parser_test	tests[] = {
+
+		// CASE 1: SIMPLE COMMANDS (NO REDIRS)
 		{
 			.name = "ls",
 			.major_number = test_number,
@@ -206,6 +214,33 @@ void	test_parser(int	test_number)
 			.token_length = 3,
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(ft_split("ls -l -a", ' '), NULL),
+				NULL, NULL)
+		},
+		{
+			.name = "Only Newline",
+			.major_number = test_number,
+			.minor_number = 3,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "Long Command",
+			.major_number = test_number,
+			.minor_number = 4,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_WORD, .data.word = "README.md" },
+				{ .type = TOKEN_WORD, .data.word = "this_file_doesnt_exist_lol" },
+				{ .type = TOKEN_WORD, .data.word = "BROTHER_HOW" },
+				{ .type = TOKEN_WORD, .data.word = "Im_running_out_of_shit_to_test" },
+			},
+			.token_length = 6,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat Makefile README.md this_file_doesnt_exist_lol BROTHER_HOW Im_running_out_of_shit_to_test", ' '), NULL),
 				NULL, NULL)
 		}
 	};
