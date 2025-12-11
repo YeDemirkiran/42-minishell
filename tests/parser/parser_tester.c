@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 00:36:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 00:45:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -20,6 +20,7 @@
 #include <structs/s_token.h>
 #include <structs/s_redirection.h>
 #include <types/t_bool.h>
+#include <enums/e_redir_type.h>
 
 #include <modules/parser.h>
 #include <modules/ast.h>
@@ -185,6 +186,17 @@ t_test_result	conduct_parser_test(t_parser_test test)
 	return (test_result);
 }
 
+static void *alloc_redir(t_redir_type type, int fd, char *path)
+{
+	t_redirection	*redir;
+
+	redir = malloc(sizeof(t_redirection));
+	redir->path = path;
+	redir->redir_type = type;
+	redir->target_fd = fd;
+	return ((void *)redir);
+}
+
 void	test_parser(int	test_number)
 {
 	t_parser_test	tests[] = {
@@ -242,7 +254,23 @@ void	test_parser(int	test_number)
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(ft_split("cat Makefile README.md this_file_doesnt_exist_lol BROTHER_HOW Im_running_out_of_shit_to_test", ' '), NULL),
 				NULL, NULL)
-		}
+		},
+
+		// CASE 1: SIMPLE COMMANDS WITH REDIRECTIONS
+		{
+			.name = "cat < Makefile",
+			.major_number = test_number,
+			.minor_number = 5,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number =- 1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("ls -l -a", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))),
+				NULL, NULL)
+		},
 	};
 
 	t_test_result results;
