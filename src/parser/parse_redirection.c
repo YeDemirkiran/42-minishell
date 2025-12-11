@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 23:32:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 23:53:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -63,12 +63,6 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 	t_list			*redir_node;
 
 	token_obj = ((t_token *)token->content);
-	// result.current_token = token_obj;
-	// if (token->next == NULL || ((t_token *)token->next)->type != TOKEN_WORD)
-	// {
-	// 	result.current_token = NULL;
-	// 	return ((t_parse_result){.type = PARSE_RESULT_TOKEN_ERROR});
-	// }
 	redirection = malloc(sizeof(t_redirection));
 	if (redirection == NULL)
 		return ((t_parse_result){.type = PARSE_RESULT_RUNTIME_ERROR});

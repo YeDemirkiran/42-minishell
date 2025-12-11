@@ -6,27 +6,31 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 17:30:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 23:57:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stddef.h>
-#include <stdio.h>
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
+#include <stdio.h> // TODO: Remove
 #include <stdlib.h>
 #include <errno.h>
 
+// Internal libraries
 #include <libft/string.h>
 #include <libft/write.h>
 
+// Project headers
 #include "enums/e_redir_type.h"
-
 #include "structs/s_ast.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
 
-#include "modules/ast.h"
-
+// Local headers
 #include "parse_command.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 // TODO: remove
 static void	debug_ast_print_node(t_ast *ast)
@@ -89,8 +93,9 @@ static void	debug_ast_print_node(t_ast *ast)
 	}
 }
 
-// Takes a pointer to a token and generates a tree, and returns it.
-// Potentially recursively calls itself.
+/**
+ * @brief Main entry point for the parser. Calls the required grammar rules.
+ */
 static t_parse_result	parse_token(t_list *tokens)
 {
 	t_parse_result	result;
@@ -104,8 +109,11 @@ static t_parse_result	parse_token(t_list *tokens)
 	return (result);
 }
 
-// Uses tokens from a lexer and converts them into a full AST
-// TODO: Remove debug logs
+/**
+ * @brief Takes a list of tokens and parses it as a syntax tree.
+ * @returns Full AST on success, NULL on failure.
+ * @note Prints the error itself in case of failure.
+ */
 t_ast	*parse(t_list *tokens)
 {
 	t_ast			*root;
@@ -134,3 +142,5 @@ t_ast	*parse(t_list *tokens)
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
+
+/* ================================== END ================================== */

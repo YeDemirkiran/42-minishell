@@ -6,26 +6,33 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 23:32:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 23:58:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <stddef.h>
-#include <stdio.h>
+/* ================================ HEADERS ================================ */
+
+// Standrad libraries
 #include <stdlib.h>
 
+// Internal libraries
 #include <libft/string.h>
-#include "enums/e_redir_type.h"
 
+// Project headers
+#include "enums/e_redir_type.h"
 #include "structs/s_ast.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
 #include "modules/ast.h"
 
+// Local headers
 #include "parse_redirection.h"
 
-// Parses a token according to COMMAND grammar.
-// TODO: Remove comments.
+/* =============================== FUNCTIONS =============================== */
+
+/**
+ * @brief Parses a simple command with arguments and redirections.
+ */
 static t_parse_result	parse_simple_command(t_list *tokens)
 {
 	t_parse_result	result;
@@ -44,10 +51,7 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	{
 		token_obj = (t_token *)(tokens->content);
 		if (get_redir_type(token_obj->type) != REDIR_NONE)
-		{
-			//printf("\n\nENTERING REDIR PARSING\n\n");
 			parse_redirection(tokens, &redirs);
-		}
 		else if (token_obj->type == TOKEN_WORD)
 			ft_lstadd_back(&args, ft_lstnew((void *)ft_strdup(token_obj->data.word)));
 		else
@@ -63,6 +67,10 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	return (result);
 }
 
+
+/**
+ * @brief Parses a subshell.
+ */
 static t_parse_result	parse_subshell(t_list *tokens)
 {
 	t_parse_result	result;
@@ -74,6 +82,13 @@ static t_parse_result	parse_subshell(t_list *tokens)
 	return (result);
 }
 
+/**
+ * @brief Takes a token and parses it into either a simple command or
+ * a subshell.
+ *
+ * The process is decided by whether the first token is either a word,
+ * a redirection token, or a left parenthesis token.
+ */
 t_parse_result	parse_command(t_list *tokens)
 {
 	t_parse_result	result;
@@ -90,3 +105,5 @@ t_parse_result	parse_command(t_list *tokens)
 		result = (t_parse_result){.ast = NULL, .current_token = tokens, .type = PARSE_RESULT_TOKEN_ERROR};
 	return (result);
 }
+
+/* ================================== END ================================== */
