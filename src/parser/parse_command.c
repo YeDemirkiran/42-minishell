@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 14:49:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/11 17:29:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -40,9 +40,8 @@ static int	redir_default_fd(t_redir_type type)
 
 static t_redir_type	get_redir_type(t_token_type type)
 {
-	int	redir;
+	t_redir_type	redir;
 
-	redir = -1;
 	if (type == TOKEN_REDIR_INPUT)
 		redir = REDIR_INPUT;
 	else if (type == TOKEN_REDIR_OUTPUT)
@@ -51,10 +50,46 @@ static t_redir_type	get_redir_type(t_token_type type)
 		redir = REDIR_HEREDOC;
 	else if (type == TOKEN_REDIR_APPEND)
 		redir = REDIR_APPEND;
-	printf("(returning: %i)\n", redir);
+	else
+		redir = REDIR_NONE;
+	//printf("(returning: %i)\n", redir);
 	return (redir);
 }
 
+// Takes a token and saves it in redirections linked list if it's
+// a redirection token.
+static t_parse_result	parse_redirection(t_list *token, t_list **redirs)
+{
+	t_parse_result	result;
+	t_redir_type	type;
+	t_token			*token_obj;
+	t_redirection	*redirection;
+	t_list			*redir_node;
+
+	token_obj = ((t_token *)token->content);
+	// result.current_token = token_obj;
+	// if (token->next == NULL || ((t_token *)token->next)->type != TOKEN_WORD)
+	// {
+	// 	result.current_token = NULL;
+	// 	return ((t_parse_result){.type = PARSE_RESULT_TOKEN_ERROR});
+	// }
+	redirection = malloc(sizeof(t_redirection));
+	if (redirection == NULL)
+		return ((t_parse_result){.type = PARSE_RESULT_RUNTIME_ERROR});
+	type = get_redir_type(token_obj->type);
+	if (token_obj->data.number == -1)
+		redirection->target_fd = redir_default_fd(type);
+	else
+		redirection->target_fd = token_obj->data.number;
+	redirection->redir_type = type;
+	redir_node = ft_lstnew((void *)redirection);
+	token_obj = (t_token *)token->next;
+	redirection->path = ft_strdup(token_obj->data.word);
+	ft_lstadd_back(redirs, redir_node);
+	result.type = PARSE_RESULT_SUCCESS;
+	result.current_token = token->next->next;
+	return (result);
+}
 
 // Parses a token according to COMMAND grammar.
 // TODO: Remove comments.
@@ -63,45 +98,23 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	t_parse_result	result;
 	t_token			*token_obj;
 	t_list			*redirs;
-	t_list			*current_redir;
 	t_list			*args;
-	t_redirection	*redirection;
-	t_redir_type	redir_type;
-	int				skip_next;
 
 	result.ast = NULL;
 	result.current_token = NULL;
 	result.type = PARSE_RESULT_RUNTIME_ERROR;
 	if (tokens == NULL || tokens->content == NULL)
 		return (result);
-	skip_next = 0;
-	current_redir = NULL;
 	redirs = NULL;
 	args = NULL;
 	while (tokens != NULL)
 	{
 		token_obj = (t_token *)(tokens->content);
-		if (skip_next == 1)
+		if (get_redir_type(token_obj->type) != REDIR_NONE)
 		{
-			skip_next = 0;
-			if (token_obj->type == TOKEN_WORD && current_redir != NULL)
-				((t_redirection *)(current_redir->content))->path = ft_strdup(token_obj->data.word);
-			//else, throw error
-			tokens = tokens->next;
-			continue ;
-		}
-		redir_type = get_redir_type(token_obj->type);
-		if (redir_type != (t_redir_type)-1)
-		{
-			redirection = malloc(sizeof(t_redirection));
-			if (token_obj->data.number == -1)
-				redirection->target_fd = redir_default_fd(redir_type);
-			else
-				redirection->target_fd = token_obj->data.number;
-			redirection->redir_type = redir_type;
-			skip_next = 1;
-			current_redir = ft_lstnew((void *)redirection);
-			ft_lstadd_back(&redirs, current_redir);
+			//printf("\n\nENTERING REDIR PARSING\n\n");
+			parse_redirection(tokens, &redirs);
+
 		}
 		else if (token_obj->type == TOKEN_WORD)
 		{
@@ -137,11 +150,13 @@ t_parse_result	parse_command(t_list *tokens)
 	t_token			*token;
 
 	token = (t_token *)tokens->content;
-	if (token->type == TOKEN_WORD || get_redir_type(token->type) >= 0)
+	// if (token->type == TOKEN_NEWLINE)
+	// 	result = (t_parse_result){.ast = NULL, .current_token = tokens->next, .type = PARSE_RESULT_SUCCESS};
+	if (token->type == TOKEN_WORD || get_redir_type(token->type) != REDIR_NONE)
 		result = parse_simple_command(tokens);
-	else if (result.current_token ->type == TOKEN_PAREN_LEFT)
+	else if (token->type == TOKEN_PAREN_LEFT)
 		result = parse_subshell(tokens);
 	else
-		result = (t_parse_result){.ast = NULL, .current_token = token, .type = PARSE_RESULT_TOKEN_ERROR};
+		result = (t_parse_result){.ast = NULL, .current_token = tokens, .type = PARSE_RESULT_TOKEN_ERROR};
 	return (result);
 }
