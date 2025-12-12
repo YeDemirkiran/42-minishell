@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:27:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 18:32:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 23:49:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -24,7 +24,14 @@
 // Takes a void pointer, casts it to t_redirection* and frees its content.
 static void	free_redir_struct(void *redir)
 {
-	free(((t_redirection *)redir)->path);
+	t_redirection	*redir_obj;
+
+	if (redir == NULL)
+		return ;
+	redir_obj = (t_redirection *)redir;
+	if (redir_obj->path != NULL)
+		free(redir_obj->path);
+	free(redir_obj);
 }
 
 /**
