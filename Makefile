@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/12/11 23:32:59 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/12 18:33:43 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -46,7 +46,7 @@ PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_redirec
 
 ## AST
 AST_DIR = ast/
-AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c)
+AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c ast_helper.c)
 
 ## Executor
 EXECUTOR_DIR = executor/
