@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 00:48:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 18:07:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -62,8 +62,6 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 			break ;
 		tokens = tokens->next;
 	}
-	if (args == NULL)
-		return (result);
 	result.ast = ast_new_node(AST_COMMAND, ast_command_data(ft_lst_to_string_arr(args), redirs), NULL, NULL);
 	if (result.ast != NULL)
 		result.type = PARSE_RESULT_SUCCESS;
