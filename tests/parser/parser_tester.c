@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 17:07:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 18:42:52 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -86,22 +86,32 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 		char	**expected_args = expected->data->ast_command.arguments;
 		char	**testee_args = testee->data->ast_command.arguments;
 
+
+		// NULL check
+		if ((expected_args == NULL) != (testee_args == NULL))
+			return (0);
+		if ((expected->data->ast_command.command == NULL) != (testee->data->ast_command.command == NULL))
+			return (0);
+
 		// Comamnd path
-		if (strcmp(expected->data->ast_command.command,
+		if (expected->data->ast_command.command != NULL && strcmp(expected->data->ast_command.command,
 			testee->data->ast_command.command) != 0)
 			return (0);
 
 		// Arguments
-		size_t	i = 0;
-		while (expected_args[i] != NULL && testee_args[i] != NULL)
+		if (expected_args != NULL)
 		{
-			if (strcmp(expected_args[i], testee_args[i]) != 0)
+			size_t	i = 0;
+			while (expected_args[i] != NULL && testee_args[i] != NULL)
+			{
+				if (strcmp(expected_args[i], testee_args[i]) != 0)
+					return (0);
+				i++;
+			}
+			//  Check for early termination
+			if ((expected_args[i] != NULL) || (testee_args[i] != NULL))
 				return (0);
-			i++;
 		}
-		//  Check for early termination
-		if ((expected_args[i] != NULL) || (testee_args[i] != NULL))
-			return (0);
 
 		// Redirections
 		t_list	*exp_redirs = expected->data->ast_command.redirs;
@@ -435,12 +445,12 @@ void	test_parser(int	test_number)
 			.major_number = test_number,
 			.minor_number = 12,
 			.tokens = (t_token[]) {
-				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "File" },
 			},
 			.token_length = 2,
 			.expected_ast = ast_new_node(AST_COMMAND,
-				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_APPEND, 0, ft_strdup("File")))),
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("File")))),
 				NULL, NULL)
 		},
 	};
