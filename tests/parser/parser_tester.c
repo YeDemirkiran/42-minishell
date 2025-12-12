@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 01:35:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 12:52:00 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -197,6 +197,24 @@ static void *alloc_redir(t_redir_type type, int fd, char *path)
 	return ((void *)redir);
 }
 
+static t_list	*two_redir_list(t_redirection first, t_redirection second)
+{
+	t_list	*root;
+
+	root = ft_lstnew(alloc_redir(first.redir_type, first.target_fd, first.path));
+	root->next = ft_lstnew(alloc_redir(second.redir_type, second.target_fd, second.path));
+	return (root);
+}
+
+static t_list	*four_redir_list(t_redirection first, t_redirection second, t_redirection third, t_redirection fourth)
+{
+	t_list	*root;
+
+	root = two_redir_list(first, second);
+	root->next->next = two_redir_list(third, fourth);
+	return (root);
+}
+
 void	test_parser(int	test_number)
 {
 	t_parser_test	tests[] = {
@@ -263,7 +281,7 @@ void	test_parser(int	test_number)
 			.minor_number = 5,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cat" },
-				{ .type = TOKEN_REDIR_INPUT, .data.number =- 1 },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "Makefile" },
 			},
 			.token_length = 3,
@@ -274,10 +292,10 @@ void	test_parser(int	test_number)
 		{
 			.name = "cat << EOF",
 			.major_number = test_number,
-			.minor_number = 5,
+			.minor_number = 6,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cat" },
-				{ .type = TOKEN_REDIR_HEREDOC, .data.number =- 1 },
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "EOF" },
 			},
 			.token_length = 3,
@@ -288,10 +306,10 @@ void	test_parser(int	test_number)
 		{
 			.name = "cat > File",
 			.major_number = test_number,
-			.minor_number = 5,
+			.minor_number = 7,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cat" },
-				{ .type = TOKEN_REDIR_OUTPUT, .data.number =- 1 },
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "File" },
 			},
 			.token_length = 3,
@@ -302,15 +320,112 @@ void	test_parser(int	test_number)
 		{
 			.name = "cat >> File",
 			.major_number = test_number,
-			.minor_number = 5,
+			.minor_number = 8,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cat" },
-				{ .type = TOKEN_REDIR_APPEND, .data.number =- 1 },
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "File" },
 			},
 			.token_length = 3,
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_APPEND, 1, ft_strdup("File")))),
+				NULL, NULL)
+		},
+
+		// CASE 3: REDIRECTIONS WITH FDs
+		{
+			.name = "cat 999999999< Makefile",
+			.major_number = test_number,
+			.minor_number = 9,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = 999999999 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 999999999, ft_strdup("Makefile")))),
+				NULL, NULL)
+		},
+		{
+			.name = "cat 999999999<< EOF",
+			.major_number = test_number,
+			.minor_number = 10,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = 999999999 },
+				{ .type = TOKEN_WORD, .data.word = "EOF" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_HEREDOC, 999999999, ft_strdup("EOF")))),
+				NULL, NULL)
+		},
+		{
+			.name = "cat 999999999> File",
+			.major_number = test_number,
+			.minor_number = 11,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = 999999999 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_OUTPUT, 999999999, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "cat 999999999>> File",
+			.major_number = test_number,
+			.minor_number = 12,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_APPEND, .data.number = 999999999 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_APPEND, 999999999, ft_strdup("File")))),
+				NULL, NULL)
+		},
+
+		// CASE 4: MULTIPLE REDIRECTIONS
+		{
+			.name = "cat < Makefile < Makefile2",
+			.major_number = test_number,
+			.minor_number = 13,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile2" },
+			},
+			.token_length = 5,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat", ' '), two_redir_list((t_redirection){.path = ft_strdup("Makefile"), .target_fd = 0, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile2"), .target_fd = 0, .redir_type = REDIR_INPUT})),
+				NULL, NULL)
+		},
+		{
+			.name = "cat < Makefile < Makefile2 123<Makefile3 -123<Makefile4",
+			.major_number = test_number,
+			.minor_number = 13,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile2" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = 123 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile3" },
+				{ .type = TOKEN_WORD, .data.word = "-123" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile4" },
+			},
+			.token_length = 10,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(ft_split("cat -123", ' '), four_redir_list((t_redirection){.path = ft_strdup("Makefile"), .target_fd = 0, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile2"), .target_fd = 0, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile3"), .target_fd = 123, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile4"), .target_fd = 0, .redir_type = REDIR_INPUT})),
 				NULL, NULL)
 		},
 	};
