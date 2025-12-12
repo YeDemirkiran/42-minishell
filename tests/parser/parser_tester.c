@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 12:52:00 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 17:07:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -426,6 +426,21 @@ void	test_parser(int	test_number)
 			.token_length = 10,
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(ft_split("cat -123", ' '), four_redir_list((t_redirection){.path = ft_strdup("Makefile"), .target_fd = 0, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile2"), .target_fd = 0, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile3"), .target_fd = 123, .redir_type = REDIR_INPUT}, (t_redirection){.path = ft_strdup("Makefile4"), .target_fd = 0, .redir_type = REDIR_INPUT})),
+				NULL, NULL)
+		},
+
+		// CASE 15: ONLY REDIRS
+		{
+			.name = "< File",
+			.major_number = test_number,
+			.minor_number = 12,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_APPEND, 0, ft_strdup("File")))),
 				NULL, NULL)
 		},
 	};
