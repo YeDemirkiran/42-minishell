@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 18:42:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 01:02:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -420,7 +420,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "cat < Makefile < Makefile2 123<Makefile3 -123<Makefile4",
 			.major_number = test_number,
-			.minor_number = 13,
+			.minor_number = 14,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cat" },
 				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
@@ -439,11 +439,11 @@ void	test_parser(int	test_number)
 				NULL, NULL)
 		},
 
-		// CASE 15: ONLY REDIRS
+		// CASE 5: ONLY REDIRS
 		{
 			.name = "< File",
 			.major_number = test_number,
-			.minor_number = 12,
+			.minor_number = 15,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
 				{ .type = TOKEN_WORD, .data.word = "File" },
@@ -451,6 +451,99 @@ void	test_parser(int	test_number)
 			.token_length = 2,
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "> File",
+			.major_number = test_number,
+			.minor_number = 16,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_OUTPUT, 1, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "<< File",
+			.major_number = test_number,
+			.minor_number = 17,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_HEREDOC, 0, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = ">> File",
+			.major_number = test_number,
+			.minor_number = 18,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_APPEND, 1, ft_strdup("File")))),
+				NULL, NULL)
+		},
+
+		// CASE 6: ONLY REDIRS WITH FDs
+		{
+			.name = "99999< File",
+			.major_number = test_number,
+			.minor_number = 19,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_INPUT, .data.number = 99999 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_INPUT, 99999, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "99999> File",
+			.major_number = test_number,
+			.minor_number = 20,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = 99999 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_OUTPUT, 99999, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "99999<< File",
+			.major_number = test_number,
+			.minor_number = 21,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = 99999 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_HEREDOC, 99999, ft_strdup("File")))),
+				NULL, NULL)
+		},
+		{
+			.name = "99999>> File",
+			.major_number = test_number,
+			.minor_number = 22,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_APPEND, .data.number = 99999 },
+				{ .type = TOKEN_WORD, .data.word = "File" },
+			},
+			.token_length = 2,
+			.expected_ast = ast_new_node(AST_COMMAND,
+				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_APPEND, 99999, ft_strdup("File")))),
 				NULL, NULL)
 		},
 	};
