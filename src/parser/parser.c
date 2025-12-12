@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 23:59:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/12 18:09:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -49,14 +49,19 @@ static void	debug_ast_print_node(t_ast *ast)
 		printf("COMMAND DATA\n");
 		printf("Command: %s\n", ast->data->ast_command.command);
 
-		printf("Arguments: ");
-		for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
+		if (ast->data->ast_command.arguments != NULL)
 		{
-			printf("%s", ast->data->ast_command.arguments[i]);
-			if (ast->data->ast_command.arguments[i + 1] != NULL)
-				printf(", ");
+			printf("Arguments: ");
+			for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
+			{
+				printf("%s", ast->data->ast_command.arguments[i]);
+				if (ast->data->ast_command.arguments[i + 1] != NULL)
+					printf(", ");
+			}
+			printf("\n");
 		}
-		printf("\n");
+		else
+			printf("Arguments: (null)\n");
 
 		printf("Redirs: ");
 		t_list	*lst = ast->data->ast_command.redirs;
