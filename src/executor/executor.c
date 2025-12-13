@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/11 00:21:38 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/11 17:23:33 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 
 #include <structs/s_ast.h>
 
+
+/*This function cut \n and \r in char* of end of the line */
 char  *cut_wrong_chracter(const char *s1)
 {
     int i;

@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 14:31:56 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/13 13:07:39 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 #include "macros/m_colors.h"
 #include "structs/s_ast.h"
+#include "structs/s_redirection.h"
 
 #include "modules/lexer.h"
 #include "modules/ast.h"
@@ -41,10 +42,13 @@ static void manuel_test(t_ast **ast)
 		//ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("ls", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL));
 		//(*ast) = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat Makefile", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep a", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep o", ' '), NULL), NULL, NULL)));
 		(*ast) = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat /etc/passwd", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep root", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cut -d: -f1", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL))));
+		//(*ast)  = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(&((t_redirection){.path = "Makefile",.redir_type = TOKEN_REDIR_INPUT,.target_fd = 0}))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL));
 }
 
 int	main(int argc, char **argv, char **envp)
 {
+	int fd_in = 0;
+	int fd_out = 1;
 	char	*input;
 	char	*tmp;
 	//t_list	*tokens;
@@ -69,8 +73,7 @@ int	main(int argc, char **argv, char **envp)
 		input = ft_strjoin(tmp, "\n");
 		free(tmp);
 		manuel_test(&ast);
-		//printf("DEBUG COMMAND : %s\n", ast->data->ast_command.command);
-		executor(ast, envp, 0, 1);
+		executor(ast, envp, fd_in, fd_out);
 		if (input == NULL)
 			break;
 	}
