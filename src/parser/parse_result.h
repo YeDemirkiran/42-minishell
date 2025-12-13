@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:00:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/11 16:54:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:40:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -38,5 +38,26 @@ typedef struct s_parse_result
 	t_ast				*ast;
 	t_list				*current_token;
 }	t_parse_result;
+
+/**
+ * @brief Creates a parse_result object with given values.
+ */
+t_parse_result	parse_result(t_parse_result_type type,
+	t_ast *ast, t_list *current_token);
+
+/**
+ * @brief Creates a parse_result object of type syntax error.
+ */
+t_parse_result	parse_syntax_error(t_list *token);
+
+/**
+ * @brief Creates a parse_result object of type runtime error.
+ */
+t_parse_result	parse_runtime_error(t_list *token);
+
+/**
+ * @brief Creates a parse_result object of type success.
+ */
+t_parse_result	parse_success(t_ast *ast, t_list *token);
 
 #endif
