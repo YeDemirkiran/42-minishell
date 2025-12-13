@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 14:46:22 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 17:59:57 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -113,6 +113,49 @@ static t_parse_result	parse_token(t_list *tokens)
 	return (result);
 }
 
+static void	print_token_error(t_parse_result result)
+{
+	t_token	*token;
+	char	*token_word;
+
+	if (result.type != PARSE_RESULT_TOKEN_ERROR)
+		return ;
+	if (result.current_token == NULL || result.current_token->content == NULL)
+		token = NULL;
+	else
+		token = (t_token *)(result.current_token->content);
+	ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+	if (token->type == TOKEN_WORD)
+		token_word = token->data.word;
+	else if (token->type == TOKEN_NEWLINE)
+		token_word = "newline";
+	else if (token->type == TOKEN_PIPE)
+		token_word = "|";
+	else if (token->type == TOKEN_IF_AND)
+		token_word = "&&";
+	else if (token->type == TOKEN_IF_OR)
+		token_word = "||";
+	else if (token->type == TOKEN_PAREN_LEFT)
+		token_word = "(";
+	else if (token->type == TOKEN_PAREN_RIGHT)
+		token_word = ")";
+	else if (token->type == TOKEN_REDIR_INPUT)
+		token_word = "<";
+	else if (token->type == TOKEN_REDIR_OUTPUT)
+		token_word = ">";
+	else if (token->type == TOKEN_REDIR_HEREDOC)
+		token_word = "<<";
+	else if (token->type == TOKEN_REDIR_APPEND)
+		token_word = ">>";
+	else
+		token_word = NULL;
+	if (token_word == NULL)
+		ft_putstr_fd("(null)", 2);
+	else
+		ft_putstr_fd(token_word, 2);
+	ft_putstr_fd("'\n", 2);
+}
+
 /**
  * @brief Takes a list of tokens and parses it as a syntax tree.
  * @returns Full AST on success, NULL on failure.
@@ -134,7 +177,7 @@ t_ast	*parse(t_list *tokens)
 	{
 		// Time to give an error
 		if (result.type == PARSE_RESULT_TOKEN_ERROR)
-			ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+			print_token_error(result);
 		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
 			perror("minishell");
 		else
