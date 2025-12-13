@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 18:09:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:46:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -107,11 +107,8 @@ static t_parse_result	parse_token(t_list *tokens)
 {
 	t_parse_result	result;
 
-	result.ast = NULL;
-	result.type = PARSE_RESULT_RUNTIME_ERROR;
-	result.current_token = NULL;
 	if (tokens == NULL || tokens->content == NULL)
-		return (result);
+		return (parse_runtime_error(NULL));
 	result = parse_command(tokens);
 	return (result);
 }

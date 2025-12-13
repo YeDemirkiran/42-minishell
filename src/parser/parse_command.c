@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 18:07:27 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:52:35 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -40,9 +40,7 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	t_list			*redirs;
 	t_list			*args;
 
-	result.ast = NULL;
-	result.current_token = NULL;
-	result.type = PARSE_RESULT_RUNTIME_ERROR;
+	result = parse_runtime_error(tokens);
 	if (tokens == NULL || tokens->content == NULL)
 		return (result);
 	redirs = NULL;
@@ -96,15 +94,17 @@ t_parse_result	parse_command(t_list *tokens)
 	t_parse_result	result;
 	t_token			*token;
 
+	if (tokens == NULL)
+		return (parse_runtime_error(NULL));
 	token = (t_token *)tokens->content;
-	// if (token->type == TOKEN_NEWLINE)
-	// 	result = (t_parse_result){.ast = NULL, .current_token = tokens->next, .type = PARSE_RESULT_SUCCESS};
-	if (token->type == TOKEN_WORD || get_redir_type(token->type) != REDIR_NONE)
+	if (token->type == TOKEN_NEWLINE)
+		result = parse_success(NULL, tokens->next);
+ 	else if (token->type == TOKEN_WORD || get_redir_type(token->type) != REDIR_NONE)
 		result = parse_simple_command(tokens);
 	else if (token->type == TOKEN_PAREN_LEFT)
 		result = parse_subshell(tokens);
 	else
-		result = (t_parse_result){.ast = NULL, .current_token = tokens, .type = PARSE_RESULT_TOKEN_ERROR};
+		result = parse_syntax_error(tokens);
 	return (result);
 }
 
