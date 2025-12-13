@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 14:52:35 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 17:37:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -51,6 +51,12 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 		if (get_redir_type(token_obj->type) != REDIR_NONE)
 		{
 			result = parse_redirection(tokens, &redirs);
+			if (result.type != PARSE_RESULT_SUCCESS)
+			{
+				ft_lstclear(&args, free);
+				ft_lstclear(&redirs, free_redir_struct);
+				return (result);
+			}
 			tokens = result.current_token;
 			continue ;
 		}

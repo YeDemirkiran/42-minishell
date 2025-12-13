@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 14:43:27 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 17:26:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -71,9 +71,14 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 	else
 		redirection->target_fd = token_obj->data.number;
 	redirection->redir_type = type;
-	redir_node = ft_lstnew((void *)redirection);
 	token_obj = (t_token *)token->next->content;
+	if (token_obj->type != TOKEN_WORD)
+	{
+		free(redirection);
+		return (parse_syntax_error(token->next));
+	}
 	redirection->path = ft_strdup(token_obj->data.word);
+	redir_node = ft_lstnew((void *)redirection);
 	ft_lstadd_back(redirs, redir_node);
 	return (parse_success(NULL, token->next->next));
 }
