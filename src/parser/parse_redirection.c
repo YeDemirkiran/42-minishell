@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/12 01:36:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:43:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -56,7 +56,6 @@ t_redir_type	get_redir_type(t_token_type type)
  */
 t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 {
-	t_parse_result	result;
 	t_redir_type	type;
 	t_token			*token_obj;
 	t_redirection	*redirection;
@@ -65,9 +64,9 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 	token_obj = ((t_token *)token->content);
 	redirection = malloc(sizeof(t_redirection));
 	if (redirection == NULL)
-		return ((t_parse_result){.type = PARSE_RESULT_RUNTIME_ERROR});
+		return (parse_runtime_error(token));
 	type = get_redir_type(token_obj->type);
-	if (token_obj->data.number == -1)
+	if (token_obj->data.number < 0)
 		redirection->target_fd = get_redir_default_fd(type);
 	else
 		redirection->target_fd = token_obj->data.number;
@@ -76,7 +75,5 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 	token_obj = (t_token *)token->next->content;
 	redirection->path = ft_strdup(token_obj->data.word);
 	ft_lstadd_back(redirs, redir_node);
-	result.type = PARSE_RESULT_SUCCESS;
-	result.current_token = token->next->next;
-	return (result);
+	return (parse_success(NULL, token->next->next));
 }
