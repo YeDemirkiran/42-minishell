@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 17:31:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 15:24:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -70,11 +70,10 @@ int	main(int argc, char **argv, char **envp)
 		// STEP 2: Parser
 		// Use the tokens from lexer and parse them to usable commands by the executor.
 		ast = parse(tokens);
-		(void)ast;
 
 		// STEP 3: Execution
 		// Execute the parsed commands here. Provide envp for them.
-		// execute(cmd);
+		executor(ast, envp, 0, 1);
 
 		// STEP 4: Restart
 		// Prepare the shell for the next iteration.

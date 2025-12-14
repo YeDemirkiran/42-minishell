@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/14 15:22:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 15:25:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 #include "sys/wait.h"
 #include "../../lib/garbage_collector/gb.h"
 
-#include <structs/s_ast.h>
-#include <structs/s_redirection.h>
-#include <enums/e_redir_type.h>
+#include "structs/s_ast.h"
+#include "structs/s_redirection.h"
+#include "enums/e_redir_type.h"
 
 
 /*This function cut \n and \r in char* of end of the line */
