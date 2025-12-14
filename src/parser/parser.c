@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:27:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 17:13:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ t_ast	*parse(t_list *tokens)
 
 	// todo: remove printf logs
 	printf("(DEBUG: Starting shell step 2: Parser)\n");
-	printf("(DEBUG: Step 1: Parse AST)\n");
+	printf("(DEBUG: Step 2: Parse AST)\n");
 
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
@@ -191,7 +191,7 @@ t_ast	*parse(t_list *tokens)
 		return (NULL);
 	}
 	root = result.ast;
-	printf("(DEBUG: Step 1: Printing AST %i)\n", root == NULL);
+	printf("(DEBUG: Step 2.1: Printing AST)\n");
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
