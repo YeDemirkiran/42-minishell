@@ -1,0 +1,119 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_command.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
+/*   Updated: 2025/12/14 14:05:35 by yademirk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ================================ HEADERS ================================ */
+
+// Standrad libraries
+#include <stdlib.h>
+
+// Internal libraries
+#include <libft/string.h>
+
+// Project headers
+#include "enums/e_redir_type.h"
+#include "structs/s_ast.h"
+#include "structs/s_token.h"
+#include "structs/s_redirection.h"
+#include "modules/ast.h"
+
+// Local headers
+#include "parse_redirection.h"
+
+/* =============================== FUNCTIONS =============================== */
+
+/**
+ * @brief Parses a simple command with arguments and redirections.
+ * @returns A struct of t_parse_result.
+ * This structs holds the data about the operation.
+ */
+static t_parse_result	parse_simple_command(t_list *tokens)
+{
+	t_parse_result	result;
+	t_token			*token_obj;
+	t_list			*redirs;
+	t_list			*args;
+
+	result = parse_runtime_error(tokens);
+	if (tokens == NULL || tokens->content == NULL)
+		return (result);
+	redirs = NULL;
+	args = NULL;
+	while (tokens != NULL && tokens->content != NULL)
+	{
+		token_obj = (t_token *)(tokens->content);
+		if (get_redir_type(token_obj->type) != REDIR_NONE)
+		{
+			result = parse_redirection(tokens, &redirs);
+			if (result.type != PARSE_RESULT_SUCCESS)
+			{
+				ft_lstclear(&args, free);
+				ft_lstclear(&redirs, free_redir_struct);
+				return (result);
+			}
+			tokens = result.current_token;
+			continue ;
+		}
+		else if (token_obj->type == TOKEN_WORD)
+			ft_lstadd_back(&args, ft_lstnew((void *)ft_strdup(token_obj->data.word)));
+		else
+			break ;
+		tokens = tokens->next;
+	}
+	result.ast = ast_new_node(AST_COMMAND, ast_command_data(ft_lst_to_string_arr(args), redirs), NULL, NULL);
+	if (result.ast != NULL)
+		result.type = PARSE_RESULT_SUCCESS;
+	ft_lstclear(&args, NULL);
+	return (result);
+}
+
+/**
+ * @brief Parses a subshell.
+ */
+static t_parse_result	parse_subshell(t_list *tokens)
+{
+	t_parse_result	result;
+
+	(void)tokens;
+	result.type = PARSE_RESULT_RUNTIME_ERROR;
+	result.ast = NULL;
+	result.current_token = NULL;
+	return (result);
+}
+
+/**
+ * @brief Takes a token and parses it into either a simple command or
+ * a subshell.
+ *
+ * The process is decided by whether the first token is either a word,
+ * a redirection token, or a left parenthesis token.
+ */
+t_parse_result	parse_command(t_list *tokens)
+{
+	t_parse_result	result;
+	t_token			*token;
+
+	if (tokens == NULL || tokens->content == NULL)
+		return (parse_runtime_error(NULL));
+	token = (t_token *)tokens->content;
+	if (token->type == TOKEN_NEWLINE)
+		result = parse_success(NULL, tokens->next);
+ 	else if (token->type == TOKEN_WORD
+		|| get_redir_type(token->type) != REDIR_NONE)
+		result = parse_simple_command(tokens);
+	else if (token->type == TOKEN_PAREN_LEFT)
+		result = parse_subshell(tokens);
+	else
+		result = parse_syntax_error(tokens);
+	return (result);
+}
+
+/* ================================== END ================================== */

@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/17 08:48:56 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/13 14:41:40 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -30,11 +30,27 @@ LIBGB_INC_DIR = $(LIBGB_DIR)include/
 LIBGB_A = $(LIBGB_DIR)libgb.a
 
 # C FILES
-C_FILES = $(MAIN_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES) $(LEXER_FILES) $(EXECUTOR_FILES)
+C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXECUTOR_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
 
 ## Main
 MAIN_DIR = main/
 MAIN_FILES = $(addprefix $(MAIN_DIR), main.c)
+
+## Lexer
+LEXER_DIR = lexer/
+LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_misc.c token.c token_utils.c)
+
+## Parser
+PARSER_DIR = parser/
+PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_redirection.c parse_result.c)
+
+## AST
+AST_DIR = ast/
+AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c ast_helper.c)
+
+## Executor
+EXECUTOR_DIR = executor/
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
@@ -44,21 +60,13 @@ BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c)
 SIGNAL_DIR = signal/
 SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
 
-## Lexer
-LEXER_DIR = lexer/
-LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c)
-
-## Executor
-EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c)
-
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
 OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 
 # CONFIGURATION
 CC = cc
-W_FLAGS = -Wall -Wextra -Werror
+W_FLAGS = -Wall -Wextra -Werror -g
 INC_FLAGS = -I$(INC_DIR) -I$(LIBGB_INC_DIR) -I$(LIBFT_INC_DIR)
 LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -lreadline -lft -lgb
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
@@ -81,7 +89,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(FLAGS) $^ -c -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)*
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -rf $(NAME)

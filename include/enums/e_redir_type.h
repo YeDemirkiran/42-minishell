@@ -1,22 +1,25 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   s_linked_list.h                                    :+:      :+:    :+:   */
+/*   e_redir_type.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 23:52:48 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 23:55:07 by yademirk         ###   ########.fr       */
+/*   Created: 2025/11/13 15:56:30 by yademirk          #+#    #+#             */
+/*   Updated: 2025/12/11 17:11:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef S_LINKED_LIST_H
-# define S_LINKED_LIST_H
+#ifndef E_REDIR_TYPE_H
+# define E_REDIR_TYPE_H
 
-typedef struct s_linked_list
+typedef enum e_redir_type
 {
-	t_linked_list	*next;
-	void			*content;
-}			t_linked_list;
+	REDIR_NONE,
+	REDIR_INPUT,
+	REDIR_OUTPUT,
+	REDIR_HEREDOC,
+	REDIR_APPEND
+}	t_redir_type;
 
 #endif

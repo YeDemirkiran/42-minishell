@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   s_command.h                                        :+:      :+:    :+:   */
+/*   e_metachar.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 23:37:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/17 13:57:01 by yademirk         ###   ########.fr       */
+/*   Created: 2025/09/07 20:19:25 by yademirk          #+#    #+#             */
+/*   Updated: 2025/11/17 12:36:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef S_COMMAND_H
-# define S_COMMAND_H
+#ifndef E_METACHAR_H
+# define E_METACHAR_H
 
-# include <structs/s_linked_list.h>
-
-// Struct of a command, to be used by the executor.
-typedef struct s_command
+// Metacharacters used for the tokenization phase.
+typedef enum e_metachar
 {
-	char			*command_path;
-	char			**arguments;
-	t_linked_list	*redirs;
-}			t_command;
+	METACHAR_SPACE = ' ',
+	METACHAR_TAB = '\t',
+	METACHAR_NEWLINE = '\n',
+	METACHAR_PIPE = '|',
+	METACHAR_AMPERSAND = '&',
+	METACHAR_SEMICOLON = ';',
+	METACHAR_PAREN_LEFT = '(',
+	METACHAR_PAREN_RIGHT = ')',
+	METACHAR_REDIR_LEFT = '<',
+	METACHAR_REDIR_RIGHT = '>'
+}	t_metachar;
 
 #endif

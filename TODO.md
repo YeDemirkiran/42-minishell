@@ -4,11 +4,14 @@ Prompt > Input > Lexer > Parser > Executor > Repeat
 
 ### Lexer
 #### Split
+Done
 #### Quote Handling
+Done
 #### Tokenization
+Done
 
 ### Parser
-#### Expansion	
+#### Expansion
 #### AST
 
 ### Executor
