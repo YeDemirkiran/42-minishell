@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 17:26:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 18:32:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 
@@ -61,6 +61,8 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 	t_redirection	*redirection;
 	t_list			*redir_node;
 
+	if (token == NULL || token->content == NULL || token->next == NULL || token->next->content == NULL)
+		return (parse_runtime_error(token));
 	token_obj = ((t_token *)token->content);
 	redirection = malloc(sizeof(t_redirection));
 	if (redirection == NULL)
@@ -78,7 +80,18 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 		return (parse_syntax_error(token->next));
 	}
 	redirection->path = ft_strdup(token_obj->data.word);
+	if (redirection->path == NULL)
+	{
+		free(redirection);
+		return (parse_runtime_error(token->next));
+	}
 	redir_node = ft_lstnew((void *)redirection);
+	if (redir_node == NULL)
+	{
+		free(redirection->path);
+		free(redirection);
+		return (parse_runtime_error(token->next));
+	}
 	ft_lstadd_back(redirs, redir_node);
 	return (parse_success(NULL, token->next->next));
 }

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 14:05:35 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 18:18:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	t_token			*token_obj;
 	t_list			*redirs;
 	t_list			*args;
+	t_list			*tmp_list;
+	char			*tmp_char;
 
 	result = parse_runtime_error(tokens);
 	if (tokens == NULL || tokens->content == NULL)
@@ -63,14 +65,61 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 			continue ;
 		}
 		else if (token_obj->type == TOKEN_WORD)
-			ft_lstadd_back(&args, ft_lstnew((void *)ft_strdup(token_obj->data.word)));
+		{
+			tmp_char = ft_strdup(token_obj->data.word);
+			if (tmp_char == NULL)
+			{
+				ft_lstclear(&args, free);
+				ft_lstclear(&redirs, free_redir_struct);
+				return (parse_runtime_error(tokens));
+			}
+			tmp_list = ft_lstnew((void *)tmp_char);
+			if (tmp_list == NULL)
+			{
+				free(tmp_char);
+				ft_lstclear(&args, free);
+				ft_lstclear(&redirs, free_redir_struct);
+				return (parse_runtime_error(tokens));
+			}
+			ft_lstadd_back(&args, tmp_list);
+		}
 		else
 			break ;
 		tokens = tokens->next;
 	}
-	result.ast = ast_new_node(AST_COMMAND, ast_command_data(ft_lst_to_string_arr(args), redirs), NULL, NULL);
-	if (result.ast != NULL)
-		result.type = PARSE_RESULT_SUCCESS;
+
+	t_ast_data	*data;
+	char		**c_args;
+
+	c_args = NULL;
+	if (args != NULL)
+	{
+		c_args = ft_lst_to_string_arr(args);
+		if (c_args == NULL)
+		{
+			ft_lstclear(&args, free);
+			ft_lstclear(&redirs, free_redir_struct);
+			return (parse_runtime_error(tokens));
+		}
+	}	
+	data = ast_command_data(c_args, redirs);
+	if (data == NULL)
+	{
+		ft_lstclear(&args, free);
+		ft_lstclear(&redirs, free_redir_struct);
+		free(c_args);
+		return (parse_runtime_error(tokens));
+	}
+	result.ast = ast_new_node(AST_COMMAND, data, NULL, NULL);
+	if (result.ast == NULL)
+	{
+		ft_lstclear(&args, free);
+		ft_lstclear(&redirs, free_redir_struct);
+		free(data->ast_command.arguments);
+		free(data);
+		return (parse_runtime_error(tokens));
+	}
+	result.type = PARSE_RESULT_SUCCESS;
 	ft_lstclear(&args, NULL);
 	return (result);
 }
