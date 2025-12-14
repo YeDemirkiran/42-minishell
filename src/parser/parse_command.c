@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 17:37:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 14:05:35 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -32,6 +32,8 @@
 
 /**
  * @brief Parses a simple command with arguments and redirections.
+ * @returns A struct of t_parse_result.
+ * This structs holds the data about the operation.
  */
 static t_parse_result	parse_simple_command(t_list *tokens)
 {
@@ -45,7 +47,7 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 		return (result);
 	redirs = NULL;
 	args = NULL;
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->content != NULL)
 	{
 		token_obj = (t_token *)(tokens->content);
 		if (get_redir_type(token_obj->type) != REDIR_NONE)
@@ -73,7 +75,6 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	return (result);
 }
 
-
 /**
  * @brief Parses a subshell.
  */
@@ -100,12 +101,13 @@ t_parse_result	parse_command(t_list *tokens)
 	t_parse_result	result;
 	t_token			*token;
 
-	if (tokens == NULL)
+	if (tokens == NULL || tokens->content == NULL)
 		return (parse_runtime_error(NULL));
 	token = (t_token *)tokens->content;
 	if (token->type == TOKEN_NEWLINE)
 		result = parse_success(NULL, tokens->next);
- 	else if (token->type == TOKEN_WORD || get_redir_type(token->type) != REDIR_NONE)
+ 	else if (token->type == TOKEN_WORD
+		|| get_redir_type(token->type) != REDIR_NONE)
 		result = parse_simple_command(tokens);
 	else if (token->type == TOKEN_PAREN_LEFT)
 		result = parse_subshell(tokens);

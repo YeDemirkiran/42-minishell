@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 13:51:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 14:03:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ t_ast	*parse(t_list *tokens)
 	printf("(DEBUG: Starting shell step 2: Parser)\n");
 	printf("(DEBUG: Step 1: Parse AST)\n");
 
-	if (tokens == NULL)
+	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
 	result = parse_token(tokens);
 	if (result.type != PARSE_RESULT_SUCCESS)
