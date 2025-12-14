@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 01:02:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 23:36:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -545,6 +545,140 @@ void	test_parser(int	test_number)
 			.expected_ast = ast_new_node(AST_COMMAND,
 				ast_command_data(NULL, ft_lstnew(alloc_redir(REDIR_APPEND, 99999, ft_strdup("File")))),
 				NULL, NULL)
+		},
+
+		// CASE 7: EMPTY REDIRS
+		{
+			.name = "<",
+			.major_number = test_number,
+			.minor_number = 23,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = ">",
+			.major_number = test_number,
+			.minor_number = 24,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = -1 },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "<<",
+			.major_number = test_number,
+			.minor_number = 25,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = ">>",
+			.major_number = test_number,
+			.minor_number = 26,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+
+		// CASE 8: EMPTY REDIR WITH NEWLINE
+		{
+			.name = "< [newline]",
+			.major_number = test_number,
+			.minor_number = 27,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "> [newline]",
+			.major_number = test_number,
+			.minor_number = 28,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = -1 },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "<< [newline]",
+			.major_number = test_number,
+			.minor_number = 29,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = ">> [newline]",
+			.major_number = test_number,
+			.minor_number = 30,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+
+		// CASE 0: EMPTY REDIR WITH OTHER TOKENS
+		{
+			.name = "<&&",
+			.major_number = test_number,
+			.minor_number = 31,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = ">||",
+			.major_number = test_number,
+			.minor_number = 32,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_OUTPUT, .data.number = -1 },
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "<<(",
+			.major_number = test_number,
+			.minor_number = 33,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_HEREDOC, .data.number = -1 },
+				{ .type = TOKEN_PAREN_LEFT },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = ">>)",
+			.major_number = test_number,
+			.minor_number = 34,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
 		},
 	};
 
