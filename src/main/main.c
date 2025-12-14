@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 13:07:39 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/14 15:06:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "macros/m_colors.h"
 #include "structs/s_ast.h"
 #include "structs/s_redirection.h"
+#include "enums/e_redir_type.h"
 
 #include "modules/lexer.h"
 #include "modules/ast.h"
@@ -38,11 +39,13 @@
 
 static void manuel_test(t_ast **ast)
 {
+	(void)ast;
 	   	//(*ast) = ast_new_node(AST_COMMAND, ast_command_data(ft_split("ls", ' '), NULL), NULL , NULL);
 		//ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("ls", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL));
 		//(*ast) = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat Makefile", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep a", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep o", ' '), NULL), NULL, NULL)));
-		(*ast) = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat /etc/passwd", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep root", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cut -d: -f1", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL))));
-		//(*ast)  = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(&((t_redirection){.path = "Makefile",.redir_type = TOKEN_REDIR_INPUT,.target_fd = 0}))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL));
+		//(*ast) = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat /etc/passwd", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("grep root", ' '), NULL), NULL, NULL), ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cut -d: -f1", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL))));
+		// (*ast) = ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(&((t_redirection){.path = "Makefile",.redir_type = REDIR_INPUT, .target_fd = 0}))), NULL, NULL);
+		// (*ast) = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(&((t_redirection){.path = "Makefile",.redir_type = REDIR_INPUT, .target_fd = 0}))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), NULL), NULL, NULL));
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -72,7 +75,9 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		input = ft_strjoin(tmp, "\n");
 		free(tmp);
-		manuel_test(&ast);
+		ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(&((t_redirection){.path = "Makefile",.redir_type = REDIR_INPUT, .target_fd = 0}))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("wc -l", ' '), ft_lstnew(&((t_redirection){.path = "out",.redir_type = REDIR_OUTPUT, .target_fd = 1}))), NULL, NULL));
+		(void)manuel_test;
+		//manuel_test(&ast);
 		executor(ast, envp, fd_in, fd_out);
 		if (input == NULL)
 			break;

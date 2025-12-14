@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/11 17:23:33 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/14 15:05:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include "../../lib/garbage_collector/gb.h"
 
 #include <structs/s_ast.h>
+#include <structs/s_redirection.h>
+#include <enums/e_redir_type.h>
 
 
 /*This function cut \n and \r in char* of end of the line */
@@ -58,15 +60,32 @@ void delete_new_line(char ***s1)
 }
 void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 {
-	(void)ast;
 	pid_t pid;
+	t_redirection	*redir;
 
+	
 	pid = fork();
 	delete_new_line(&ast->data->ast_command.arguments);
 	if(pid == 0)
 	{
 		dup2(fd_in, 0);
 		dup2(fd_out, 1);
+		t_list *redirs = ast->data->ast_command.redirs;
+		printf("REDIRS NULL: %i\n", redirs == NULL);
+		while (redirs != NULL)
+		{
+			int fd = -1;
+			redir = (t_redirection *)redirs->content;
+			if (redir->redir_type == REDIR_INPUT)
+				fd = open(redir->path, O_RDONLY);
+			else if (redir->redir_type == REDIR_OUTPUT)
+				fd = open(redir->path, O_WRONLY | O_CREAT, 0777);
+			if (fd >= 0)
+			{
+				dup2(fd, redir->target_fd);
+			}		
+			redirs = redirs->next;
+		}
 		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
 		exit(1);
 	}
