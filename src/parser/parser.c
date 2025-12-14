@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 17:59:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/14 13:51:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -113,6 +113,35 @@ static t_parse_result	parse_token(t_list *tokens)
 	return (result);
 }
 
+static char	*get_token_string(t_token *token)
+{
+	if (token == NULL)
+		return (NULL);
+	if (token->type == TOKEN_WORD)
+		return (token->data.word);
+	if (token->type == TOKEN_NEWLINE)
+		return ("newline");
+	if (token->type == TOKEN_PIPE)
+		return ("|");
+	if (token->type == TOKEN_IF_AND)
+		return ("&&");
+	if (token->type == TOKEN_IF_OR)
+		return ("||");
+	if (token->type == TOKEN_PAREN_LEFT)
+		return ("(");
+	if (token->type == TOKEN_PAREN_RIGHT)
+		return (")");
+	if (token->type == TOKEN_REDIR_INPUT)
+		return ("<");
+	if (token->type == TOKEN_REDIR_OUTPUT)
+		return (">");
+	if (token->type == TOKEN_REDIR_HEREDOC)
+		return ("<<");
+	if (token->type == TOKEN_REDIR_APPEND)
+		return (">>");
+	return (NULL);
+}
+
 static void	print_token_error(t_parse_result result)
 {
 	t_token	*token;
@@ -125,30 +154,7 @@ static void	print_token_error(t_parse_result result)
 	else
 		token = (t_token *)(result.current_token->content);
 	ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
-	if (token->type == TOKEN_WORD)
-		token_word = token->data.word;
-	else if (token->type == TOKEN_NEWLINE)
-		token_word = "newline";
-	else if (token->type == TOKEN_PIPE)
-		token_word = "|";
-	else if (token->type == TOKEN_IF_AND)
-		token_word = "&&";
-	else if (token->type == TOKEN_IF_OR)
-		token_word = "||";
-	else if (token->type == TOKEN_PAREN_LEFT)
-		token_word = "(";
-	else if (token->type == TOKEN_PAREN_RIGHT)
-		token_word = ")";
-	else if (token->type == TOKEN_REDIR_INPUT)
-		token_word = "<";
-	else if (token->type == TOKEN_REDIR_OUTPUT)
-		token_word = ">";
-	else if (token->type == TOKEN_REDIR_HEREDOC)
-		token_word = "<<";
-	else if (token->type == TOKEN_REDIR_APPEND)
-		token_word = ">>";
-	else
-		token_word = NULL;
+	token_word = get_token_string(token);
 	if (token_word == NULL)
 		ft_putstr_fd("(null)", 2);
 	else
