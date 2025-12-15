@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/15 22:34:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/15 23:35:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -32,6 +32,9 @@
 
 /**
  * @brief Takes a word token and saves it to an arguments list.
+ * @note This function is used to comply with 42 Norm's
+ * "max 25 line per function" rule. Do not use outside of the
+ * parse_simple_command function.
  */
 static int	save_word_to_arg_list(t_list **args, char *word)
 {
@@ -51,6 +54,13 @@ static int	save_word_to_arg_list(t_list **args, char *word)
 	return (1);
 }
 
+/**
+ * @brief Takes an argument and redirections list, creates an AST node and
+ * passes it to the given **ast parameter.
+ * @note This function is used to comply with 42 Norm's
+ * "max 25 line per function" rule. Do not use outside of the
+ * parse_simple_command function.
+ */
 static int	save_command_ast_node(t_list *args, t_ast **ast, t_list *redirs)
 {
 	t_ast_data	*data;
@@ -80,6 +90,27 @@ static int	save_command_ast_node(t_list *args, t_ast **ast, t_list *redirs)
 }
 
 /**
+ * @brief Static function used for freeing parse lists in the
+ * parse_simple_command function.
+ *
+ * @returns Returns a t_parse_result object with the given parse result type,
+ * for convenience.
+ *
+ * @note This function is used to comply with 42 Norm's
+ * "max 25 line per function" rule. Do not use outside of the
+ * parse_simple_command function.
+ */
+static t_parse_result	free_parse_lists(t_list **args, t_list **redirs,
+	t_parse_result result)
+{
+	if (args != NULL)
+		ft_lstclear(args, free);
+	if (redirs != NULL)
+		ft_lstclear(redirs, free_redir_struct);
+	return (result);
+}
+
+/**
  * @brief Parses a simple command with arguments and redirections.
  * @returns A struct of t_parse_result.
  * This structs holds the data about the operation.
@@ -103,33 +134,22 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 		{
 			result = parse_redirection(tokens, &redirs);
 			if (result.type != PARSE_RESULT_SUCCESS)
-			{
-				ft_lstclear(&args, free);
-				ft_lstclear(&redirs, free_redir_struct);
-				return (result);
-			}
+				return (free_parse_lists(&args, &redirs, result));
 			tokens = result.current_token;
 			continue ;
 		}
 		else if (token_obj->type == TOKEN_WORD)
 		{
 			if (save_word_to_arg_list(&args, token_obj->data.word) != 1)
-			{
-				ft_lstclear(&args, free);
-				ft_lstclear(&redirs, free_redir_struct);
-				return (parse_runtime_error(tokens));
-			}
+				return (free_parse_lists(&args, &redirs,
+					parse_runtime_error(tokens)));
 		}
 		else
 			break ;
 		tokens = tokens->next;
 	}
 	if (save_command_ast_node(args, &(result.ast), redirs) != 1)
-	{
-		ft_lstclear(&args, free);
-		ft_lstclear(&redirs, free_redir_struct);
-		return (parse_runtime_error(tokens));
-	}
+		return (free_parse_lists(&args, &redirs, parse_runtime_error(tokens)));
 	result.type = PARSE_RESULT_SUCCESS;
 	ft_lstclear(&args, NULL);
 	return (result);
