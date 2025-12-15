@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 18:18:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/15 22:06:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -29,6 +29,34 @@
 #include "parse_redirection.h"
 
 /* =============================== FUNCTIONS =============================== */
+
+static int	save_command_ast_node(t_list *args, t_ast **ast, t_list *redirs)
+{
+	t_ast_data	*data;
+	char		**c_args;
+
+	c_args = NULL;
+	if (args != NULL)
+	{
+		c_args = ft_lst_to_string_arr(args);
+		if (c_args == NULL)
+			return (0);
+	}
+	data = ast_command_data(c_args, redirs);
+	if (data == NULL)
+	{
+		free(c_args);
+		return (0);
+	}
+	*ast = ast_new_node(AST_COMMAND, data, NULL, NULL);
+	if (*ast == NULL)
+	{
+		free(data->ast_command.arguments);
+		free(data);
+		return (0);
+	}
+	return (1);
+}
 
 /**
  * @brief Parses a simple command with arguments and redirections.
@@ -87,36 +115,10 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 			break ;
 		tokens = tokens->next;
 	}
-
-	t_ast_data	*data;
-	char		**c_args;
-
-	c_args = NULL;
-	if (args != NULL)
-	{
-		c_args = ft_lst_to_string_arr(args);
-		if (c_args == NULL)
-		{
-			ft_lstclear(&args, free);
-			ft_lstclear(&redirs, free_redir_struct);
-			return (parse_runtime_error(tokens));
-		}
-	}	
-	data = ast_command_data(c_args, redirs);
-	if (data == NULL)
+	if (save_command_ast_node(args, &(result.ast), redirs) != 1)
 	{
 		ft_lstclear(&args, free);
 		ft_lstclear(&redirs, free_redir_struct);
-		free(c_args);
-		return (parse_runtime_error(tokens));
-	}
-	result.ast = ast_new_node(AST_COMMAND, data, NULL, NULL);
-	if (result.ast == NULL)
-	{
-		ft_lstclear(&args, free);
-		ft_lstclear(&redirs, free_redir_struct);
-		free(data->ast_command.arguments);
-		free(data);
 		return (parse_runtime_error(tokens));
 	}
 	result.type = PARSE_RESULT_SUCCESS;
