@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/15 22:06:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/15 22:34:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -29,6 +29,27 @@
 #include "parse_redirection.h"
 
 /* =============================== FUNCTIONS =============================== */
+
+/**
+ * @brief Takes a word token and saves it to an arguments list.
+ */
+static int	save_word_to_arg_list(t_list **args, char *word)
+{
+	t_list	*new;
+	char	*str;
+
+	str = ft_strdup(word);
+	if (str == NULL)
+		return (0);
+	new = ft_lstnew((void *)str);
+	if (new == NULL)
+	{
+		free(str);
+		return (0);
+	}
+	ft_lstadd_back(args, new);
+	return (1);
+}
 
 static int	save_command_ast_node(t_list *args, t_ast **ast, t_list *redirs)
 {
@@ -69,8 +90,6 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	t_token			*token_obj;
 	t_list			*redirs;
 	t_list			*args;
-	t_list			*tmp_list;
-	char			*tmp_char;
 
 	result = parse_runtime_error(tokens);
 	if (tokens == NULL || tokens->content == NULL)
@@ -94,22 +113,12 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 		}
 		else if (token_obj->type == TOKEN_WORD)
 		{
-			tmp_char = ft_strdup(token_obj->data.word);
-			if (tmp_char == NULL)
+			if (save_word_to_arg_list(&args, token_obj->data.word) != 1)
 			{
 				ft_lstclear(&args, free);
 				ft_lstclear(&redirs, free_redir_struct);
 				return (parse_runtime_error(tokens));
 			}
-			tmp_list = ft_lstnew((void *)tmp_char);
-			if (tmp_list == NULL)
-			{
-				free(tmp_char);
-				ft_lstclear(&args, free);
-				ft_lstclear(&redirs, free_redir_struct);
-				return (parse_runtime_error(tokens));
-			}
-			ft_lstadd_back(&args, tmp_list);
 		}
 		else
 			break ;
