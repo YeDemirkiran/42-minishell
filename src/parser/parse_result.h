@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_result.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:00:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:27:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/16 16:19:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #ifndef PARSE_RESULT_H
 # define PARSE_RESULT_H
@@ -43,7 +43,7 @@ typedef struct s_parse_result
  * @brief Creates a parse_result object with given values.
  */
 t_parse_result	parse_result(t_parse_result_type type,
-	t_ast *ast, t_list *current_token);
+					t_ast *ast, t_list *current_token);
 
 /**
  * @brief Creates a parse_result object of type syntax error.

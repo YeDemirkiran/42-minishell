@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/16 16:15:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/16 16:20:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -207,7 +207,7 @@ t_parse_result	parse_command(t_list *tokens)
 	token = (t_token *)tokens->content;
 	if (token->type == TOKEN_NEWLINE)
 		result = parse_success(NULL, tokens->next);
- 	else if (token->type == TOKEN_WORD
+	else if (token->type == TOKEN_WORD
 		|| get_redir_type(token->type) != REDIR_NONE)
 		result = parse_simple_command(tokens);
 	else if (token->type == TOKEN_PAREN_LEFT)
