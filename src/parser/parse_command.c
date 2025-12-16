@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/15 23:35:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/16 16:15:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -111,6 +111,41 @@ static t_parse_result	free_parse_lists(t_list **args, t_list **redirs,
 }
 
 /**
+ * @brief The body of the loop of the parse_simple_command function.
+ * @note This function is used to comply with 42 Norm's
+ * "max 25 line per function" rule. Do not use outside of the
+ * parse_simple_command function.
+ * @returns The parse_result object of the subsequent function calls.
+ * @note The outer loop should break if the parse_result is SUCCESS,
+ * but the current_token pointer is NULL.
+ */
+static t_parse_result	parse_simple_command_loop_body(t_list **token,
+	t_list **redirs, t_list **args)
+{
+	t_token			*token_obj;
+	t_parse_result	redir_result;
+
+	token_obj = (t_token *)((*token)->content);
+	if (get_redir_type(token_obj->type) != REDIR_NONE)
+	{
+		redir_result = parse_redirection(*token, redirs);
+		if (redir_result.type != PARSE_RESULT_SUCCESS)
+			return (redir_result);
+		*token = redir_result.current_token;
+		return (parse_success(NULL, *token));
+	}
+	else if (token_obj->type == TOKEN_WORD)
+	{
+		if (save_word_to_arg_list(args, token_obj->data.word) != 1)
+			return (parse_runtime_error(*token));
+	}
+	else
+		return (parse_success(NULL, NULL));
+	*token = (*token)->next;
+	return (parse_success(NULL, *token));
+}
+
+/**
  * @brief Parses a simple command with arguments and redirections.
  * @returns A struct of t_parse_result.
  * This structs holds the data about the operation.
@@ -118,7 +153,6 @@ static t_parse_result	free_parse_lists(t_list **args, t_list **redirs,
 static t_parse_result	parse_simple_command(t_list *tokens)
 {
 	t_parse_result	result;
-	t_token			*token_obj;
 	t_list			*redirs;
 	t_list			*args;
 
@@ -129,24 +163,11 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	args = NULL;
 	while (tokens != NULL && tokens->content != NULL)
 	{
-		token_obj = (t_token *)(tokens->content);
-		if (get_redir_type(token_obj->type) != REDIR_NONE)
-		{
-			result = parse_redirection(tokens, &redirs);
-			if (result.type != PARSE_RESULT_SUCCESS)
-				return (free_parse_lists(&args, &redirs, result));
-			tokens = result.current_token;
-			continue ;
-		}
-		else if (token_obj->type == TOKEN_WORD)
-		{
-			if (save_word_to_arg_list(&args, token_obj->data.word) != 1)
-				return (free_parse_lists(&args, &redirs,
-					parse_runtime_error(tokens)));
-		}
-		else
+		result = parse_simple_command_loop_body(&tokens, &redirs, &args);
+		if (result.type != PARSE_RESULT_SUCCESS)
+			return (free_parse_lists(&args, &redirs, result));
+		if (result.current_token == NULL)
 			break ;
-		tokens = tokens->next;
 	}
 	if (save_command_ast_node(args, &(result.ast), redirs) != 1)
 		return (free_parse_lists(&args, &redirs, parse_runtime_error(tokens)));
