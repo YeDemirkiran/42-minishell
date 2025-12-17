@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 23:36:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 00:19:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -28,6 +28,10 @@
 #define COLOR_GREEN "\e[0;32m"
 #define COLOR_RED "\e[0;31m"
 #define COLOR_WHITE "\e[0;37m"
+
+#define TEST_COMMAND(str) ast_new_node(AST_COMMAND, ast_command_data(ft_split(str, ' '), NULL), NULL, NULL)
+#define TEST_COMMAND_REDIR(str, redir_type, redir_fd, redir_path) ast_new_node(AST_COMMAND, ast_command_data(ft_split(str, ' '), alloc_redir(redir_type, redir_fd, ft_strdup(redir_path))), NULL, NULL)
+#define TEST_PIPE(left, right) ast_new_node(AST_PIPE, NULL, left, right)
 
 typedef struct s_parser_test
 {
@@ -635,7 +639,7 @@ void	test_parser(int	test_number)
 			.expected_ast = NULL
 		},
 
-		// CASE 0: EMPTY REDIR WITH OTHER TOKENS
+		// CASE 9: EMPTY REDIR WITH OTHER TOKENS
 		{
 			.name = "<&&",
 			.major_number = test_number,
@@ -679,6 +683,145 @@ void	test_parser(int	test_number)
 			},
 			.token_length = 2,
 			.expected_ast = NULL
+		},
+
+		// CASE 10: PIPELINE OF SIMPLE COMMANDS (2 commands)
+		{
+			.name = "ls | cat",
+			.major_number = test_number,
+			.minor_number = 35,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+			},
+			.token_length = 3,
+			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("ls", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), NULL), NULL, NULL))
+		},
+		{
+			.name = "cat Makefile | sort -r",
+			.major_number = test_number,
+			.minor_number = 36,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_WORD, .data.word = "-r" },
+			},
+			.token_length = 5,
+			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat Makefile", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort -r", ' '), NULL), NULL, NULL))
+		},
+		{
+			.name = "cat file1 file2 file3 file4 file5 file6 file7 | sort -rrrrr -r -r -rrrr",
+			.major_number = test_number,
+			.minor_number = 37,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_WORD, .data.word = "file1" },
+				{ .type = TOKEN_WORD, .data.word = "file2" },
+				{ .type = TOKEN_WORD, .data.word = "file3" },
+				{ .type = TOKEN_WORD, .data.word = "file4" },
+				{ .type = TOKEN_WORD, .data.word = "file5" },
+				{ .type = TOKEN_WORD, .data.word = "file6" },
+				{ .type = TOKEN_WORD, .data.word = "file7" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_WORD, .data.word = "-rrrrr" },
+				{ .type = TOKEN_WORD, .data.word = "-r" },
+				{ .type = TOKEN_WORD, .data.word = "-r" },
+				{ .type = TOKEN_WORD, .data.word = "-rrrr" },
+			},
+			.token_length = 14,
+			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat file1 file2 file3 file4 file5 file6 file7", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort -rrrrr -r -r -rrrr", ' '), NULL), NULL, NULL))
+		},
+
+		// CASE 11: PIPELINE OF COMMANDS WITH REDIRECTIONS (2 commands)
+		{
+			.name = "cat < Makefile | sort",
+			.major_number = test_number,
+			.minor_number = 38,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+			},
+			.token_length = 5,
+			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort", ' '), NULL), NULL, NULL))
+		},
+		{
+			.name = "cat < Makefile | sort >> outfile",
+			.major_number = test_number,
+			.minor_number = 39,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_REDIR_INPUT, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "Makefile" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_REDIR_APPEND, .data.number = -1 },
+				{ .type = TOKEN_WORD, .data.word = "outfile" },
+			},
+			.token_length = 7,
+			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort", ' '), ft_lstnew(alloc_redir(REDIR_APPEND, 1, ft_strdup("outfile")))), NULL, NULL))
+		},
+
+		// CASE 12: LONG PIPELINES OF SIMPLE COMMANDS
+		{
+			.name = "ls | cat | sort",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_PIPE(TEST_PIPE(TEST_COMMAND("ls"), TEST_COMMAND("cat")), TEST_COMMAND("sort"))
+		},
+		{
+			.name = "ls | cat | sort | cat | sort | cat | sort | cat | sort | cat | sort | cat | sort | cat | sort | wc",
+			.major_number = test_number,
+			.minor_number = 41,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cat" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "sort" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "wc" },
+			},
+			.token_length = 31,
+			.expected_ast = TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_COMMAND("ls"), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("wc"))
 		},
 	};
 
