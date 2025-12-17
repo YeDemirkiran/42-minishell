@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 17:36:50 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/17 16:44:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/17 17:47:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,7 @@
 t_parse_result	parse_pipeline(t_list *token)
 {
 	t_parse_result	result;
+	t_ast			*node_tmp;
 	t_ast			*left;
 	t_ast			*right;
 	t_token			*token_obj;
@@ -27,27 +28,34 @@ t_parse_result	parse_pipeline(t_list *token)
 		return (result);
 	left = result.ast;
 	token = result.current_token;
-	//printf("Is  token nbull? %i\n", token == NULL);
 	while (token != NULL && token->content != NULL)
 	{
-		//printf("\n\nENTERED PIPE LOOP\n\n");
 		token_obj = (t_token *)(token->content);
 		if (token_obj->type == TOKEN_PIPE)
 		{
 			result = parse_command(token->next);
 			if (result.type != PARSE_RESULT_SUCCESS)
+			{
+				ast_free_tree(left);
 				return (result);
+			}
+			else if (result.ast == NULL)
+			{
+				ast_free_tree(left);
+				return (parse_syntax_error(token->next));
+			}
 			token = result.current_token;
 			right = result.ast;
-			left = ast_new_node(AST_PIPE, NULL, left, right);
-			if (left == NULL)
+			node_tmp = ast_new_node(AST_PIPE, NULL, left, right);
+			if (node_tmp == NULL)
+			{
+				ast_free_tree(node_tmp);
 				return (parse_runtime_error(token));
+			}
+			left = node_tmp;
 		}
 		else
-		{
-			//printf("\n\nNot in a pipeline, break\n\n");
 			break ;
-		}
 	}
 	return (parse_success(left, token));
 }
