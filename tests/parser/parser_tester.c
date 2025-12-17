@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/18 00:19:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 01:07:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -822,6 +822,41 @@ void	test_parser(int	test_number)
 			},
 			.token_length = 31,
 			.expected_ast = TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_COMMAND("ls"), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("cat")), TEST_COMMAND("sort")), TEST_COMMAND("wc"))
+		},
+
+		// CASE 14: PIPE ERRORS
+		{
+			.name = "|",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "ls |",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "ls | |",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
 		},
 	};
 
