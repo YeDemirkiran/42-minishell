@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/19 20:56:36 by yademirk          #+#    #+#              #
-#    Updated: 2025/11/29 00:36:18 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/17 22:05:37 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -20,7 +20,7 @@ LIB_PATH = ../../lib
 LIBFT_PATH = $(LIB_PATH)/libft
 AST_PATH = ../../src/ast
 
-SRC = ./ast_tester.c $(AST_PATH)/ast.c $(AST_PATH)/ast_traversal.c
+SRC = ./ast_tester.c $(AST_PATH)/*.c
 INC_FLAGS = -I./ -I../../include/ -I$(LIBFT_PATH)/include
 LIB_FLAGS = -L$(LIBFT_PATH) -lft
 

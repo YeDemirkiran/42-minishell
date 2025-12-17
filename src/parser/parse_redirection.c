@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 18:32:03 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/15 17:36:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 
@@ -50,41 +50,60 @@ t_redir_type	get_redir_type(t_token_type type)
 	return (redir);
 }
 
+static t_parse_result	is_redir_valid(t_list *token)
+{
+	t_token	*token_obj;
+
+	if (token == NULL || token->content == NULL)
+		return (parse_runtime_error(token));
+	else if (token->next == NULL || token->next->content == NULL)
+		return (parse_runtime_error(token));
+	token_obj = (t_token *)(token->next->content);
+	if (token_obj->type != TOKEN_WORD)
+		return (parse_syntax_error(token->next));
+	return (parse_success(NULL, NULL));
+}
+
+static t_redirection	*create_redirection(t_list *token)
+{
+	t_redirection	*redirection;
+	t_token			*token_obj;
+
+	redirection = malloc(sizeof(t_redirection));
+	if (redirection == NULL)
+		return (NULL);
+	token_obj = ((t_token *)token->content);
+	redirection->redir_type = get_redir_type(token_obj->type);
+	if (token_obj->data.number < 0)
+		redirection->target_fd = get_redir_default_fd(redirection->redir_type);
+	else
+		redirection->target_fd = token_obj->data.number;
+	token_obj = (t_token *)token->next->content;
+	redirection->path = ft_strdup(token_obj->data.word);
+	if (redirection->path == NULL)
+	{
+		free(redirection);
+		return (NULL);
+	}
+	return (redirection);
+}
+
 /**
  * @brief Takes a token and saves it in redirections linked list if it's
  * a redirection token.
  */
 t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 {
-	t_redir_type	type;
-	t_token			*token_obj;
+	t_parse_result	result;
 	t_redirection	*redirection;
 	t_list			*redir_node;
 
-	if (token == NULL || token->content == NULL || token->next == NULL || token->next->content == NULL)
-		return (parse_runtime_error(token));
-	token_obj = ((t_token *)token->content);
-	redirection = malloc(sizeof(t_redirection));
+	result = is_redir_valid(token);
+	if (result.type != PARSE_RESULT_SUCCESS)
+		return (result);
+	redirection = create_redirection(token);
 	if (redirection == NULL)
 		return (parse_runtime_error(token));
-	type = get_redir_type(token_obj->type);
-	if (token_obj->data.number < 0)
-		redirection->target_fd = get_redir_default_fd(type);
-	else
-		redirection->target_fd = token_obj->data.number;
-	redirection->redir_type = type;
-	token_obj = (t_token *)token->next->content;
-	if (token_obj->type != TOKEN_WORD)
-	{
-		free(redirection);
-		return (parse_syntax_error(token->next));
-	}
-	redirection->path = ft_strdup(token_obj->data.word);
-	if (redirection->path == NULL)
-	{
-		free(redirection);
-		return (parse_runtime_error(token->next));
-	}
 	redir_node = ft_lstnew((void *)redirection);
 	if (redir_node == NULL)
 	{

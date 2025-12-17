@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 17:13:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/16 17:39:02 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -31,6 +31,7 @@
 
 // Local headers
 #include "parse_command.h"
+#include "parse_pipeline.h"
 
 /* =============================== FUNCTIONS =============================== */
 
@@ -100,18 +101,6 @@ static void	debug_ast_print_node(t_ast *ast)
 	}
 }
 
-/**
- * @brief Main entry point for the parser. Calls the required grammar rules.
- */
-static t_parse_result	parse_token(t_list *tokens)
-{
-	t_parse_result	result;
-
-	if (tokens == NULL || tokens->content == NULL)
-		return (parse_runtime_error(NULL));
-	result = parse_command(tokens);
-	return (result);
-}
 
 static char	*get_token_string(t_token *token)
 {
@@ -160,6 +149,19 @@ static void	print_token_error(t_parse_result result)
 	else
 		ft_putstr_fd(token_word, 2);
 	ft_putstr_fd("'\n", 2);
+}
+
+/**
+ * @brief Main entry point for the parser. Calls the required grammar rules.
+ */
+static t_parse_result	parse_token(t_list *tokens)
+{
+	t_parse_result	result;
+
+	if (tokens == NULL || tokens->content == NULL)
+		return (parse_runtime_error(NULL));
+	result = parse_pipeline(tokens);
+	return (result);
 }
 
 /**
