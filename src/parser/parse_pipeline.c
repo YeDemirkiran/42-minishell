@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 17:36:50 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/17 17:50:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 10:15:46 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -33,6 +33,11 @@ t_parse_result	parse_pipeline(t_list *token)
 		token_obj = (t_token *)(token->content);
 		if (token_obj->type == TOKEN_PIPE)
 		{
+			if (token->next == NULL || token->next->content == NULL)
+			{
+				ast_free_tree(left);
+				return (parse_uncomplete_error(token));
+			}
 			result = parse_command(token->next);
 			if (result.type != PARSE_RESULT_SUCCESS)
 			{
