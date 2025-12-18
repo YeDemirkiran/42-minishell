@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/16 17:39:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 10:18:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -136,13 +136,17 @@ static void	print_token_error(t_parse_result result)
 	t_token	*token;
 	char	*token_word;
 
-	if (result.type != PARSE_RESULT_TOKEN_ERROR)
+	if (result.type != PARSE_RESULT_TOKEN_ERROR
+		&& result.type != PARSE_RESULT_TOKEN_UNCOMPLETE)
 		return ;
 	if (result.current_token == NULL || result.current_token->content == NULL)
 		token = NULL;
 	else
 		token = (t_token *)(result.current_token->content);
-	ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+	if (result.type == PARSE_RESULT_TOKEN_ERROR)
+		ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+	else if (result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
+		ft_putstr_fd("minishell: uncompleted operator '", 2);
 	token_word = get_token_string(token);
 	if (token_word == NULL)
 		ft_putstr_fd("(null)", 2);
@@ -184,7 +188,8 @@ t_ast	*parse(t_list *tokens)
 	if (result.type != PARSE_RESULT_SUCCESS)
 	{
 		// Time to give an error
-		if (result.type == PARSE_RESULT_TOKEN_ERROR)
+		if (result.type == PARSE_RESULT_TOKEN_ERROR
+			|| result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
 			print_token_error(result);
 		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
 			perror("minishell");
