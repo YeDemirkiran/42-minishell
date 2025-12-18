@@ -4,3 +4,6 @@
 [submodule "lib/libft"]
 	path = lib/libft
 	url = git@github.com:YeDemirkiran/libft.git
+[submodule "lib/minishell_lb"]
+	path = lib/minishell_lb
+	url = git@github.com:muh4mmedemin/minishell_lb.git
