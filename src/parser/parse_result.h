@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:00:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/16 16:19:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 10:15:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,7 +23,8 @@ typedef enum e_parse_result_type
 {
 	PARSE_RESULT_SUCCESS,
 	PARSE_RESULT_TOKEN_ERROR,
-	PARSE_RESULT_RUNTIME_ERROR
+	PARSE_RESULT_RUNTIME_ERROR,
+	PARSE_RESULT_TOKEN_UNCOMPLETE
 }	t_parse_result_type;
 
 /**
@@ -44,6 +45,11 @@ typedef struct s_parse_result
  */
 t_parse_result	parse_result(t_parse_result_type type,
 					t_ast *ast, t_list *current_token);
+
+/**
+ * @brief Creates a parse_result object of type uncomplete token error.
+ */
+t_parse_result	parse_uncomplete_error(t_list *token);
 
 /**
  * @brief Creates a parse_result object of type syntax error.

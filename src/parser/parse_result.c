@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_result.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/13 14:35:09 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:27:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 10:15:04 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -32,6 +32,14 @@ t_parse_result	parse_result(t_parse_result_type type,
 	result.ast = ast;
 	result.current_token = current_token;
 	return (result);
+}
+
+/**
+ * @brief Creates a parse_result object of type uncomplete token error.
+ */
+t_parse_result	parse_uncomplete_error(t_list *token)
+{
+	return (parse_result(PARSE_RESULT_TOKEN_UNCOMPLETE, NULL, token));
 }
 
 /**
