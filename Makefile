@@ -1,14 +1,14 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/12/16 17:39:15 by yademirk         ###   ########.fr        #
+#    Created: 2025/12/18 19:37:22 by muayna            #+#    #+#              #
+#    Updated: 2025/12/19 02:04:05 by muayna           ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
 NAME = minishell
 
@@ -20,6 +20,14 @@ INC_DIR = ./include/
 
 ## Libraries
 LIB_DIR = ./lib/
+
+LIBMNL_DIR = $(LIB_DIR)minishell_lb/
+LIBMNL_INC_DIR = $(LIBMNL_DIR)includes/
+LIBMNL_A = $(LIBGNL_DIR)minishell_lb.a
+
+LIBGNL_DIR = $(LIB_DIR)get_next_line/
+LIBGNL_INC_DIR = $(LIBGNL_DIR)includes/
+LIBGNL_A = $(LIBGNL_DIR)gnl.a
 
 LIBFT_DIR = $(LIB_DIR)libft/
 LIBFT_INC_DIR = $(LIBFT_DIR)include/
@@ -67,15 +75,15 @@ OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 # CONFIGURATION
 CC = cc
 W_FLAGS = -Wall -Wextra -Werror -g
-INC_FLAGS = -I$(INC_DIR) -I$(LIBGB_INC_DIR) -I$(LIBFT_INC_DIR)
-LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -lreadline -lft -lgb
+INC_FLAGS = -I$(INC_DIR) -I$(LIBFT_INC_DIR) -I$(LIBGB_INC_DIR) -I$(LIBGNL_INC_DIR) -I$(LIBMNL_INC_DIR)
+LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -L$(LIBGNL_DIR) -L$(LIBMNL_DIR)  -lreadline $(LIBGNL_A) $(LIBMNL_A)  -lft -lgb 
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
 
 # ----------------------------------------------------------
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT_A) $(LIBGB_A)
+$(NAME): $(OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
 	$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $(NAME)
 
 $(LIBFT_A):
@@ -83,6 +91,12 @@ $(LIBFT_A):
 
 $(LIBGB_A):
 	make -C $(LIBGB_DIR)
+
+$(LIBGNL_A): $(LIBFT_A)
+	make -C $(LIBGNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include"
+
+$(LIBMNL_A):
+	make -C $(LIBMNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes -I../../lib/garbage_collector -I../../lib/get_next_line/includes"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	mkdir -p $(dir $@)

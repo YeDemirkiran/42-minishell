@@ -7,3 +7,7 @@
 [submodule "lib/minishell_lb"]
 	path = lib/minishell_lb
 	url = git@github.com:muh4mmedemin/minishell_lb.git
+[submodule "lib/get_next_line"]
+	path = lib/get_next_line
+	url = git@github.com:muh4mmedemin/get_next_line.git
+	branch = withMakefile

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 15:24:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/18 20:29:59 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
+#include <get_next_line.h>
 
 #include "../lexer/token.h"
 
@@ -70,6 +71,7 @@ int	main(int argc, char **argv, char **envp)
 		// STEP 2: Parser
 		// Use the tokens from lexer and parse them to usable commands by the executor.
 		ast = parse(tokens);
+		get_next_line(0);
 
 		// STEP 3: Execution
 		// Execute the parsed commands here. Provide envp for them.
