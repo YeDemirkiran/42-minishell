@@ -6,7 +6,7 @@
 #    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/18 19:37:22 by muayna            #+#    #+#              #
-#    Updated: 2025/12/19 02:04:05 by muayna           ###   ########.fr        #
+#    Updated: 2025/12/19 10:05:51 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ LIB_DIR = ./lib/
 
 LIBMNL_DIR = $(LIB_DIR)minishell_lb/
 LIBMNL_INC_DIR = $(LIBMNL_DIR)includes/
-LIBMNL_A = $(LIBGNL_DIR)minishell_lb.a
+LIBMNL_A = $(LIBMNL_DIR)minishell_lb.a
 
 LIBGNL_DIR = $(LIB_DIR)get_next_line/
 LIBGNL_INC_DIR = $(LIBGNL_DIR)includes/
@@ -34,7 +34,7 @@ LIBFT_INC_DIR = $(LIBFT_DIR)include/
 LIBFT_A = $(LIBFT_DIR)libft.a
 
 LIBGB_DIR = $(LIB_DIR)garbage_collector/
-LIBGB_INC_DIR = $(LIBGB_DIR)include/
+LIBGB_INC_DIR = $(LIBGB_DIR)
 LIBGB_A = $(LIBGB_DIR)libgb.a
 
 # C FILES
@@ -74,9 +74,9 @@ OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 
 # CONFIGURATION
 CC = cc
-W_FLAGS = -Wall -Wextra -Werror -g
+#W_FLAGS = -Wall -Wextra -Werror -g
 INC_FLAGS = -I$(INC_DIR) -I$(LIBFT_INC_DIR) -I$(LIBGB_INC_DIR) -I$(LIBGNL_INC_DIR) -I$(LIBMNL_INC_DIR)
-LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -L$(LIBGNL_DIR) -L$(LIBMNL_DIR)  -lreadline $(LIBGNL_A) $(LIBMNL_A)  -lft -lgb 
+LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -L$(LIBGNL_DIR) -L$(LIBMNL_DIR)  -lreadline $(LIBMNL_A) $(LIBGNL_A)  -lft -lgb
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
 
 # ----------------------------------------------------------
@@ -93,10 +93,10 @@ $(LIBGB_A):
 	make -C $(LIBGB_DIR)
 
 $(LIBGNL_A): $(LIBFT_A)
-	make -C $(LIBGNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include"
+	make -C $(LIBGNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes"
 
-$(LIBMNL_A):
-	make -C $(LIBMNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes -I../../lib/garbage_collector -I../../lib/get_next_line/includes"
+$(LIBMNL_A): $(LIBFT_A) $(LIBGB_A)
+	make -C $(LIBMNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes -I../garbage_collector -I../get_next_line/includes"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	mkdir -p $(dir $@)
