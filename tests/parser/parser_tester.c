@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 00:05:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 00:14:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -30,7 +30,7 @@
 #define COLOR_WHITE "\e[0;37m"
 
 #define TEST_COMMAND(str) ast_new_node(AST_COMMAND, ast_command_data(ft_split(str, ' '), NULL), NULL, NULL)
-#define TEST_COMMAND_REDIR(str, redir_type, redir_fd, redir_path) ast_new_node(AST_COMMAND, ast_command_data(ft_split(str, ' '), alloc_redir(redir_type, redir_fd, ft_strdup(redir_path))), NULL, NULL)
+#define TEST_COMMAND_REDIR(str, redir_type, redir_fd, redir_path) ast_new_node(AST_COMMAND, ast_command_data(ft_split(str, ' '), ft_lstnew(alloc_redir(redir_type, redir_fd, ft_strdup(redir_path)))), NULL, NULL)
 #define TEST_PIPE(left, right) ast_new_node(AST_PIPE, NULL, left, right)
 
 typedef struct s_parser_test
@@ -696,7 +696,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "cat" },
 			},
 			.token_length = 3,
-			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("ls", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), NULL), NULL, NULL))
+			.expected_ast = TEST_PIPE(TEST_COMMAND("ls"), TEST_COMMAND("cat"))
 		},
 		{
 			.name = "cat Makefile | sort -r",
@@ -710,7 +710,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "-r" },
 			},
 			.token_length = 5,
-			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat Makefile", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort -r", ' '), NULL), NULL, NULL))
+			.expected_ast = TEST_PIPE(TEST_COMMAND("cat Makefile"), TEST_COMMAND("sort -r"))
 		},
 		{
 			.name = "cat file1 file2 file3 file4 file5 file6 file7 | sort -rrrrr -r -r -rrrr",
@@ -733,7 +733,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "-rrrr" },
 			},
 			.token_length = 14,
-			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat file1 file2 file3 file4 file5 file6 file7", ' '), NULL), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort -rrrrr -r -r -rrrr", ' '), NULL), NULL, NULL))
+			.expected_ast = TEST_PIPE(TEST_COMMAND("cat file1 file2 file3 file4 file5 file6 file7"), TEST_COMMAND("sort -rrrrr -r -r -rrrr"))
 		},
 
 		// CASE 11: PIPELINE OF COMMANDS WITH REDIRECTIONS (2 commands)
@@ -749,7 +749,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "sort" },
 			},
 			.token_length = 5,
-			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort", ' '), NULL), NULL, NULL))
+			.expected_ast = TEST_PIPE(TEST_COMMAND_REDIR("cat", REDIR_INPUT, 0, "Makefile"), TEST_COMMAND("sort"))
 		},
 		{
 			.name = "cat < Makefile | sort >> outfile",
@@ -765,7 +765,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "outfile" },
 			},
 			.token_length = 7,
-			.expected_ast = ast_new_node(AST_PIPE, NULL, ast_new_node(AST_COMMAND, ast_command_data(ft_split("cat", ' '), ft_lstnew(alloc_redir(REDIR_INPUT, 0, ft_strdup("Makefile")))), NULL, NULL), ast_new_node(AST_COMMAND, ast_command_data(ft_split("sort", ' '), ft_lstnew(alloc_redir(REDIR_APPEND, 1, ft_strdup("outfile")))), NULL, NULL))
+			.expected_ast = TEST_PIPE(TEST_COMMAND_REDIR("cat", REDIR_INPUT, 0, "Makefile"), TEST_COMMAND_REDIR("sort", REDIR_APPEND, 1, "outfile"))
 		},
 
 		// CASE 12: LONG PIPELINES OF SIMPLE COMMANDS
