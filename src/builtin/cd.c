@@ -1,29 +1,27 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 18:06:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/19 12:16:12 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
+#include <minishell_lb.h>
 
-// Self-explanatory
-void	change_directory(const char *path)
+void cd(t_envp_list **list, char *input)
 {
-	int	res;
-
-	res = chdir(path);
-	if (res != 0)
-	{
-		// todo: it should write "bash: cd: {path}"
-		// todo: return cd's exit status
-		// edge case: when path is "", it does nothing
-		perror("cd");
-	}
+    char buf[1024];
+    char *old_pwd;
+ 
+    getcwd(buf, 1024);
+    update_envp_value(list, "OLDPWD", buf);
+    //printf("DEBUG OLDPWD %s\n", find_value_on_envp(list, "OLDPWD"));
+    chdir(input);
+    getcwd(buf, 1024);
+    update_envp_value(list, "PWD", buf);
+    //printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
 }
