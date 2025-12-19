@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/19 13:41:54 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/19 18:09:32 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ int	main(int argc, char **argv, char **envp)
 		executor(ast, envp, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
+		free(prompt);
 	}
+	free(prompt);
 	return (EXIT_SUCCESS);
 }
