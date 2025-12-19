@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/19 10:13:33 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/19 11:28:02 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,10 @@ int	main(int argc, char **argv, char **envp)
 	t_list	*tokens;
 	char	first_run;
 	t_ast	*ast;
-	
+	t_envp_list *envp_list;
+	char *prompt;
+
+	envp_list = create_envp_list(envp);
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -58,7 +61,8 @@ int	main(int argc, char **argv, char **envp)
 		if (!first_run && input != NULL)
 			free(input);
 		first_run = 0;
-		tmp = readline("babag > ");
+		prompt = rl_header(&envp_list, envp);
+		tmp = readline(prompt);
 		if (tmp == NULL)
 			break ;
 		input = ft_strjoin(tmp, "\n");

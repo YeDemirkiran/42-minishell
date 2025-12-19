@@ -6,7 +6,7 @@
 #    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/18 19:37:22 by muayna            #+#    #+#              #
-#    Updated: 2025/12/19 10:05:51 by muayna           ###   ########.fr        #
+#    Updated: 2025/12/19 11:19:01 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -107,6 +107,9 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+	make -C $(LIBMNL_DIR) fclean
+	make -C $(LIBGB_DIR) fclean
+	make -C $(LIBGNL_DIR) fclean
 
 re: fclean all
 

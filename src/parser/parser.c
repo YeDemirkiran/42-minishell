@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/16 17:39:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/19 11:16:55 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -175,8 +175,8 @@ t_ast	*parse(t_list *tokens)
 	t_parse_result	result;
 
 	// todo: remove printf logs
-	printf("(DEBUG: Starting shell step 2: Parser)\n");
-	printf("(DEBUG: Step 2: Parse AST)\n");
+	//printf("(DEBUG: Starting shell step 2: Parser)\n");
+	//printf("(DEBUG: Step 2: Parse AST)\n");
 
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
@@ -193,7 +193,7 @@ t_ast	*parse(t_list *tokens)
 		return (NULL);
 	}
 	root = result.ast;
-	printf("(DEBUG: Step 2.1: Printing AST)\n");
+	//printf("(DEBUG: Step 2.1: Printing AST)\n");
 	ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
