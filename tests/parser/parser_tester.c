@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/18 01:07:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 00:05:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -856,6 +856,72 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_PIPE },
 			},
 			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "ls | | | | | | | | | | | | | | | | | | | | |",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 22,
+			.expected_ast = NULL
+		},
+		{
+			.name = "ls | &&",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "ls | ||",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "ls |&",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 2,
 			.expected_ast = NULL
 		},
 	};
