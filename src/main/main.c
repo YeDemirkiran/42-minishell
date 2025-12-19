@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/19 18:09:32 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 00:25:45 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,10 @@ int	main(int argc, char **argv, char **envp)
 			break;
 		tokens = lexical_analyze(input);
 		ast = parse(tokens);
-		executor(ast, envp, 0, 1);
+		if(ast->type == AST_COMMAND && isbuiltin(cut_wrong_chracter(ast->data->ast_command.command)))
+			run_builtin(ast, envp, &envp_list);
+		else
+			executor(ast, envp, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		free(prompt);

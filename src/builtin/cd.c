@@ -6,11 +6,12 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/19 12:16:12 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 00:21:38 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell_lb.h>
+#include "../include/modules/builtin.h"
 
 void cd(t_envp_list **list, char *input)
 {

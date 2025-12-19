@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/19 12:37:54 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 00:28:29 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,27 @@
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
 #include <minishell_lb.h>
+#include "../include/modules/executor.h"
+#include "../include/modules/builtin.h"
 
+static void run_redirs(t_list **redirs)
+{
+	int fd;
+	t_redirection *redir;
+
+	fd = -1;
+	redir = (t_redirection *)(*redirs)->content;
+	if (redir->redir_type == REDIR_INPUT)
+		fd = open(redir->path, O_RDONLY);
+	else if (redir->redir_type == REDIR_OUTPUT)
+		fd = open(redir->path, O_WRONLY | O_CREAT , 0777);
+	if (fd >= 0)
+		dup2(fd, redir->target_fd);
+	(*redirs) = (*redirs)->next;
+	close(fd);
+}
 
 /*This function cut \n and \r in char* of end of the line */
-
 void delete_new_line(char ***s1)
 {
 	char **str;
@@ -41,20 +58,22 @@ void delete_new_line(char ***s1)
 	}
 }
 
-void run_redirs(t_list **redirs)
+int isbuiltin(const char *command)
 {
-	int fd;
-	t_redirection *redir;
+	char **b_names;
+	b_names = ft_split("cd pwd echo", ' ');
+	if(!ft_strncmp(command, b_names[1], ft_strlen(command)))
+		return 1;
+	if(!ft_strncmp(command, b_names[0], ft_strlen(command)))
+		return 1;
+	return 0;
+}
 
-	fd = -1;
-	redir = (t_redirection *)(*redirs)->content;
-	if (redir->redir_type == REDIR_INPUT)
-		fd = open(redir->path, O_RDONLY);
-	else if (redir->redir_type == REDIR_OUTPUT)
-		fd = open(redir->path, O_WRONLY | O_CREAT , 0777);
-	if (fd >= 0)
-		dup2(fd, redir->target_fd);
-	(*redirs) = (*redirs)->next;
+void run_builtin(t_ast *ast, char **envp, t_envp_list **envp_list)
+{
+	if(isbuiltin(ast->data->ast_command.arguments[0]))
+		cd(envp_list, ast->data->ast_command.arguments[1]);
+	(void)envp;
 }
 
 void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
@@ -62,6 +81,7 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 	pid_t pid;
 	t_list *redirs;
 	
+	pid = 1;
 	delete_new_line(&ast->data->ast_command.arguments);
 	pid = fork();
 	if(pid == 0)
@@ -76,16 +96,6 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 		exit(1);
 	}
 	wait(NULL);
-}
-
-void debug_print(t_ast *ast)
-{
-	printf("DEBUG ROOT LEG TYPE : %d\n", ast->type);
-	printf("DEBUG LEFT LEG TYPE : %d\n", ast->left->type);
-	printf("DEBUG LEFT LEG COMMAND : %s\n", ast->left->data->ast_command.command);
-	printf("DEBUG RIHT LEG TYPE : %d\n", ast->right->type);
-	printf("DEBUG RIHT LEG COMMAND : %s\n", ast->right->data->ast_command.command);
-	printf("DEBUG RIHT LEG ARGUMENT : %s\n", ast->right->data->ast_command.arguments[1]);
 }
 
 void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
@@ -103,5 +113,5 @@ void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
 		close(pipefd[0]);
 	}
 	(void)envp;
-	//debug_print(for_debug);
 }
+
