@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:27:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 13:58:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 14:32:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -39,20 +39,9 @@ void	free_redir_struct(void *redir)
  */
 void	ast_free_command(t_ast *ast)
 {
-	size_t	i;
-
 	if (ast->type != AST_COMMAND || ast->data == NULL)
 		return ;
-	if (ast->data->ast_command.arguments != NULL)
-	{
-		i = 0;
-		while (ast->data->ast_command.arguments[i] != NULL)
-		{
-			free(ast->data->ast_command.arguments[i]);
-			i++;
-		}
-		free(ast->data->ast_command.arguments);
-	}
+	ft_lstclear(&(ast->data->ast_command.arguments), free);
 	ft_lstclear(&(ast->data->ast_command.redirs), free_redir_struct);
 }
 

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:44:24 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/13 17:32:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 14:30:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,7 +19,7 @@
 void	ast_traverse_preorder(t_ast *ast, void (*f)(t_ast *));
 void	ast_traverse_postorder(t_ast *ast, void (*f)(t_ast *));
 
-t_ast_data	*ast_command_data(char **args, t_list *redirs);
+t_ast_data	*ast_command_data(t_list *args, t_list *redirs);
 t_ast		*ast_new_node(t_ast_type type, t_ast_data *data,
 				t_ast *left, t_ast *right);
 

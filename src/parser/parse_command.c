@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/17 16:42:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 14:33:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -64,25 +64,13 @@ static int	save_word_to_arg_list(t_list **args, char *word)
 static int	save_command_ast_node(t_list *args, t_ast **ast, t_list *redirs)
 {
 	t_ast_data	*data;
-	char		**c_args;
 
-	c_args = NULL;
-	if (args != NULL)
-	{
-		c_args = ft_lst_to_string_arr(args);
-		if (c_args == NULL)
-			return (0);
-	}
-	data = ast_command_data(c_args, redirs);
+	data = ast_command_data(args, redirs);
 	if (data == NULL)
-	{
-		free(c_args);
 		return (0);
-	}
 	*ast = ast_new_node(AST_COMMAND, data, NULL, NULL);
 	if (*ast == NULL)
 	{
-		free(data->ast_command.arguments);
 		free(data);
 		return (0);
 	}

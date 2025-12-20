@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 13:58:14 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 14:35:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -38,6 +38,8 @@
 // TODO: remove
 static void	debug_ast_print_node(t_ast *ast)
 {
+	t_list	*list;
+
 	printf("\nAST NODE\n");
 	printf("TYPE: ");
 	if (ast->type == AST_COMMAND)
@@ -48,16 +50,18 @@ static void	debug_ast_print_node(t_ast *ast)
 	if (ast->type == AST_COMMAND)
 	{
 		printf("COMMAND DATA\n");
-		printf("Command: %s\n", ast->data->ast_command.arguments[0]);
 
-		if (ast->data->ast_command.arguments != NULL)
+		list = ast->data->ast_command.arguments;
+		if (list != NULL)
 		{
+			printf("Command: %s\n", (char *)(list->content));
 			printf("Arguments: ");
-			for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
+			while (list != NULL)
 			{
-				printf("%s", ast->data->ast_command.arguments[i]);
-				if (ast->data->ast_command.arguments[i + 1] != NULL)
+				printf("%s", (char *)(list->content));
+				if (list->next != NULL)
 					printf(", ");
+				list = list->next;
 			}
 			printf("\n");
 		}

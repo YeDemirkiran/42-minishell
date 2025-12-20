@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 10:18:12 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 13:58:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 14:30:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -25,7 +25,7 @@ typedef union u_ast_data
 {
 	struct s_command
 	{
-		char	**arguments;
+		t_list	*arguments;
 		t_list	*redirs;
 	}	ast_command;
 }	t_ast_data;

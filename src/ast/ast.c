@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 13:59:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 14:30:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -26,7 +26,7 @@
 /* =============================== FUNCTIONS =============================== */
 
 // Initializes and returns a data union with command struct values.
-t_ast_data	*ast_command_data(char **args, t_list *redirs)
+t_ast_data	*ast_command_data(t_list *args, t_list *redirs)
 {
 	t_ast_data	*data;
 
