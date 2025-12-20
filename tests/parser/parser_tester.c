@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 00:14:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 13:58:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -93,13 +93,6 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 
 		// NULL check
 		if ((expected_args == NULL) != (testee_args == NULL))
-			return (0);
-		if ((expected->data->ast_command.command == NULL) != (testee->data->ast_command.command == NULL))
-			return (0);
-
-		// Comamnd path
-		if (expected->data->ast_command.command != NULL && strcmp(expected->data->ast_command.command,
-			testee->data->ast_command.command) != 0)
 			return (0);
 
 		// Arguments

@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ast_helper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:27:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:26:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 13:58:02 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -45,10 +45,6 @@ void	ast_free_command(t_ast *ast)
 		return ;
 	if (ast->data->ast_command.arguments != NULL)
 	{
-		if (ast->data->ast_command.command != NULL)
-			if (ast->data->ast_command.command
-				!= ast->data->ast_command.arguments[0])
-				free(ast->data->ast_command.command);
 		i = 0;
 		while (ast->data->ast_command.arguments[i] != NULL)
 		{
@@ -56,10 +52,6 @@ void	ast_free_command(t_ast *ast)
 			i++;
 		}
 		free(ast->data->ast_command.arguments);
-	}
-	else if (ast->data->ast_command.command != NULL)
-	{
-		free(ast->data->ast_command.command);
 	}
 	ft_lstclear(&(ast->data->ast_command.redirs), free_redir_struct);
 }

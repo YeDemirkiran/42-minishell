@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:34:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 18:24:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 13:58:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -30,7 +30,7 @@ void	ast_print_node(t_ast *ast)
 	if (ast->type == AST_COMMAND)
 	{
 		printf("COMMAND DATA\n");
-		printf("Command: %s\n", ast->data->ast_command.command);
+		printf("Command: %s\n", ast->data->ast_command.arguments[0]);
 
 		printf("Arguments: ");
 		for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)

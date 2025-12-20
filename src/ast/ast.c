@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:45:56 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:26:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 13:59:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -29,16 +29,10 @@
 t_ast_data	*ast_command_data(char **args, t_list *redirs)
 {
 	t_ast_data	*data;
-	char		*command;
 
 	data = malloc(sizeof(t_ast_data));
 	if (data == NULL)
 		return (NULL);
-	if (args != NULL)
-		command = args[0];
-	else
-		command = NULL;
-	data->ast_command.command = command;
 	data->ast_command.arguments = args;
 	data->ast_command.redirs = redirs;
 	return (data);
