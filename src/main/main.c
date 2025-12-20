@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/08 17:31:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 15:01:14 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -25,6 +25,7 @@
 #include "modules/lexer.h"
 #include "modules/ast.h"
 #include "modules/parser.h"
+#include "modules/expansion.h"
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
@@ -72,11 +73,15 @@ int	main(int argc, char **argv, char **envp)
 		ast = parse(tokens);
 		(void)ast;
 
-		// STEP 3: Execution
+		// STEP 3: Expansion
+		// Walk the AST and substitute variables, split words and remove quotes.
+		expansion(ast, NULL);
+
+		// STEP 4: Execution
 		// Execute the parsed commands here. Provide envp for them.
 		// execute(cmd);
 
-		// STEP 4: Restart
+		// STEP 5: Restart
 		// Prepare the shell for the next iteration.
 		// free tokens
 		free_tokens(&tokens);

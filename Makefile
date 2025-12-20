@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/12/16 17:39:15 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/20 15:02:36 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -30,7 +30,7 @@ LIBGB_INC_DIR = $(LIBGB_DIR)include/
 LIBGB_A = $(LIBGB_DIR)libgb.a
 
 # C FILES
-C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXECUTOR_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
+C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXPANSION_FILES) $(EXECUTOR_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
 
 ## Main
 MAIN_DIR = main/
@@ -47,6 +47,10 @@ PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_redirec
 ## AST
 AST_DIR = ast/
 AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c ast_helper.c)
+
+## Expansion
+EXPANSION_DIR = expansion/
+EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c)
 
 ## Executor
 EXECUTOR_DIR = executor/
