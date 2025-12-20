@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 13:11:37 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 16:57:10 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,11 @@ int	main(int argc, char **argv, char **envp)
 	char	first_run;
 	t_ast	*ast;
 	t_envp_list *envp_list;
+	char **envp_char_list;
 	char *prompt;
 
 	envp_list = create_envp_list(envp);
+	envp_char_list = envp_list_to_char_arr(envp_list);
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -72,9 +74,9 @@ int	main(int argc, char **argv, char **envp)
 		tokens = lexical_analyze(input);
 		ast = parse(tokens);
 		if(ast->type == AST_COMMAND && isbuiltin(cut_wrong_chracter(ast->data->ast_command.command)))
-			run_builtin(ast, envp, &envp_list);
+			run_builtin(ast, &envp_char_list, &envp_list);
 		else
-			executor(ast, envp, 0, 1);
+			executor(ast, envp_char_list, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		free(prompt);

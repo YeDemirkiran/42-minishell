@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:23:43 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 00:25:03 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 16:58:02 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,6 @@
 void	executor(t_ast *ast, char **envp, int fd_in, int fd_out);
 int isbuiltin(const char *command);
 void delete_new_line(char ***s1);
-void run_builtin(t_ast *ast, char **envp, t_envp_list **envp_list);
+void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/20 13:09:27 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 17:05:01 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,17 +63,28 @@ int isbuiltin(const char *command)
 	char **b_names;
 	b_names = ft_split("cd pwd echo", ' ');
 	if(!ft_strncmp(command, b_names[1], ft_strlen(command)))
+	{
+		clear_arr(&b_names);
 		return 1;
+	}
 	if(!ft_strncmp(command, b_names[0], ft_strlen(command)))
+	{
+		clear_arr(&b_names);
 		return 1;
+	}
+	clear_arr(&b_names);
 	return 0;
 }
 
-void run_builtin(t_ast *ast, char **envp, t_envp_list **envp_list)
+void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 {
+	char **tmp;
+
+	tmp = (*envp_char);
 	if(isbuiltin(ast->data->ast_command.arguments[0]))
 		cd(envp_list, ast->data->ast_command.arguments[1]);
-	(void)envp;
+	(*envp_char) = envp_list_to_char_arr((*envp_list));
+	clear_arr(&tmp);
 }
 
 void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
@@ -94,7 +105,7 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 			run_redirs(&redirs);
 		if(isbuiltin(cut_wrong_chracter(ast->data->ast_command.command)))
 		{
-			run_builtin(ast, envp, NULL);
+			run_builtin(ast, &envp, NULL);
 			return ;
 		}
 		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
