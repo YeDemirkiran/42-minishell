@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 00:21:38 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 12:52:14 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,5 @@ void cd(t_envp_list **list, char *input)
     chdir(input);
     getcwd(buf, 1024);
     update_envp_value(list, "PWD", buf);
-    //printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
+    printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
 }

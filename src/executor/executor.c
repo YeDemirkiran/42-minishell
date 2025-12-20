@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/20 00:28:29 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/20 13:09:27 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,13 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 		//printf("REDIRS NULL: %i\n", redirs == NULL);
 		while (redirs != NULL)
 			run_redirs(&redirs);
+		if(isbuiltin(cut_wrong_chracter(ast->data->ast_command.command)))
+		{
+			run_builtin(ast, envp, NULL);
+			return ;
+		}
 		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
+		perror("-babashel: command not found");
 		exit(1);
 	}
 	wait(NULL);
