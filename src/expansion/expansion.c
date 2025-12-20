@@ -6,12 +6,56 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 15:02:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 19:35:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+#include <stdlib.h>
+
+#include <libft/string.h>
+
 #include "structs/s_ast.h"
 
+static char	*get_value_from_env(char *str, char *key)
+{
+	size_t	i;
+	size_t	len;
+
+	char	*value;
+
+	i = 0;
+	while (str[i] != '\0' && key[i] != '\0' && str[i] == key[i])
+		i++;
+	if (key[i] != '\0' || str[i] != '=')
+		return (NULL);
+	len = 0;
+	while (str[len + (i + 1)] != '\0')
+		len++;
+	value = ft_substr(str, (unsigned int)(i + 1), len);
+	return (value);
+}
+
+static char	*get_env_var(char *key, t_list *env)
+{
+	char	*str;
+	char	*value;
+
+	if (key == NULL || env == NULL)
+		return (NULL);
+	value = NULL;
+	while (env != NULL)
+	{
+		if (env->content != NULL)
+		{
+			str = (char *)(env->content);
+			value = get_value_from_env(str, key);
+			if (value != NULL)
+				break ;
+		}
+		env = env->next;
+	}
+	return (value);
+}
 
 #include "stdio.h"
 /**
