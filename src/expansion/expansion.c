@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 19:35:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/20 21:02:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,6 +15,8 @@
 #include <libft/string.h>
 
 #include "structs/s_ast.h"
+
+#include "expansion_block.h"
 
 static char	*get_value_from_env(char *str, char *key)
 {
@@ -55,6 +57,49 @@ static char	*get_env_var(char *key, t_list *env)
 		env = env->next;
 	}
 	return (value);
+}
+
+static t_list	*get_expansion_data(char *word)
+{
+	t_list	*node;
+	t_list	*root;
+	size_t	i;
+	size_t	word_start;
+
+	word_start = 0;
+	i = 0;
+	while (word[i] != '\0')
+	{
+		if (word[i] == '$')
+		{
+			// peek and check if variable is valid
+			// save word
+			// save variable key
+			word_start = i + 1;
+		}
+		i++;
+	}
+}
+
+/**
+ * @brief Takes a list node, checks if the content needs
+ * to be expanded and does so.
+ * @return 0 on failure, 1 on success, 2 on NULL node.
+ */
+static int	expand_word(t_list *node)
+{
+	char	*word;
+	size_t	i;
+
+	if (node == NULL || node->content == NULL)
+		return (2);
+	word = (char *)(node->content);
+	i = 0;
+	while (word[i] != '\0')
+	{
+
+	}
+	return (1);
 }
 
 #include "stdio.h"
