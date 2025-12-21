@@ -6,13 +6,13 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 00:22:02 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/22 00:49:59 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-void cd(t_envp_list **list, char *input);
+void cd(t_envp_list **list, t_ast *ast);
 
 #endif
