@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 01:20:02 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/22 01:59:00 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@
 
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
+
+char *appen_speacial_chr(t_envp_list **list, char c)
+{
+	if(c == '~')
+		return (find_value_on_envp(list, "HOME"));
+	return NULL;
+}
 
 char *cd_shortcut(t_envp_list **list, char *input)
 {

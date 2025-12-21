@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/22 00:50:23 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/22 01:59:05 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 			return ;
 		}
 		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
-		perror("-babashel: command not found");
+		perror("-babashell: command not found");
 		exit(1);
 	}
 	wait(NULL);
