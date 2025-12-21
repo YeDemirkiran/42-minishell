@@ -6,13 +6,14 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 21:02:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/21 20:16:52 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stdlib.h>
 
 #include <libft/string.h>
+#include <libft/predicate.h>
 
 #include "structs/s_ast.h"
 
@@ -59,6 +60,20 @@ static char	*get_env_var(char *key, t_list *env)
 	return (value);
 }
 
+static int	is_variable_valid(char *word)
+{
+	size_t	i;
+
+	if (word == NULL || word[0] == '\0')
+		return (0);
+	i = 0;
+	while (word[i] != '\0' && (ft_isalnum(word[i]) || word[i] == '_'))
+		i++;
+	if (i == 0)
+		return (0);
+	return (1);
+}
+
 static t_list	*get_expansion_data(char *word)
 {
 	t_list	*node;
@@ -73,8 +88,11 @@ static t_list	*get_expansion_data(char *word)
 		if (word[i] == '$')
 		{
 			// peek and check if variable is valid
-			// save word
-			// save variable key
+			if (is_variable_valid(word + (i + 1)) == 1)
+			{
+				// save word
+				// save variable key
+			}
 			word_start = i + 1;
 		}
 		i++;
@@ -89,16 +107,10 @@ static t_list	*get_expansion_data(char *word)
 static int	expand_word(t_list *node)
 {
 	char	*word;
-	size_t	i;
 
 	if (node == NULL || node->content == NULL)
 		return (2);
 	word = (char *)(node->content);
-	i = 0;
-	while (word[i] != '\0')
-	{
-
-	}
 	return (1);
 }
 
