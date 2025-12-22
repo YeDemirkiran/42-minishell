@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 07:19:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:14:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -98,7 +98,7 @@ static int	save_expansion_word(t_list **node, t_list **root,
 	t_list		*lst;
 	t_expansion	*expansion;
 
-	if (node == NULL || root == NULL)
+	if (node == NULL || root == NULL || word_start == word_end)
 		return (2);
 	expansion = malloc(sizeof(t_expansion));
 	if (expansion == NULL)
@@ -115,7 +115,7 @@ static int	save_expansion_word(t_list **node, t_list **root,
 	if (*node == NULL)
 	{
 		*node = lst;
-		*root = node;
+		*root = *node;
 	}
 	else
 		(*node)->next = lst;
@@ -132,7 +132,6 @@ static int	save_expansion_variable(t_list **node, t_list **root, char *key, t_li
 {
 	t_list		*lst;
 	t_expansion	*expansion;
-	char		*var_value;
 
 	if (node == NULL || root == NULL)
 		return (2);
@@ -150,7 +149,7 @@ static int	save_expansion_variable(t_list **node, t_list **root, char *key, t_li
 	if (*node == NULL)
 	{
 		*node = lst;
-		*root = node;
+		*root = *node;
 	}
 	else
 		(*node)->next = lst;
@@ -198,7 +197,7 @@ static t_list	*expand_word(char *word, t_list *envp)
 			{
 				printf("\n(we have a valid variable)\n");
 				// save word
-				if (save_expansion_word(&node, &root, word_start, i) != 1)
+				if (save_expansion_word(&node, &root, word_start, i) == 0)
 				{
 					ft_lstclear(&root, free);
 					return (NULL);
@@ -217,7 +216,66 @@ static t_list	*expand_word(char *word, t_list *envp)
 		}
 		i++;
 	}
+	if (i > word_start && word_start > 0)
+	{
+		if (save_expansion_word(&node, &root, word_start, i) == 0)
+		{
+			ft_lstclear(&root, free);
+			return (NULL);
+		}
+	}
 	return (root);
+}
+
+static size_t	get_new_word_length(t_list *expansion_data)
+{
+	size_t		len;
+	t_expansion	*data;
+
+	len = 0;
+	while (expansion_data != NULL && expansion_data->content != NULL)
+	{
+		data = (t_expansion *)(expansion_data->content);
+		if (data->type == EXPANSION_WORD)
+			len += data->data.word.end - data->data.word.start;
+		else if (data->type == EXPANSION_VARIABLE)
+			len += ft_strlen(data->data.variable_value);
+		expansion_data = expansion_data->next;
+	}
+	return (len);
+}
+
+/**
+ * @brief Takes a list of expansion data blocks and produces a new word.
+ */
+static char	*produce_new_word(char *str, t_list *expansion_data)
+{
+	char		*word;
+	size_t		i;
+	t_expansion	*data;
+	size_t		len;
+
+	len = get_new_word_length(expansion_data) + 1;
+	printf("\n(new word len: %lu)\n", len - 1);
+	word = malloc(sizeof(char) * len);
+	if (word == NULL)
+		return (NULL);
+	i = 0;
+	while (expansion_data != NULL && expansion_data->content != NULL)
+	{
+		data = (t_expansion *)(expansion_data->content);
+		if (data->type == EXPANSION_WORD)
+			i += ft_strlcpy(word + i, str + data->data.word.start, len - i);
+		else if (data->type == EXPANSION_VARIABLE)
+		{
+			printf("(VAR VAL: %s, I: %lu)\n", data->data.variable_value, i);
+			i += ft_strlcpy(word + i, data->data.variable_value, len - i);
+		}
+		expansion_data = expansion_data->next;
+	}
+	//word[i] = '\0';
+	printf("(word: %s)\n", word);
+	return (word);
 }
 
 /**
@@ -236,10 +294,17 @@ static int	expand_word_list(t_list *node, t_list *envp)
 	{
 		word = (char *)(node->content);
 		data = expand_word(word, envp);
+		if (data != NULL)
+		{
+			word = produce_new_word(word, data);
+			ft_lstclear(&data, free);
+			if (word == NULL)
+				return (0);
+			free(node->content);
+			node->content = (void *)word;
+		}
 		node = node->next;
 	}
-	if (data == NULL)
-		return (1);
 	return (1);
 }
 
