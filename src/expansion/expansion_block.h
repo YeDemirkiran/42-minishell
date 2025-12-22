@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:54:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 21:02:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 06:27:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,18 +15,26 @@
 
 # include <stddef.h>
 
-typedef struct s_expansion_word
+typedef enum e_expansion_type
 {
-	char	*str;
-	size_t	start;
-	size_t	end;
-}			t_expansion_word;
+	EXPANSION_WORD,
+	EXPANSION_VARIABLE
+}	t_expansion_type;
 
-typedef union u_expansion
+typedef union u_expansion_data
 {
-	char				*variable_key;
-	t_expansion_word	word;
+	char	*variable_value;
+	struct s_expansion_word
+	{
+		size_t	start;
+		size_t	end;
+	}		word;
+}	t_expansion_data;
+
+typedef struct s_expansion
+{
+	t_expansion_type	type;
+	t_expansion_data	data;
 }			t_expansion;
-
 
 #endif
