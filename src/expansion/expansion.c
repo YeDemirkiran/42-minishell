@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 08:21:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 15:25:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -92,13 +92,13 @@ static int	is_variable_valid(char *word)
  * to an expansion data list.
  * @return 0 on failure, 1 on success, 2 on NULL node or root parameters.
  */
-static int	save_expansion_word(t_list **node, t_list **root,
+static int	save_expansion_word(t_list **root,
 	size_t word_start, size_t word_end)
 {
 	t_list		*lst;
 	t_expansion	*expansion;
 
-	if (node == NULL || root == NULL || word_start == word_end)
+	if (root == NULL || word_start == word_end)
 		return (2);
 	expansion = malloc(sizeof(t_expansion));
 	if (expansion == NULL)
@@ -112,13 +112,7 @@ static int	save_expansion_word(t_list **node, t_list **root,
 		free(expansion);
 		return (0);
 	}
-	if (*node == NULL)
-	{
-		*node = lst;
-		*root = *node;
-	}
-	else
-		(*node)->next = lst;
+	ft_lstadd_back(root, lst);
 	return (1);
 }
 
@@ -128,12 +122,12 @@ static int	save_expansion_word(t_list **node, t_list **root,
  * @return 0 on failure, 1 on success, 2 on NULL node or root parameters.
  * @note Calls getenv() function if envp is NULL.
  */
-static int	save_expansion_variable(t_list **node, t_list **root, char *key, t_list *envp)
+static int	save_expansion_variable(t_list **root, char *key, t_list *envp)
 {
 	t_list		*lst;
 	t_expansion	*expansion;
 
-	if (node == NULL || root == NULL)
+	if (root == NULL || key == NULL)
 		return (2);
 	expansion = malloc(sizeof(t_expansion));
 	if (expansion == NULL)
@@ -146,13 +140,8 @@ static int	save_expansion_variable(t_list **node, t_list **root, char *key, t_li
 		free(expansion);
 		return (0);
 	}
-	if (*node == NULL)
-	{
-		*node = lst;
-		*root = *node;
-	}
-	else
-		(*node)->next = lst;
+	ft_lstadd_back(root, lst);
+	printf("(key: %s, value: %s)\n", key, expansion->data.variable_value);
 	return (1);
 }
 
@@ -179,14 +168,12 @@ static size_t set_variable_key(char *word, char **key_holder)
 static t_list	*expand_word(char *word, t_list *envp)
 {
 	t_list	*root;
-	t_list	*node;
 	size_t	i;
 	size_t	word_start;
 	char	*key;
 
 	word_start = 0;
 	i = 0;
-	node = NULL;
 	root = NULL;
 	while (word[i] != '\0')
 	{
@@ -197,14 +184,14 @@ static t_list	*expand_word(char *word, t_list *envp)
 			{
 				printf("\n(we have a valid variable)\n");
 				// save word
-				if (save_expansion_word(&node, &root, word_start, i) == 0)
+				if (save_expansion_word(&root, word_start, i) == 0)
 				{
 					ft_lstclear(&root, free);
 					return (NULL);
 				}
 				i += set_variable_key(word + (i + 1), &key);
 				// save variable key
-				if (save_expansion_variable(&node, &root, key, envp) != 1)
+				if (save_expansion_variable(&root, key, envp) != 1)
 				{
 					free(key);
 					ft_lstclear(&root, free);
@@ -218,7 +205,7 @@ static t_list	*expand_word(char *word, t_list *envp)
 	}
 	if (i > word_start && word_start > 0)
 	{
-		if (save_expansion_word(&node, &root, word_start, i) == 0)
+		if (save_expansion_word(&root, word_start, i) == 0)
 		{
 			ft_lstclear(&root, free);
 			return (NULL);
@@ -235,6 +222,7 @@ static size_t	get_new_word_length(t_list *expansion_data)
 	len = 0;
 	while (expansion_data != NULL && expansion_data->content != NULL)
 	{
+		printf("\nwuwuwuw\n");
 		data = (t_expansion *)(expansion_data->content);
 		if (data->type == EXPANSION_WORD)
 			len += data->data.word.end - data->data.word.start;
@@ -256,6 +244,8 @@ static char	*produce_new_word(char *str, t_list *expansion_data)
 	size_t		len;
 
 	len = get_new_word_length(expansion_data) + 1;
+	if (len == 1)
+		return (NULL);
 	printf("\n(new word len: %lu)\n", len - 1);
 	word = malloc(sizeof(char) * len);
 	if (word == NULL)
@@ -266,11 +256,11 @@ static char	*produce_new_word(char *str, t_list *expansion_data)
 		data = (t_expansion *)(expansion_data->content);
 		if (data->type == EXPANSION_WORD)
 		{
-			printf("(WORD VAL: %s, I: %lu)\n", ft_substr(str, data->data.word.start, data->data.word.end - data->data.word.start), i);
+			//printf("(WORD VAL: %s, I: %lu)\n", ft_substr(str, data->data.word.start, data->data.word.end - data->data.word.start), i);
 			ft_strlcpy(word + i, str + data->data.word.start, data->data.word.end - data->data.word.start + 1);
 			i += data->data.word.end - data->data.word.start;
 		}
-		else if (data->type == EXPANSION_VARIABLE)
+		else if (data->type == EXPANSION_VARIABLE && data->data.variable_value != NULL)
 		{
 			printf("(VAR VAL: %s, I: %lu)\n", data->data.variable_value, i);
 			i += ft_strlcpy(word + i, data->data.variable_value, len - i);
@@ -302,8 +292,6 @@ static int	expand_word_list(t_list *node, t_list *envp)
 		{
 			word = produce_new_word(word, data);
 			ft_lstclear(&data, free);
-			if (word == NULL)
-				return (0);
 			free(node->content);
 			node->content = (void *)word;
 		}
