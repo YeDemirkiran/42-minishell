@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 17:16:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 17:36:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -185,22 +185,26 @@ t_test_result	conduct_expansion_test(t_expansion_test test)
 	return (test_result);
 }
 
+int	test_number = 0;
+
 #define TEST_COMMAND(str) ast_new_node(AST_COMMAND, ast_command_data(char_arr_to_list(ft_split(str, ' ')), NULL), NULL, NULL)
 #define TEST_PIPE(left, right) ast_new_node(AST_PIPE, NULL, left, right)
+#define TEST_EXPANSION(testee_str, expected_str) { .number = (++test_number), .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND(expected_str)}
 
 static void	test_expansion(void)
 {
 	t_expansion_test	tests[] = {
-		// TEST 1: $USER
-		{
-			.number = 1,
-			.testee = TEST_COMMAND("echo $USER"),
-			.expected = TEST_COMMAND("echo yademirk")
-		}
+		// TEST 1: Basic tests
+		TEST_EXPANSION("$USER", "yademirk"),
+		TEST_EXPANSION("echo $USER", "echo yademirk"),
+		TEST_EXPANSION("echo $USER two", "echo yademirk two"),
+		TEST_EXPANSION("word$USER", "wordyademirk"),
+		TEST_EXPANSION("$USER$USER", "yademirkyademirk"),
+		TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
 	};
 	t_test_result results;
 
-	printf("\nTesting expansion() function\n");
+	printf("\nTesting expansion() function\n\n");
 
 	for (size_t i = 0; i < sizeof(tests) / sizeof(t_expansion_test); i++)
 	{
