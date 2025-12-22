@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 17:36:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 22:21:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -200,7 +200,17 @@ static void	test_expansion(void)
 		TEST_EXPANSION("echo $USER two", "echo yademirk two"),
 		TEST_EXPANSION("word$USER", "wordyademirk"),
 		TEST_EXPANSION("$USER$USER", "yademirkyademirk"),
+		TEST_EXPANSION("$USER$USER$USER", "yademirkyademirkyademirk"),
 		TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
+		TEST_EXPANSION("word1-$USER-word2-$USER-word3-$USER", "word1-yademirk-word2-yademirk-word3-yademirk"),
+
+		// TEST 2: Mixed valid variables
+		TEST_EXPANSION("$USER $HOME", "yademirk /home/yademirk"),
+		TEST_EXPANSION("$USER$HOME", "yademirk/home/yademirk"),
+		TEST_EXPANSION("$USER$HOME$USER", "yademirk/home/yademirkyademirk"),
+		TEST_EXPANSION("$USER$USER$HOME$HOME", "yademirkyademirk/home/yademirk/home/yademirk"),
+		TEST_EXPANSION("$HOME$PWD$DISPLAY$PATH$USERNAME$DESKTOP_SESSION$SHELL", "/home/yademirk" "/home/yademirk/Desktop/42-projects/minishell/tests/expansion" ":0" "/home/yademirk/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin" "yademirk" "ubuntu" "/bin/bash"),
+		//TEST_EXPANSION(NULL, NULL)
 	};
 	t_test_result results;
 
