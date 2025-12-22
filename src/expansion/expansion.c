@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 15:25:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 16:01:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -141,7 +141,7 @@ static int	save_expansion_variable(t_list **root, char *key, t_list *envp)
 		return (0);
 	}
 	ft_lstadd_back(root, lst);
-	printf("(key: %s, value: %s)\n", key, expansion->data.variable_value);
+	//printf("(key: %s, value: %s)\n", key, expansion->data.variable_value);
 	return (1);
 }
 
@@ -182,7 +182,6 @@ static t_list	*expand_word(char *word, t_list *envp)
 			// peek and check if variable is valid
 			if (is_variable_valid(word + (i + 1)) == 1)
 			{
-				printf("\n(we have a valid variable)\n");
 				// save word
 				if (save_expansion_word(&root, word_start, i) == 0)
 				{
@@ -198,8 +197,8 @@ static t_list	*expand_word(char *word, t_list *envp)
 					return (NULL);
 				}
 				free(key);
+				word_start = i + 1;
 			}
-			word_start = i + 1;
 		}
 		i++;
 	}
@@ -222,7 +221,6 @@ static size_t	get_new_word_length(t_list *expansion_data)
 	len = 0;
 	while (expansion_data != NULL && expansion_data->content != NULL)
 	{
-		printf("\nwuwuwuw\n");
 		data = (t_expansion *)(expansion_data->content);
 		if (data->type == EXPANSION_WORD)
 			len += data->data.word.end - data->data.word.start;
@@ -246,7 +244,7 @@ static char	*produce_new_word(char *str, t_list *expansion_data)
 	len = get_new_word_length(expansion_data) + 1;
 	if (len == 1)
 		return (NULL);
-	printf("\n(new word len: %lu)\n", len - 1);
+	//printf("\n(new word len: %lu)\n", len - 1);
 	word = malloc(sizeof(char) * len);
 	if (word == NULL)
 		return (NULL);
@@ -312,6 +310,27 @@ static void	expand_command_arguments(t_ast *ast)
 	expand_word_list(args, NULL);
 }
 
+//TODO: Remove
+static void	print_command_args(t_ast *ast)
+{
+	t_list	*lst;
+
+	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
+		return ;
+	lst = ast->data->ast_command.arguments;
+	if (lst == NULL)
+		return ;
+	printf("CMD: %s, Args: ", (char *)(lst->content));
+	while (lst != NULL)
+	{
+		printf("%s", (char *)(lst->content));
+		if (lst->next != NULL)
+			printf(", ");
+		lst = lst->next;
+	}
+	printf("\n");
+}
+
 /**
  * @brief Takes an AST and expands arguments in it.
  */
@@ -319,7 +338,9 @@ void	expansion(t_ast *root, t_list *env)
 {
 	(void)root;
 	(void)env;
-	printf("(DEBUG: Starting shell step 3: Expansion)\n");
+	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
 	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
 	ast_traverse_postorder(root, expand_command_arguments);
+	printf("(DEBUG: Step 3.2: Printing New Variables)\n");
+	ast_traverse_preorder(root, print_command_args);
 }
