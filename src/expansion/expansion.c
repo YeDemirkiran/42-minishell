@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 16:01:15 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 16:23:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -70,8 +70,9 @@ static char	*get_env_var(char *key, t_list *envp)
 
 /**
  * @brief Checks whether a word starting from index 0 abides by the
- * shell variable rules.
+ * minishell variable rules.
  * @return 0 if the word is not a valid variable, 1 otherwise.
+ * @note Variables can only consist of alphanumeric values and the '_' symbol.
  */
 static int	is_variable_valid(char *word)
 {
@@ -141,7 +142,6 @@ static int	save_expansion_variable(t_list **root, char *key, t_list *envp)
 		return (0);
 	}
 	ft_lstadd_back(root, lst);
-	//printf("(key: %s, value: %s)\n", key, expansion->data.variable_value);
 	return (1);
 }
 
@@ -163,9 +163,11 @@ static size_t set_variable_key(char *word, char **key_holder)
 }
 
 /**
- * @brief Takes a word and returns the expanded version of it.
+ * @brief Takes a word and outputs a linked list of expansion data blocks.
+ *
+ * These blocks are required for the second step of expansion: Concatenation.
  */
-static t_list	*expand_word(char *word, t_list *envp)
+static t_list	*get_expansion_data(char *word, t_list *envp)
 {
 	t_list	*root;
 	size_t	i;
@@ -179,17 +181,14 @@ static t_list	*expand_word(char *word, t_list *envp)
 	{
 		if (word[i] == '$')
 		{
-			// peek and check if variable is valid
 			if (is_variable_valid(word + (i + 1)) == 1)
 			{
-				// save word
 				if (save_expansion_word(&root, word_start, i) == 0)
 				{
 					ft_lstclear(&root, free);
 					return (NULL);
 				}
 				i += set_variable_key(word + (i + 1), &key);
-				// save variable key
 				if (save_expansion_variable(&root, key, envp) != 1)
 				{
 					free(key);
@@ -213,6 +212,11 @@ static t_list	*expand_word(char *word, t_list *envp)
 	return (root);
 }
 
+/**
+ * @brief Takes a list of expansion data blocks and returns the total length of
+ * the whole string that will be generated.
+ * @note This function is used to correctly allocate memory beforehand.
+ */
 static size_t	get_new_word_length(t_list *expansion_data)
 {
 	size_t		len;
@@ -232,9 +236,10 @@ static size_t	get_new_word_length(t_list *expansion_data)
 }
 
 /**
- * @brief Takes a list of expansion data blocks and produces a new word.
+ * @brief Takes a list of expansion data blocks,
+ * builds the expanded version of a string and returns it.
  */
-static char	*produce_new_word(char *str, t_list *expansion_data)
+static char	*get_expanded_word(char *str, t_list *expansion_data)
 {
 	char		*word;
 	size_t		i;
@@ -244,7 +249,6 @@ static char	*produce_new_word(char *str, t_list *expansion_data)
 	len = get_new_word_length(expansion_data) + 1;
 	if (len == 1)
 		return (NULL);
-	//printf("\n(new word len: %lu)\n", len - 1);
 	word = malloc(sizeof(char) * len);
 	if (word == NULL)
 		return (NULL);
@@ -254,19 +258,15 @@ static char	*produce_new_word(char *str, t_list *expansion_data)
 		data = (t_expansion *)(expansion_data->content);
 		if (data->type == EXPANSION_WORD)
 		{
-			//printf("(WORD VAL: %s, I: %lu)\n", ft_substr(str, data->data.word.start, data->data.word.end - data->data.word.start), i);
 			ft_strlcpy(word + i, str + data->data.word.start, data->data.word.end - data->data.word.start + 1);
 			i += data->data.word.end - data->data.word.start;
 		}
 		else if (data->type == EXPANSION_VARIABLE && data->data.variable_value != NULL)
 		{
-			printf("(VAR VAL: %s, I: %lu)\n", data->data.variable_value, i);
 			i += ft_strlcpy(word + i, data->data.variable_value, len - i);
 		}
 		expansion_data = expansion_data->next;
 	}
-	//word[i] = '\0';
-	printf("(word: %s)\n", word);
 	return (word);
 }
 
@@ -285,10 +285,10 @@ static int	expand_word_list(t_list *node, t_list *envp)
 	while (node != NULL)
 	{
 		word = (char *)(node->content);
-		data = expand_word(word, envp);
+		data = get_expansion_data(word, envp);
 		if (data != NULL)
 		{
-			word = produce_new_word(word, data);
+			word = get_expanded_word(word, data);
 			ft_lstclear(&data, free);
 			free(node->content);
 			node->content = (void *)word;
@@ -332,7 +332,7 @@ static void	print_command_args(t_ast *ast)
 }
 
 /**
- * @brief Takes an AST and expands arguments in it.
+ * @brief Takes a syntax tree and expands arguments in it.
  */
 void	expansion(t_ast *root, t_list *env)
 {
