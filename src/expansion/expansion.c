@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 06:04:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 06:37:02 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -62,6 +62,11 @@
 // 	return (value);
 // }
 
+/**
+ * @brief Checks whether a word starting from index 0 abides by the
+ * shell variable rules.
+ * @return 0 if the word is not a valid variable, 1 otherwise.
+ */
 static int	is_variable_valid(char *word)
 {
 	size_t	i;
@@ -76,14 +81,54 @@ static int	is_variable_valid(char *word)
 	return (1);
 }
 
-static t_list	*get_expansion_data(char *word)
+/**
+ * @brief Saves an expansion data block to an expansion data list.
+ * @return 0 on failure, 1 on success, 2 on NULL node or root parameters.
+ */
+static int	save_expansion_word(t_list **node, t_list **root,
+	size_t word_start, size_t word_end)
 {
+	t_list		*lst;
+	t_expansion	*expansion;
+
+	if (node == NULL || root == NULL)
+		return (2);
+	expansion = malloc(sizeof(t_expansion));
+	if (expansion == NULL)
+		return (0);
+	expansion->type = EXPANSION_WORD;
+	expansion->data.word.start = word_start;
+	expansion->data.word.end = word_end;
+	lst = ft_lstnew((void *)expansion);
+	if (lst == NULL)
+	{
+		free(expansion);
+		return (0);
+	}
+	if (*node == NULL)
+	{
+		*node = lst;
+		*root = node;
+	}
+	else
+		(*node)->next = lst;
+	return (1);
+}
+
+/**
+ * @brief Takes a word and returns the expanded version of it.
+ */
+static t_list	*expand_word(char *word)
+{
+	t_list	*root;
+	t_list	*node;
 	size_t	i;
 	size_t	word_start;
 
-	(void)word_start;
 	word_start = 0;
 	i = 0;
+	node = NULL;
+	root = NULL;
 	while (word[i] != '\0')
 	{
 		if (word[i] == '$')
@@ -93,13 +138,18 @@ static t_list	*get_expansion_data(char *word)
 			{
 				printf("\n(we have a valid variable)\n");
 				// save word
+				if (save_expansion_word(&node, &root, word_start, i) != 1)
+				{
+					ft_lstclear(&root, free);
+					return (NULL);
+				}
 				// save variable key
 			}
 			word_start = i + 1;
 		}
 		i++;
 	}
-	return (NULL);
+	return (root);
 }
 
 /**
@@ -117,7 +167,7 @@ static int	expand_word_list(t_list *node)
 	while (node != NULL)
 	{
 		word = (char *)(node->content);
-		data = get_expansion_data(word);
+		data = expand_word(word);
 		node = node->next;
 	}
 	if (data == NULL)
@@ -132,6 +182,8 @@ static void	expand_command_arguments(t_ast *ast)
 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
 		return ;
 	args = ast->data->ast_command.arguments;
+	if (args == NULL)
+		return ;
 	expand_word_list(args);
 }
 
