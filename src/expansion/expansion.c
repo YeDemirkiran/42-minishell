@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 08:14:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 08:21:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -265,7 +265,11 @@ static char	*produce_new_word(char *str, t_list *expansion_data)
 	{
 		data = (t_expansion *)(expansion_data->content);
 		if (data->type == EXPANSION_WORD)
-			i += ft_strlcpy(word + i, str + data->data.word.start, len - i);
+		{
+			printf("(WORD VAL: %s, I: %lu)\n", ft_substr(str, data->data.word.start, data->data.word.end - data->data.word.start), i);
+			ft_strlcpy(word + i, str + data->data.word.start, data->data.word.end - data->data.word.start + 1);
+			i += data->data.word.end - data->data.word.start;
+		}
 		else if (data->type == EXPANSION_VARIABLE)
 		{
 			printf("(VAR VAL: %s, I: %lu)\n", data->data.variable_value, i);
