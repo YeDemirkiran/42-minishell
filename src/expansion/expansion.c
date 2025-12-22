@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 06:37:02 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/22 07:19:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,46 +21,52 @@
 
 #include "expansion_block.h"
 
-// static char	*get_value_from_env(char *str, char *key)
-// {
-// 	size_t	i;
-// 	size_t	len;
+/**
+ * @brief Extracts the value part from a key-value pair.
+ * @return Address of the value.
+ * @note The returned pointer is not malloc'd, don't try to free it.
+ */
+static char	*get_value_from_env(char *str, char *key)
+{
+	size_t	i;
 
-// 	char	*value;
+	i = 0;
+	while (str[i] != '\0' && key[i] != '\0' && str[i] == key[i])
+		i++;
+	if (key[i] != '\0' || str[i] != '=')
+		return (NULL);
+	return (str + (i + 1));
+}
 
-// 	i = 0;
-// 	while (str[i] != '\0' && key[i] != '\0' && str[i] == key[i])
-// 		i++;
-// 	if (key[i] != '\0' || str[i] != '=')
-// 		return (NULL);
-// 	len = 0;
-// 	while (str[len + (i + 1)] != '\0')
-// 		len++;
-// 	value = ft_substr(str, (unsigned int)(i + 1), len);
-// 	return (value);
-// }
+/**
+ * @brief Searches for a variable key in an environment
+ * list and returns its value.
+ * @note - Calls getenv() if envp is NULL.
+ * @note - The returned pointer is not malloc'd, don't try to free it.
+ */
+static char	*get_env_var(char *key, t_list *envp)
+{
+	char	*str;
+	char	*value;
 
-// static char	*get_env_var(char *key, t_list *env)
-// {
-// 	char	*str;
-// 	char	*value;
-
-// 	if (key == NULL || env == NULL)
-// 		return (NULL);
-// 	value = NULL;
-// 	while (env != NULL)
-// 	{
-// 		if (env->content != NULL)
-// 		{
-// 			str = (char *)(env->content);
-// 			value = get_value_from_env(str, key);
-// 			if (value != NULL)
-// 				break ;
-// 		}
-// 		env = env->next;
-// 	}
-// 	return (value);
-// }
+	if (key == NULL)
+		return (NULL);
+	else if (envp == NULL)
+		return (getenv((const char *)key));
+	value = NULL;
+	while (envp != NULL)
+	{
+		if (envp->content != NULL)
+		{
+			str = (char *)(envp->content);
+			value = get_value_from_env(str, key);
+			if (value != NULL)
+				break ;
+		}
+		envp = envp->next;
+	}
+	return (value);
+}
 
 /**
  * @brief Checks whether a word starting from index 0 abides by the
@@ -82,7 +88,8 @@ static int	is_variable_valid(char *word)
 }
 
 /**
- * @brief Saves an expansion data block to an expansion data list.
+ * @brief Saves an expansion data block of type WORD
+ * to an expansion data list.
  * @return 0 on failure, 1 on success, 2 on NULL node or root parameters.
  */
 static int	save_expansion_word(t_list **node, t_list **root,
@@ -116,14 +123,67 @@ static int	save_expansion_word(t_list **node, t_list **root,
 }
 
 /**
+ * @brief Saves an expansion data block of type VARIABLE
+ * to an expansion data list.
+ * @return 0 on failure, 1 on success, 2 on NULL node or root parameters.
+ * @note Calls getenv() function if envp is NULL.
+ */
+static int	save_expansion_variable(t_list **node, t_list **root, char *key, t_list *envp)
+{
+	t_list		*lst;
+	t_expansion	*expansion;
+	char		*var_value;
+
+	if (node == NULL || root == NULL)
+		return (2);
+	expansion = malloc(sizeof(t_expansion));
+	if (expansion == NULL)
+		return (0);
+	expansion->type = EXPANSION_VARIABLE;
+	expansion->data.variable_value = get_env_var(key, envp);
+	lst = ft_lstnew((void *)expansion);
+	if (lst == NULL)
+	{
+		free(expansion);
+		return (0);
+	}
+	if (*node == NULL)
+	{
+		*node = lst;
+		*root = node;
+	}
+	else
+		(*node)->next = lst;
+	return (1);
+}
+
+static size_t set_variable_key(char *word, char **key_holder)
+{
+	size_t	i;
+
+	if (word == NULL || key_holder == NULL)
+		return (0);
+	i = 0;
+	while (word[i] != '\0' && (ft_isalnum(word[i]) || word[i] == '_'))
+		i++;
+	if (i == 0)
+		return (0);
+	*key_holder = ft_substr(word, (unsigned int)0, i);
+	if (*key_holder == NULL)
+		return (0);
+	return (i);
+}
+
+/**
  * @brief Takes a word and returns the expanded version of it.
  */
-static t_list	*expand_word(char *word)
+static t_list	*expand_word(char *word, t_list *envp)
 {
 	t_list	*root;
 	t_list	*node;
 	size_t	i;
 	size_t	word_start;
+	char	*key;
 
 	word_start = 0;
 	i = 0;
@@ -143,7 +203,15 @@ static t_list	*expand_word(char *word)
 					ft_lstclear(&root, free);
 					return (NULL);
 				}
+				i += set_variable_key(word + (i + 1), &key);
 				// save variable key
+				if (save_expansion_variable(&node, &root, key, envp) != 1)
+				{
+					free(key);
+					ft_lstclear(&root, free);
+					return (NULL);
+				}
+				free(key);
 			}
 			word_start = i + 1;
 		}
@@ -157,7 +225,7 @@ static t_list	*expand_word(char *word)
  * to be expanded and does so.
  * @return 0 on failure, 1 on success, 2 on NULL node.
  */
-static int	expand_word_list(t_list *node)
+static int	expand_word_list(t_list *node, t_list *envp)
 {
 	char	*word;
 	t_list	*data;
@@ -167,7 +235,7 @@ static int	expand_word_list(t_list *node)
 	while (node != NULL)
 	{
 		word = (char *)(node->content);
-		data = expand_word(word);
+		data = expand_word(word, envp);
 		node = node->next;
 	}
 	if (data == NULL)
@@ -184,7 +252,7 @@ static void	expand_command_arguments(t_ast *ast)
 	args = ast->data->ast_command.arguments;
 	if (args == NULL)
 		return ;
-	expand_word_list(args);
+	expand_word_list(args, NULL);
 }
 
 /**
