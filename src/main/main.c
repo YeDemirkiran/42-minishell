@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 15:24:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 20:52:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -28,6 +28,9 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
+#include <get_next_line.h>
+#include <minishell_lb.h>
+#include <gb.h>
 
 #include "../lexer/token.h"
 
@@ -42,7 +45,12 @@ int	main(int argc, char **argv, char **envp)
 	t_list	*tokens;
 	char	first_run;
 	t_ast	*ast;
+	t_envp_list *envp_list;
+	char **envp_char_list;
+	char *prompt;
 
+	envp_list = create_envp_list(envp);
+	envp_char_list = envp_list_to_char_arr(envp_list);
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -55,31 +63,24 @@ int	main(int argc, char **argv, char **envp)
 		if (!first_run && input != NULL)
 			free(input);
 		first_run = 0;
-		tmp = readline(RL_START COLOR_GREEN RL_END SHELL_NAME RL_START COLOR_WHITE RL_END " > ");
+		prompt = rl_header(&envp_list, envp);
+		tmp = readline(prompt);
 		if (tmp == NULL)
 			break ;
 		input = ft_strjoin(tmp, "\n");
 		free(tmp);
 		if (input == NULL)
 			break;
-
-		// STEP 1: Lexical Analysis
-		// Analyze and tokenize the input.
 		tokens = lexical_analyze(input);
-
-		// STEP 2: Parser
-		// Use the tokens from lexer and parse them to usable commands by the executor.
 		ast = parse(tokens);
-
-		// STEP 3: Execution
-		// Execute the parsed commands here. Provide envp for them.
-		executor(ast, envp, 0, 1);
-
-		// STEP 4: Restart
-		// Prepare the shell for the next iteration.
-		// free tokens
+		if(ast->type == AST_COMMAND && isbuiltin(cut_wrong_chracter(ast->data->ast_command.command)))
+			run_builtin(ast, &envp_char_list, &envp_list);
+		else
+			executor(ast, envp_char_list, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
+		free(prompt);
 	}
+	free(prompt);
 	return (EXIT_SUCCESS);
 }

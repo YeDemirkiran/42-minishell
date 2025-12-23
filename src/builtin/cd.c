@@ -6,24 +6,46 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/11/27 18:06:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 20:49:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <unistd.h>
-#include <stdio.h>
+#include "stdio.h"
+#include <libft.h>
+#include "unistd.h"
 
-// Self-explanatory
-void	change_directory(const char *path)
+#include "structs/s_ast.h"
+#include <minishell_lb.h>
+
+char *appen_speacial_chr(t_envp_list **list, char c)
 {
-	int	res;
+	if(c == '~')
+		return (find_value_on_envp(list, "HOME"));
+	return NULL;
+}
 
-	res = chdir(path);
-	if (res != 0)
+char *cd_shortcut(t_envp_list **list, char *input)
+{
+	if(input == NULL)
+		return find_value_on_envp(list, "HOME");
+	return input;
+}
+
+void cd(t_envp_list **list, t_ast *ast)
+{
+    char buf[1024];
+    char *old_pwd;
+
+	if(ft_arrlen((const char **)ast->data->ast_command.arguments) > 2)
 	{
-		// todo: it should write "bash: cd: {path}"
-		// todo: return cd's exit status
-		// edge case: when path is "", it does nothing
-		perror("cd");
+		printf("-babashell: cd: too many arguments\n");
+		return ;
 	}
+    getcwd(buf, 1024);
+    update_envp_value(list, "OLDPWD", buf);
+    //printf("DEBUG OLDPWD %s\n", find_value_on_envp(list, "OLDPWD"));
+    chdir(cd_shortcut(list, ast->data->ast_command.arguments[1]));
+    getcwd(buf, 1024);
+    update_envp_value(list, "PWD", buf);
+    printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
 }
