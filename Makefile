@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/09/07 11:06:35 by yademirk          #+#    #+#              #
-#    Updated: 2025/12/23 21:05:15 by yademirk         ###   ########.fr        #
+#    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
+#    Updated: 2025/12/23 21:28:37 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -66,7 +66,7 @@ EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
-BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c)
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c pwd.c env.c)
 
 ## Signals
 SIGNAL_DIR = signal/
