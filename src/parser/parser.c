@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 21:06:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:16:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -203,7 +203,7 @@ t_ast	*parse(t_list *tokens)
 	}
 	root = result.ast;
 	//printf("(DEBUG: Step 2.1: Printing AST)\n");
-	ast_traverse_preorder(root, debug_ast_print_node);
+	//ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
 

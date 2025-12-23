@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 20:49:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:14:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,8 +23,8 @@
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
 #include <minishell_lb.h>
-#include "../include/modules/executor.h"
-#include "../include/modules/builtin.h"
+#include "modules/executor.h"
+#include "modules/builtin.h"
 
 static void run_redirs(t_list **redirs)
 {
@@ -44,19 +44,19 @@ static void run_redirs(t_list **redirs)
 }
 
 /*This function cut \n and \r in char* of end of the line */
-void delete_new_line(char ***s1)
-{
-	char **str;
-	int i;
+// void delete_new_line(char ***s1)
+// {
+// 	char **str;
+// 	int i;
 
-	str = (*s1);
-	i = 0;
-	while(str[i] != NULL)
-	{
-		str[i] = cut_wrong_chracter(str[i]);
-		i++;
-	}
-}
+// 	str = (*s1);
+// 	i = 0;
+// 	while(str[i] != NULL)
+// 	{
+// 		str[i] = cut_wrong_chracter(str[i]);
+// 		i++;
+// 	}
+// }
 
 int isbuiltin(const char *command)
 {
@@ -81,7 +81,7 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 	char **tmp;
 
 	tmp = (*envp_char);
-	if(isbuiltin(ast->data->ast_command.arguments[0]))
+	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 		cd(envp_list, ast);
 	(*envp_char) = envp_list_to_char_arr((*envp_list));
 	clear_arr(&tmp);
@@ -93,7 +93,7 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 	t_list *redirs;
 
 	pid = 1;
-	delete_new_line(&ast->data->ast_command.arguments);
+	//delete_new_line(&ast->data->ast_command.arguments);
 	pid = fork();
 	if(pid == 0)
 	{
@@ -103,12 +103,12 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 		//printf("REDIRS NULL: %i\n", redirs == NULL);
 		while (redirs != NULL)
 			run_redirs(&redirs);
-		if(isbuiltin(cut_wrong_chracter(ast->data->ast_command.command)))
+		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 		{
 			run_builtin(ast, &envp, NULL);
 			return ;
 		}
-		execve(ft_strjoin("/bin/", cut_wrong_chracter(ast->data->ast_command.command)), ast->data->ast_command.arguments, envp);
+		execve(ft_strjoin("/bin/", (char *)(ast->data->ast_command.arguments->content)), ft_lst_to_string_arr(ast->data->ast_command.arguments), envp);
 		perror("-babashell: command not found");
 		exit(1);
 	}
