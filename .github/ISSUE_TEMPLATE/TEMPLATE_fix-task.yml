@@ -1,0 +1,41 @@
+name: Fix Task
+description: Bir problemi çözmek için görev
+title: "[Fix]: Kısa başlık"
+labels: ["Fix"]
+body:
+  - type: input
+    id: source_issue
+    attributes:
+      label: İlgili bug issue (varsa)
+      placeholder: "#12"
+    validations:
+      required: false
+  - type: textarea
+    id: scope
+    attributes:
+      label: Kapsam
+      placeholder: Hangi dosyalar / fonksiyonlar etkilenecek?
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Test / Doğrulama
+      placeholder: Nasıl kontrol edeceksin?
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Ek not
+    validations:
+      required: false

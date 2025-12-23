@@ -1,16 +1,16 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 16:38:15 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/23 21:02:36 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
-#include "stdio.h" 
+#include "stdio.h"
 #include <libft.h>
 #include "stdlib.h"
 #include "unistd.h"
@@ -98,7 +98,7 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
-	
+
 	pid = 1;
 	delete_new_line(&ast->data->ast_command.arguments);
 	pid = fork();
@@ -125,7 +125,7 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
 {
 	int pipefd[2];
-	
+
 	if(ast->type == AST_COMMAND)
 		run_command(ast, envp, fd_in, fd_out);
 	else if (ast->type == AST_PIPE)
