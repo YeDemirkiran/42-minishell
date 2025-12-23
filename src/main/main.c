@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 20:52:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:05:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -25,6 +25,7 @@
 #include "modules/lexer.h"
 #include "modules/ast.h"
 #include "modules/parser.h"
+#include "modules/expansion.h"
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"

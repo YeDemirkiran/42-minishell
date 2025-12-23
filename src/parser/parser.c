@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 20:53:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:06:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -38,6 +38,8 @@
 // TODO: remove
 static void	debug_ast_print_node(t_ast *ast)
 {
+	t_list	*list;
+
 	printf("\nAST NODE\n");
 	printf("TYPE: ");
 	if (ast->type == AST_COMMAND)
@@ -48,16 +50,18 @@ static void	debug_ast_print_node(t_ast *ast)
 	if (ast->type == AST_COMMAND)
 	{
 		printf("COMMAND DATA\n");
-		printf("Command: %s\n", ast->data->ast_command.command);
 
-		if (ast->data->ast_command.arguments != NULL)
+		list = ast->data->ast_command.arguments;
+		if (list != NULL)
 		{
+			printf("Command: %s\n", (char *)(list->content));
 			printf("Arguments: ");
-			for (size_t i = 0; ast->data->ast_command.arguments[i] != NULL; i++)
+			while (list != NULL)
 			{
-				printf("%s", ast->data->ast_command.arguments[i]);
-				if (ast->data->ast_command.arguments[i + 1] != NULL)
+				printf("%s", (char *)(list->content));
+				if (list->next != NULL)
 					printf(", ");
+				list = list->next;
 			}
 			printf("\n");
 		}
@@ -136,13 +140,17 @@ static void	print_token_error(t_parse_result result)
 	t_token	*token;
 	char	*token_word;
 
-	if (result.type != PARSE_RESULT_TOKEN_ERROR)
+	if (result.type != PARSE_RESULT_TOKEN_ERROR
+		&& result.type != PARSE_RESULT_TOKEN_UNCOMPLETE)
 		return ;
 	if (result.current_token == NULL || result.current_token->content == NULL)
 		token = NULL;
 	else
 		token = (t_token *)(result.current_token->content);
-	ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+	if (result.type == PARSE_RESULT_TOKEN_ERROR)
+		ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+	else if (result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
+		ft_putstr_fd("minishell: uncompleted operator '", 2);
 	token_word = get_token_string(token);
 	if (token_word == NULL)
 		ft_putstr_fd("(null)", 2);
@@ -184,7 +192,8 @@ t_ast	*parse(t_list *tokens)
 	if (result.type != PARSE_RESULT_SUCCESS)
 	{
 		// Time to give an error
-		if (result.type == PARSE_RESULT_TOKEN_ERROR)
+		if (result.type == PARSE_RESULT_TOKEN_ERROR
+			|| result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
 			print_token_error(result);
 		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
 			perror("minishell");
