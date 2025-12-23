@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 16:22:44 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/23 16:38:15 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,9 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 		if(!ft_strncmp("cd", ast->data->ast_command.arguments[0], ft_strlen(ast->data->ast_command.arguments[0])))
 			cd(envp_list, ast);
 		else if(!ft_strncmp("pwd", ast->data->ast_command.arguments[0], ft_strlen(ast->data->ast_command.arguments[0])))
-			pwd(envp_list, ast);
+			pwd(envp_list);
+		else if(!ft_strncmp("env", ast->data->ast_command.arguments[0], ft_strlen(ast->data->ast_command.arguments[0])))
+			env(envp_list);
 	}
 	(*envp_char) = envp_list_to_char_arr((*envp_list));
 	clear_arr(&tmp);

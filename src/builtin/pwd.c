@@ -17,7 +17,7 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
-void pwd(t_envp_list **list, t_ast *ast)
+void pwd(t_envp_list **list)
 {
 	char buf[1024];
 	getcwd(buf, 1024);
