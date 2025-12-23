@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 15:01:14 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 14:54:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -79,7 +79,7 @@ int	main(int argc, char **argv, char **envp)
 
 		// STEP 4: Execution
 		// Execute the parsed commands here. Provide envp for them.
-		// execute(cmd);
+		executor(ast, envp, 0, 1);
 
 		// STEP 5: Restart
 		// Prepare the shell for the next iteration.
