@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 21:28:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:41:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -78,11 +78,22 @@ int isbuiltin(const char *command)
 
 void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 {
-	char **tmp;
+	char	**tmp;
+	char	*command;
+	size_t	len;
 
 	tmp = (*envp_char);
-	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-		cd(envp_list, ast);
+	command = (char *)(ast->data->ast_command.arguments->content);
+	len = ft_strlen(command);
+	if(isbuiltin(command))
+	{
+		if(!ft_strncmp("cd", command, len))
+			cd(envp_list, ast);
+		else if(!ft_strncmp("pwd", command, len))
+			pwd(envp_list);
+		else if(!ft_strncmp("env", command, len))
+			env(envp_list);
+	}
 	(*envp_char) = envp_list_to_char_arr((*envp_list));
 	clear_arr(&tmp);
 }
