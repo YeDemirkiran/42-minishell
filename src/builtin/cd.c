@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 21:51:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/23 22:08:42 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <libft.h>
@@ -41,11 +41,18 @@ void cd(t_envp_list **list, t_ast *ast)
 		printf("-babashell: cd: too many arguments\n");
 		return ;
 	}
-    //getcwd(buf, 1024);
-    //update_envp_value(list, "OLDPWD", buf);
-    //printf("DEBUG OLDPWD %s\n", find_value_on_envp(list, "OLDPWD"));
-    chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
-    //getcwd(buf, 1024);
-    //update_envp_value(list, "PWD", buf);
-    //printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
+    getcwd(buf, 1024);
+    update_envp_value(list, "OLDPWD", buf);
+	if(ast->data->ast_command.arguments->next == NULL)
+	{
+		if(chdir(find_value_on_envp(list, "HOME")) != 0)
+		{
+			printf("-babashell: cd: HOME not set\n");
+			return ;
+		}
+	}
+	else
+   		chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
+    getcwd(buf, 1024);
+    update_envp_value(list, "PWD", buf);
 }
