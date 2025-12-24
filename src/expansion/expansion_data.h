@@ -1,19 +1,21 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion_block.h                                  :+:      :+:    :+:   */
+/*   expansion_data.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/20 20:54:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 06:27:21 by yademirk         ###   ########.fr       */
+/*   Created: 2025/12/24 16:47:41 by yademirk          #+#    #+#             */
+/*   Updated: 2025/12/24 16:48:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef EXPANSION_BLOCK_H
-# define EXPANSION_BLOCK_H
+#ifndef EXPANSION_DATA
+# define EXPANSION_DATA
 
 # include <stddef.h>
+
+# include <libft/linked_list.h>
 
 typedef enum e_expansion_type
 {
@@ -36,5 +38,12 @@ typedef struct s_expansion
 	t_expansion_type	type;
 	t_expansion_data	data;
 }			t_expansion;
+
+/**
+ * @brief Takes a word and outputs a linked list of expansion data blocks.
+ *
+ * These blocks are required for the second step of expansion: Concatenation.
+ */
+t_list	*get_expansion_data(char *word, t_list *envp);
 
 #endif
