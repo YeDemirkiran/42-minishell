@@ -6,12 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 12:15:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 16:11:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include <libft/string.h>
 #include <libft/predicate.h>
@@ -22,7 +23,7 @@
 #include "expansion_block.h"
 
 /**
- * @brief Extracts the value part from a key-value pair.
+ * @brief Extracts the value part from a key-value pair if the keys match.
  * @return Address of the value.
  * @note The returned pointer is not malloc'd, don't try to free it.
  */
@@ -30,6 +31,8 @@ static char	*get_value_from_env(char *str, char *key)
 {
 	size_t	i;
 
+	if (str == NULL || key == NULL)
+		return (NULL);
 	i = 0;
 	while (str[i] != '\0' && key[i] != '\0' && str[i] == key[i])
 		i++;
@@ -145,12 +148,17 @@ static int	save_expansion_variable(t_list **root, char *key, t_list *envp)
 	return (1);
 }
 
+/**
+ * @brief Takes a word, saves the variable it holds in key_holder,
+ * and then returns the length of the key string.
+ */
 static size_t set_variable_key(char *word, char **key_holder)
 {
 	size_t	i;
 
 	if (word == NULL || key_holder == NULL)
 		return (0);
+	*key_holder = NULL;
 	i = 0;
 	while (word[i] != '\0' && (ft_isalnum(word[i]) || word[i] == '_'))
 		i++;
@@ -174,6 +182,8 @@ static t_list	*get_expansion_data(char *word, t_list *envp)
 	size_t	word_start;
 	char	*key;
 
+	if (word == NULL)
+		return (NULL);
 	word_start = 0;
 	i = 0;
 	root = NULL;
@@ -186,13 +196,21 @@ static t_list	*get_expansion_data(char *word, t_list *envp)
 				if (save_expansion_word(&root, word_start, i) == 0)
 				{
 					ft_lstclear(&root, free);
+					perror("minishell");
 					return (NULL);
 				}
 				i += set_variable_key(word + (i + 1), &key);
+				if (key == NULL)
+				{
+					ft_lstclear(&root, free);
+					perror("minishell");
+					return (NULL);
+				}
 				if (save_expansion_variable(&root, key, envp) != 1)
 				{
 					free(key);
 					ft_lstclear(&root, free);
+					perror("minishell");
 					return (NULL);
 				}
 				free(key);
@@ -206,6 +224,7 @@ static t_list	*get_expansion_data(char *word, t_list *envp)
 		if (save_expansion_word(&root, word_start, i) == 0)
 		{
 			ft_lstclear(&root, free);
+			perror("minishell");
 			return (NULL);
 		}
 	}
@@ -293,21 +312,30 @@ static int	expand_word_list(t_list *node, t_list *envp)
 			free(node->content);
 			node->content = (void *)word;
 		}
+		else if (errno != 0)
+			return (0);
 		node = node->next;
 	}
 	return (1);
 }
 
-static void	expand_command_arguments(t_ast *ast)
+/**
+ * @brief Takes an AST node, checks if it's of type AST_COMMAND
+ * and then performs expansion on it.
+ * @return 0 on failure, 1 on success, 2 on NULL ast parameter.
+ */
+static int	expand_command_arguments(t_ast *ast)
 {
 	t_list	*args;
 
 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
-		return ;
+		return (2);
 	args = ast->data->ast_command.arguments;
 	if (args == NULL)
-		return ;
-	expand_word_list(args, NULL);
+		return (2);
+	if (expand_word_list(args, NULL) != 1)
+		return (0);
+	return (1);
 }
 
 //TODO: Remove
@@ -333,20 +361,31 @@ static void	print_command_args(t_ast *ast)
 
 /**
  * @brief Takes a syntax tree and expands arguments in it.
+ * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-void	expansion(t_ast *root, t_list *env)
+int	expansion(t_ast *root, t_list *env)
 {
 	(void)env;
 	if (root == NULL)
-		return ;
+		return (2);
 	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
 	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
 	if (root->type == AST_COMMAND)
-		expand_command_arguments(root);
+	{
+		if (expand_command_arguments(root) != 1)
+			return (0);
+	}
 	if (root->left != NULL)
-		expansion(root->left, env);
+	{
+		if (expansion(root->left, env) != 1)
+			return (0);
+	}
 	if (root->right != NULL)
-		expansion(root->right, env);
+	{
+		if (expansion(root->right, env) != 1)
+			return (0);
+	}
 	printf("(DEBUG: Step 3.2: Printing New Variables)\n");
 	ast_traverse_preorder(root, print_command_args);
+	return (1);
 }
