@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 12:08:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 12:20:46 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -65,7 +65,7 @@ int	main(int argc, char **argv, char **envp)
 			free(input);
 		first_run = 0;
 		//prompt = rl_header(&envp_list, envp);
-		prompt = RL_START COLOR_GREEN "babashell" COLOR_WHITE RL_END " > ";
+		prompt = RL_START COLOR_GREEN RL_END "babashell" RL_START COLOR_WHITE RL_END " > ";
 		tmp = readline(prompt);
 		if (tmp == NULL)
 			break ;
@@ -84,6 +84,6 @@ int	main(int argc, char **argv, char **envp)
 		ast_free_tree(ast);
 		//free(prompt);
 	}
-	free(prompt);
+	//free(prompt);
 	return (EXIT_SUCCESS);
 }
