@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 18:28:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 02:44:04 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -234,6 +234,28 @@ static void	test_expansion(void)
 		TEST_EXPANSION("echo $ test", "echo $ test"),
 		TEST_EXPANSION("echo $ test $ echo test $ $ $ $", "echo $ test $ echo test $ $ $ $"),
 		TEST_EXPANSION("echo $@ test $$$$$$ echo test $@@@@ $... $. $", "echo $@ test $$$$$$ echo test $@@@@ $... $. $"),
+
+		// TEST 7: Single quotes
+		TEST_EXPANSION("'$USER'", "'$USER'"),
+		TEST_EXPANSION("'$USER$USER'", "'$USER$USER'"),
+		TEST_EXPANSION("'$USER''$USER'", "'$USER''$USER'"),
+		TEST_EXPANSION("'$USER'$USER'$USER'", "'$USER'yademirk'$USER'"),
+
+		// TEST 8: Double quotes
+		TEST_EXPANSION("\"$USER\"", "\"yademirk\""),
+		TEST_EXPANSION("\"$USER$USER\"", "\"yademirkyademirk\""),
+		TEST_EXPANSION("\"$USER\"\"$USER\"", "\"yademirk\"\"yademirk\""),
+		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", "\"yademirk\"yademirk\"yademirk\""),
+
+		// TEST 9: Single quotes within double quotes
+		TEST_EXPANSION("\"'$USER'\"", "\"'yademirk'\""),
+		TEST_EXPANSION("\"'$USER$USER'\"", "\"'yademirkyademirk'\""),
+		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "\"'yademirk'\"\"'yademirk'\""),
+
+		// TEST 9: Double quotes within single quotes
+		TEST_EXPANSION("'\"$USER\"'", "'\"$USER\"'"),
+		TEST_EXPANSION("'\"$USER$USER\"'", "'\"$USER$USER\"'"),
+		TEST_EXPANSION("'\"$USER\"''\"$USER\"'", "'\"$USER\"''\"$USER\"'"),
 	};
 	t_test_result results;
 
