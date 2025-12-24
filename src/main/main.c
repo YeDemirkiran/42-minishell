@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 12:20:46 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 15:46:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -75,15 +75,18 @@ int	main(int argc, char **argv, char **envp)
 			break;
 		tokens = lexical_analyze(input);
 		ast = parse(tokens);
-		expansion(ast, NULL);
+		if (expansion(ast, NULL) != 1)
+		{
+			free_tokens(&tokens);
+			ast_free_tree(ast);
+			continue ;
+		}
 		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 			run_builtin(ast, &envp_char_list, &envp_list);
 		else
 			executor(ast, envp_char_list, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
-		//free(prompt);
 	}
-	//free(prompt);
 	return (EXIT_SUCCESS);
 }
