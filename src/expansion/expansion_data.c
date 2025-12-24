@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 22:40:22 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 02:09:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -151,7 +151,7 @@ static int	save_expansion_variable(t_list **root, char *key, t_list *envp)
  * @brief Takes a word, saves the variable it holds in key_holder,
  * and then returns the length of the key string.
  */
-static size_t set_variable_key(char *word, char **key_holder)
+static size_t	set_variable_key(char *word, char **key_holder)
 {
 	size_t	i;
 
@@ -230,15 +230,31 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 	size_t	i;
 	size_t	word_start;
 	char	*key;
+	char	quote;
 
 	if (word == NULL)
 		return (NULL);
 	word_start = 0;
 	i = 0;
 	root = NULL;
+	quote = 0;
 	while (word[i] != '\0')
 	{
-		if (word[i] == '$' && is_variable_valid(word + (i + 1)) == 1)
+		if (word[i] == '\'' && quote != '"')
+		{
+			if (quote == '\'')
+				quote = 0;
+			else
+				quote = '\'';
+		}
+		else if (word[i] == '"')
+		{
+			if (quote == '"')
+				quote = 0;
+			else
+				quote = '"';
+		}
+		if (quote != '\'' && word[i] == '$' && is_variable_valid(word + (i + 1)) == 1)
 		{
 			if (save_expansion_word(&root, word_start, i) == 0)
 				return (on_expansion_data_error(&root, NULL));

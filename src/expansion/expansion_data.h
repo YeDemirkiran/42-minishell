@@ -6,12 +6,12 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:47:41 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 16:48:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 22:42:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef EXPANSION_DATA
-# define EXPANSION_DATA
+#ifndef EXPANSION_DATA_H
+# define EXPANSION_DATA_H
 
 # include <stddef.h>
 
