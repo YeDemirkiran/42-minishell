@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 02:09:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 02:42:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -247,7 +247,7 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 			else
 				quote = '\'';
 		}
-		else if (word[i] == '"')
+		else if (word[i] == '"' && quote != '\'')
 		{
 			if (quote == '"')
 				quote = 0;
