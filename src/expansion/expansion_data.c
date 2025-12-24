@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 16:49:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 22:40:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <libft/write.h>
 #include <libft/string.h>
 #include <libft/predicate.h>
 #include <libft/linked_list.h>
@@ -169,6 +170,56 @@ static size_t set_variable_key(char *word, char **key_holder)
 }
 
 /**
+ * @brief This function is called upon encountering the variable ($) sign
+ * on a word.
+ *
+ * The word parameter must start from after the sign.
+ */
+// int	on_found_variable_sign(char *word, t_list *envp)
+// {
+// 	char	*key;
+
+// 	if (is_variable_valid(word) == 1)
+// 	{
+// 		if (save_expansion_word(&root, word_start, i) == 0)
+// 		{
+// 			ft_lstclear(&root, free);
+// 			perror("minishell");
+// 			return (NULL);
+// 		}
+// 		i += set_variable_key(word + (i + 1), &key);
+// 		if (key == NULL)
+// 		{
+// 			ft_lstclear(&root, free);
+// 			perror("minishell");
+// 			return (NULL);
+// 		}
+// 		if (save_expansion_variable(&root, key, envp) != 1)
+// 		{
+// 			free(key);
+// 			ft_lstclear(&root, free);
+// 			perror("minishell");
+// 			return (NULL);
+// 		}
+// 		free(key);
+// 		word_start = i + 1;
+// 	}
+// }
+
+static void	*on_expansion_data_error(t_list **root, char *key)
+{
+	if (root != NULL)
+		ft_lstclear(root, free);
+	if (key != NULL)
+		free(key);
+	if (errno != 0)
+		perror("minishell");
+	else
+		ft_putstr_fd("minishell: unknown error during variable expansion", 2);
+	return (NULL);
+}
+
+/**
  * @brief Takes a word and outputs a linked list of expansion data blocks.
  *
  * These blocks are required for the second step of expansion: Concatenation.
@@ -187,44 +238,22 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 	root = NULL;
 	while (word[i] != '\0')
 	{
-		if (word[i] == '$')
+		if (word[i] == '$' && is_variable_valid(word + (i + 1)) == 1)
 		{
-			if (is_variable_valid(word + (i + 1)) == 1)
-			{
-				if (save_expansion_word(&root, word_start, i) == 0)
-				{
-					ft_lstclear(&root, free);
-					perror("minishell");
-					return (NULL);
-				}
-				i += set_variable_key(word + (i + 1), &key);
-				if (key == NULL)
-				{
-					ft_lstclear(&root, free);
-					perror("minishell");
-					return (NULL);
-				}
-				if (save_expansion_variable(&root, key, envp) != 1)
-				{
-					free(key);
-					ft_lstclear(&root, free);
-					perror("minishell");
-					return (NULL);
-				}
-				free(key);
-				word_start = i + 1;
-			}
+			if (save_expansion_word(&root, word_start, i) == 0)
+				return (on_expansion_data_error(&root, NULL));
+			i += set_variable_key(word + (i + 1), &key);
+			if (key == NULL)
+				return (on_expansion_data_error(&root, NULL));
+			if (save_expansion_variable(&root, key, envp) != 1)
+				return (on_expansion_data_error(&root, key));
+			free(key);
+			word_start = i + 1;
 		}
 		i++;
 	}
 	if (i > word_start && word_start > 0)
-	{
 		if (save_expansion_word(&root, word_start, i) == 0)
-		{
-			ft_lstclear(&root, free);
-			perror("minishell");
-			return (NULL);
-		}
-	}
+			return (on_expansion_data_error(&root, NULL));
 	return (root);
 }
