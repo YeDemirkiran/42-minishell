@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 16:49:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 22:53:34 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -46,6 +46,22 @@ static size_t	get_new_word_length(t_list *expansion_data)
 }
 
 /**
+ * @brief Helper function to initialize the get_expanded_word function.
+ * @return 0 on failure, 1 on success.
+ */
+static int	get_expanded_word_init(size_t *len, char **word,
+	t_list *expansion_data)
+{
+	*len = get_new_word_length(expansion_data) + 1;
+	if (*len == 1)
+		return (0);
+	*word = malloc(sizeof(char) * *len);
+	if (*word == NULL)
+		return (0);
+	return (1);
+}
+
+/**
  * @brief Takes a list of expansion data blocks,
  * builds the expanded version of a string and returns it.
  */
@@ -56,11 +72,7 @@ static char	*get_expanded_word(char *str, t_list *expansion_data)
 	t_expansion	*data;
 	size_t		len;
 
-	len = get_new_word_length(expansion_data) + 1;
-	if (len == 1)
-		return (NULL);
-	word = malloc(sizeof(char) * len);
-	if (word == NULL)
+	if (get_expanded_word_init(&len, &word, expansion_data) != 1)
 		return (NULL);
 	i = 0;
 	while (expansion_data != NULL && expansion_data->content != NULL)
@@ -68,13 +80,13 @@ static char	*get_expanded_word(char *str, t_list *expansion_data)
 		data = (t_expansion *)(expansion_data->content);
 		if (data->type == EXPANSION_WORD)
 		{
-			ft_strlcpy(word + i, str + data->data.word.start, data->data.word.end - data->data.word.start + 1);
+			ft_strlcpy(word + i, str + data->data.word.start,
+				data->data.word.end - data->data.word.start + 1);
 			i += data->data.word.end - data->data.word.start;
 		}
-		else if (data->type == EXPANSION_VARIABLE && data->data.variable_value != NULL)
-		{
+		else if (data->type == EXPANSION_VARIABLE
+			&& data->data.variable_value != NULL)
 			i += ft_strlcpy(word + i, data->data.variable_value, len - i);
-		}
 		expansion_data = expansion_data->next;
 	}
 	return (word);
