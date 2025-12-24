@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 21:51:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 12:10:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -34,18 +34,17 @@ char *cd_shortcut(t_envp_list **list, char *input)
 void cd(t_envp_list **list, t_ast *ast)
 {
     char buf[1024];
-    char *old_pwd;
 
 	if(ft_lstsize(ast->data->ast_command.arguments) > 2)
 	{
 		printf("-babashell: cd: too many arguments\n");
 		return ;
 	}
-    //getcwd(buf, 1024);
-    //update_envp_value(list, "OLDPWD", buf);
+    getcwd(buf, 1024);
+    update_envp_value(list, "OLDPWD", buf);
     //printf("DEBUG OLDPWD %s\n", find_value_on_envp(list, "OLDPWD"));
     chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
-    //getcwd(buf, 1024);
-    //update_envp_value(list, "PWD", buf);
+    getcwd(buf, 1024);
+    update_envp_value(list, "PWD", buf);
     //printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
 }
