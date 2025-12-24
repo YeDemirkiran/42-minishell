@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/22 16:23:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 12:15:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -336,11 +336,17 @@ static void	print_command_args(t_ast *ast)
  */
 void	expansion(t_ast *root, t_list *env)
 {
-	(void)root;
 	(void)env;
+	if (root == NULL)
+		return ;
 	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
 	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
-	ast_traverse_postorder(root, expand_command_arguments);
+	if (root->type == AST_COMMAND)
+		expand_command_arguments(root);
+	if (root->left != NULL)
+		expansion(root->left, env);
+	if (root->right != NULL)
+		expansion(root->right, env);
 	printf("(DEBUG: Step 3.2: Printing New Variables)\n");
 	ast_traverse_preorder(root, print_command_args);
 }
