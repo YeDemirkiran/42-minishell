@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 21:19:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 20:59:13 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -82,7 +82,10 @@ int	main(int argc, char **argv, char **envp)
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		free(prompt);
+		sort_malloc(1, 1);
 	}
+	sort_malloc(1, 1);
+	clear_arr(&envp_char_list);
 	free(prompt);
 	return (EXIT_SUCCESS);
 }
