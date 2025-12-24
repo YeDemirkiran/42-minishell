@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 20:51:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 12:09:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -106,41 +106,41 @@ static t_list	*get_tokens(char *string)
 }
 
 // TODO: Remove this function
-#include "stdio.h"
-static void	debug_print_tokens(t_list *tokens)
-{
-	t_token	*token;
+// #include "stdio.h"
+// static void	debug_print_tokens(t_list *tokens)
+// {
+// 	t_token	*token;
 
-	while (tokens != NULL)
-	{
-		token = (t_token *)(tokens->content);
-		if (token->type == TOKEN_REDIR_INPUT)
-			printf("[REDIR_INPUT, FD: %i]", token->data.number);
-		else if (token->type == TOKEN_REDIR_OUTPUT)
-			printf("[REDIR_OUTPUT, FD: %i]", token->data.number);
-		else if (token->type == TOKEN_REDIR_HEREDOC)
-			printf("[REDIR_HEREDOC, FD: %i]", token->data.number);
-		else if (token->type == TOKEN_REDIR_APPEND)
-			printf("[REDIR_APPEND, FD: %i]", token->data.number);
-		else if (token->type == TOKEN_PIPE)
-			printf("[PIPE]");
-		else if (token->type == TOKEN_PAREN_LEFT)
-			printf("[PAREN_LEFT]");
-		else if (token->type == TOKEN_PAREN_RIGHT)
-			printf("[PAREN_RIGHT]");
-		else if (token->type == TOKEN_IF_AND)
-			printf("[IF_AND]");
-		else if (token->type == TOKEN_IF_OR)
-			printf("[IF_OR]");
-		else if (token->type == TOKEN_NEWLINE)
-			printf("[NEWLINE]");
-		else if (token->type == TOKEN_WORD)
-			printf("[TOKEN_WORD, %s]", token->data.word);
-		if (tokens->next != NULL)
-			printf(", ");
-		tokens = tokens->next;
-	}
-}
+// 	while (tokens != NULL)
+// 	{
+// 		token = (t_token *)(tokens->content);
+// 		if (token->type == TOKEN_REDIR_INPUT)
+// 			printf("[REDIR_INPUT, FD: %i]", token->data.number);
+// 		else if (token->type == TOKEN_REDIR_OUTPUT)
+// 			printf("[REDIR_OUTPUT, FD: %i]", token->data.number);
+// 		else if (token->type == TOKEN_REDIR_HEREDOC)
+// 			printf("[REDIR_HEREDOC, FD: %i]", token->data.number);
+// 		else if (token->type == TOKEN_REDIR_APPEND)
+// 			printf("[REDIR_APPEND, FD: %i]", token->data.number);
+// 		else if (token->type == TOKEN_PIPE)
+// 			printf("[PIPE]");
+// 		else if (token->type == TOKEN_PAREN_LEFT)
+// 			printf("[PAREN_LEFT]");
+// 		else if (token->type == TOKEN_PAREN_RIGHT)
+// 			printf("[PAREN_RIGHT]");
+// 		else if (token->type == TOKEN_IF_AND)
+// 			printf("[IF_AND]");
+// 		else if (token->type == TOKEN_IF_OR)
+// 			printf("[IF_OR]");
+// 		else if (token->type == TOKEN_NEWLINE)
+// 			printf("[NEWLINE]");
+// 		else if (token->type == TOKEN_WORD)
+// 			printf("[TOKEN_WORD, %s]", token->data.word);
+// 		if (tokens->next != NULL)
+// 			printf(", ");
+// 		tokens = tokens->next;
+// 	}
+// }
 
 /**
  * @brief Performs lexical analysis on a given string and returns tokens.
@@ -157,10 +157,7 @@ t_list	*lexical_analyze(char *string)
 	//printf("(DEBUG: Step 1.1: Retrieved tokens: ");
 	tokens = get_tokens(string);
 	if (tokens == NULL)
-	{
-		printf("NULL)\n");
 		return (NULL);
-	}
 	//debug_print_tokens(tokens);
 	//printf(")\n");
 	//printf("(DEBUG: Step 1 'Lexical Analysis & Tokenization' completed.)\n");

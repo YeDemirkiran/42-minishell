@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/23 21:16:20 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 12:09:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -35,75 +35,75 @@
 
 /* =============================== FUNCTIONS =============================== */
 
-// TODO: remove
-static void	debug_ast_print_node(t_ast *ast)
-{
-	t_list	*list;
+// // TODO: remove
+// static void	debug_ast_print_node(t_ast *ast)
+// {
+// 	t_list	*list;
 
-	printf("\nAST NODE\n");
-	printf("TYPE: ");
-	if (ast->type == AST_COMMAND)
-		printf("command");
-	else if (ast->type == AST_PIPE)
-		printf("pipe");
-	printf("\n");
-	if (ast->type == AST_COMMAND)
-	{
-		printf("COMMAND DATA\n");
+// 	printf("\nAST NODE\n");
+// 	printf("TYPE: ");
+// 	if (ast->type == AST_COMMAND)
+// 		printf("command");
+// 	else if (ast->type == AST_PIPE)
+// 		printf("pipe");
+// 	printf("\n");
+// 	if (ast->type == AST_COMMAND)
+// 	{
+// 		printf("COMMAND DATA\n");
 
-		list = ast->data->ast_command.arguments;
-		if (list != NULL)
-		{
-			printf("Command: %s\n", (char *)(list->content));
-			printf("Arguments: ");
-			while (list != NULL)
-			{
-				printf("%s", (char *)(list->content));
-				if (list->next != NULL)
-					printf(", ");
-				list = list->next;
-			}
-			printf("\n");
-		}
-		else
-			printf("Arguments: (null)\n");
+// 		list = ast->data->ast_command.arguments;
+// 		if (list != NULL)
+// 		{
+// 			printf("Command: %s\n", (char *)(list->content));
+// 			printf("Arguments: ");
+// 			while (list != NULL)
+// 			{
+// 				printf("%s", (char *)(list->content));
+// 				if (list->next != NULL)
+// 					printf(", ");
+// 				list = list->next;
+// 			}
+// 			printf("\n");
+// 		}
+// 		else
+// 			printf("Arguments: (null)\n");
 
-		printf("Redirs: ");
-		t_list	*lst = ast->data->ast_command.redirs;
-		if (lst == NULL)
-		{
-			printf("(none)\n");
-			return;
-		}
-		t_redirection *redir;
-		while (lst != NULL)
-		{
-			redir = (t_redirection *)(lst->content);
+// 		printf("Redirs: ");
+// 		t_list	*lst = ast->data->ast_command.redirs;
+// 		if (lst == NULL)
+// 		{
+// 			printf("(none)\n");
+// 			return;
+// 		}
+// 		t_redirection *redir;
+// 		while (lst != NULL)
+// 		{
+// 			redir = (t_redirection *)(lst->content);
 
-			printf("(type: ");
-			switch (redir->redir_type)
-			{
-				case REDIR_APPEND:
-					printf(">>");
-					break;
-				case REDIR_HEREDOC:
-					printf("<<");
-					break;
-				case REDIR_INPUT:
-					printf("<");
-					break;
-				case REDIR_OUTPUT:
-					printf(">");
-					break;
-				default:
-					break;
-			}
-			printf(", fd: %i, path: %s) ", redir->target_fd, redir->path);
-			lst = lst->next;
-		}
-		printf("\n");
-	}
-}
+// 			printf("(type: ");
+// 			switch (redir->redir_type)
+// 			{
+// 				case REDIR_APPEND:
+// 					printf(">>");
+// 					break;
+// 				case REDIR_HEREDOC:
+// 					printf("<<");
+// 					break;
+// 				case REDIR_INPUT:
+// 					printf("<");
+// 					break;
+// 				case REDIR_OUTPUT:
+// 					printf(">");
+// 					break;
+// 				default:
+// 					break;
+// 			}
+// 			printf(", fd: %i, path: %s) ", redir->target_fd, redir->path);
+// 			lst = lst->next;
+// 		}
+// 		printf("\n");
+// 	}
+// }
 
 
 static char	*get_token_string(t_token *token)
