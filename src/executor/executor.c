@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 21:41:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 14:44:38 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <libft.h>
@@ -41,6 +41,40 @@ static void run_redirs(t_list **redirs)
 		dup2(fd, redir->target_fd);
 	(*redirs) = (*redirs)->next;
 	close(fd);
+}
+
+static char *command_path(t_ast *ast)
+{
+	char *cmd;
+
+	cmd = (char *)ast->data->ast_command.arguments->content;
+	if(!ft_strncmp("/bin/", cmd, 5))
+		return ft_strdup(cmd);
+	cmd = ft_strjoin("/bin/", cmd);
+	return cmd;
+}
+
+static char **list_to_char_arr(t_list *list)
+{
+	char **args;
+	int size_args;
+	t_list *tmp;
+	int i;
+
+	i = 0;
+	tmp = list;
+	size_args = ft_lstsize(list) + 1;
+	args = malloc(sizeof(char *) * size_args);
+	if(args == NULL)
+		return NULL;
+	args[size_args - 1] = NULL;
+	while(tmp != NULL)
+	{
+		args[i] = ft_strdup((char *)tmp->content);
+		i++;
+		tmp = tmp->next;
+	}
+	return args;
 }
 
 /*This function cut \n and \r in char* of end of the line */
@@ -102,16 +136,18 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
+	char **args;
+	char *cmd;
 
 	pid = 1;
-	//delete_new_line(&ast->data->ast_command.arguments);
+	args = list_to_char_arr(ast->data->ast_command.arguments);
+	cmd = command_path(ast);
 	pid = fork();
 	if(pid == 0)
 	{
 		dup2(fd_in, 0);
 		dup2(fd_out, 1);
 		redirs = ast->data->ast_command.redirs;
-		//printf("REDIRS NULL: %i\n", redirs == NULL);
 		while (redirs != NULL)
 			run_redirs(&redirs);
 		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
@@ -119,11 +155,15 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 			run_builtin(ast, &envp, NULL);
 			return ;
 		}
-		execve(ft_strjoin("/bin/", (char *)(ast->data->ast_command.arguments->content)), ft_lst_to_string_arr(ast->data->ast_command.arguments), envp);
+		execve(cmd, args, envp);
 		perror("-babashell: command not found");
+		free(cmd);
+		clear_arr(&args);
 		exit(1);
 	}
 	wait(NULL);
+	free(cmd);
+	clear_arr(&args);
 }
 
 void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
