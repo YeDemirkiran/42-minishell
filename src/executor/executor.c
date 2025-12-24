@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/24 15:36:54 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/24 23:36:02 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,13 @@
 // }
 
 
-void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
+void run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
 	char **args;
-	char *cmd;
 
 	args = list_to_char_arr(ast->data->ast_command.arguments);
-	cmd = command_path(ast);
 	pid = fork();
 	if(pid == 0)
 	{
@@ -61,34 +59,30 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 			run_redirs(&redirs);
 		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 		{
-			run_builtin(ast, &envp, NULL);
-			return ;
+			run_builtin(ast, &(*list)->envp_char, &(*list)->envp_list);
+			exit(EXIT_SUCCESS);
 		}
-		execve(cmd, args, envp);
+		execve(command_path(ast), args, (*list)->envp_char);
 		perror("-babashell: command not found");
-		free(cmd);
-		clear_arr(&args);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	wait(NULL);
-	free(cmd);
 	clear_arr(&args);
 }
 
-void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
+void	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	int pipefd[2];
 
 	if(ast->type == AST_COMMAND)
-		run_command(ast, envp, fd_in, fd_out);
+		run_command(ast, list, fd_in, fd_out);
 	else if (ast->type == AST_PIPE)
 	{
 		pipe(pipefd);
-		executor(ast->left, envp, fd_in, pipefd[1]);
+		executor(ast->left, list, fd_in, pipefd[1]);
 		close(pipefd[1]);
-		executor(ast->right, envp, pipefd[0], fd_out);
+		executor(ast->right, list, pipefd[0], fd_out);
 		close(pipefd[0]);
 	}
-	(void)envp;
 }
 

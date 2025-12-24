@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 20:59:13 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/24 23:30:55 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,16 @@ int	main(int argc, char **argv, char **envp)
 	t_list	*tokens;
 	char	first_run;
 	t_ast	*ast;
-	t_envp_list *envp_list;
-	char **envp_char_list;
+	//t_envp_list *envp_list;
+	//char **envp_char_list;
 	char *prompt;
+	t_god_struct_envp *envp_struct;
 
-	envp_list = create_envp_list(envp);
-	envp_char_list = envp_list_to_char_arr(envp_list);
+	//envp_list = create_envp_list(envp);
+	//envp_char_list = envp_list_to_char_arr(envp_list);
+	envp_struct = ft_malloc(sizeof(t_god_struct_envp), 0);
+	envp_struct->envp_list = create_envp_list(envp);
+	envp_struct->envp_char = envp_list_to_char_arr(envp_struct->envp_list);
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -64,7 +68,7 @@ int	main(int argc, char **argv, char **envp)
 		if (!first_run && input != NULL)
 			free(input);
 		first_run = 0;
-		prompt = rl_header(&envp_list, envp);
+		prompt = rl_header(&envp_struct->envp_list, envp);
 		tmp = readline(prompt);
 		if (tmp == NULL)
 			break ;
@@ -76,16 +80,16 @@ int	main(int argc, char **argv, char **envp)
 		ast = parse(tokens);
 		expansion(ast, NULL);
 		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-			run_builtin(ast, &envp_char_list, &envp_list);
+			run_builtin(ast, &envp_struct->envp_char, &envp_struct->envp_list);
 		else
-			executor(ast, envp_char_list, 0, 1);
+			executor(ast, &envp_struct, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		free(prompt);
 		sort_malloc(1, 1);
 	}
 	sort_malloc(1, 1);
-	clear_arr(&envp_char_list);
+	clear_arr(&envp_struct->envp_char);
 	free(prompt);
 	return (EXIT_SUCCESS);
 }

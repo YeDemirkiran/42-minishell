@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/24 20:54:57 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/24 23:08:00 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char *command_path(t_ast *ast)
 	cmd = (char *)ast->data->ast_command.arguments->content;
 	if(!ft_strncmp("/bin/", cmd, 5))
 		return ft_strdup(cmd);
-	cmd = ft_strjoin("/bin/", cmd);
+	cmd = sort_term_strjoin("/bin/", cmd);
 	return cmd;
 }
 
