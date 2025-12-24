@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/24 15:35:27 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/24 15:36:54 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
 	char **args;
 	char *cmd;
 
-	pid = 1;
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	cmd = command_path(ast);
 	pid = fork();
