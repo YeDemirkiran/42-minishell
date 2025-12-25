@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 02:42:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 15:18:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -219,6 +219,24 @@ static void	*on_expansion_data_error(t_list **root, char *key)
 	return (NULL);
 }
 
+static void	set_quote(char c, char *quote_addr)
+{
+	if (c == '\'' && *quote_addr != '"')
+	{
+		if (*quote_addr == '\'')
+			*quote_addr = 0;
+		else
+			*quote_addr = '\'';
+	}
+	else if (c == '"' && *quote_addr != '\'')
+	{
+		if (*quote_addr == '"')
+			*quote_addr = 0;
+		else
+			*quote_addr = '"';
+	}
+}
+
 /**
  * @brief Takes a word and outputs a linked list of expansion data blocks.
  *
@@ -240,20 +258,7 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 	quote = 0;
 	while (word[i] != '\0')
 	{
-		if (word[i] == '\'' && quote != '"')
-		{
-			if (quote == '\'')
-				quote = 0;
-			else
-				quote = '\'';
-		}
-		else if (word[i] == '"' && quote != '\'')
-		{
-			if (quote == '"')
-				quote = 0;
-			else
-				quote = '"';
-		}
+		set_quote(word[i], &quote);
 		if (quote != '\'' && word[i] == '$' && is_variable_valid(word + (i + 1)) == 1)
 		{
 			if (save_expansion_word(&root, word_start, i) == 0)
