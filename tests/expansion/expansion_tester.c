@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 14:51:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 17:02:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -221,7 +221,11 @@ static void	test_expansion(void)
 
 		// TEST 4: Non-existing variables
 		TEST_EXPANSION_EMPTY("$no"),
-		//TEST_EXPANSION("This $doesnt exist", "This exist"),
+		TEST_EXPANSION("hello$no.world", "hello.world"),
+		TEST_EXPANSION("hello$a.world", "hello.world"),
+		TEST_EXPANSION("hello$.world", "hello$.world"),
+		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$1e112$asfafsasf_asfasfasf.world", "hello.world"),
+		TEST_EXPANSION("hello$$$$$$$$$$.world", "hello$$$$$$$$$$.world"),
 
 		// TEST 5: Invalid variables
 		TEST_EXPANSION("$", "$"),
