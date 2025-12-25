@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 17:02:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 20:12:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -226,6 +226,8 @@ static void	test_expansion(void)
 		TEST_EXPANSION("hello$.world", "hello$.world"),
 		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$1e112$asfafsasf_asfasfasf.world", "hello.world"),
 		TEST_EXPANSION("hello$$$$$$$$$$.world", "hello$$$$$$$$$$.world"),
+		TEST_EXPANSION("$USER$no$HOME", "yademirk/home/yademirk"),
+		TEST_EXPANSION("$no$USER$SHELL$no$HOME$no$", "yademirk/bin/bash/home/yademirk$"),
 
 		// TEST 5: Invalid variables
 		TEST_EXPANSION("$", "$"),
