@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2025/12/25 20:31:49 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/25 22:53:13 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -58,7 +58,7 @@ AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c ast_helper.c)
 
 ## Expansion
 EXPANSION_DIR = expansion/
-EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c expansion_data.c expansion_data_utils.c)
+EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c expansion_data.c expansion_data_utils.c split_word.c)
 
 ## Executor
 EXECUTOR_DIR = executor/

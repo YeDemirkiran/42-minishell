@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 22:53:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 22:54:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,6 +21,7 @@
 #include "modules/ast.h"
 
 #include "expansion_data.h"
+#include "split_word.h"
 
 /**
  * @brief Takes a list of expansion data blocks and returns the total length of
@@ -163,16 +164,13 @@ static void	print_command_args(t_ast *ast)
 }
 
 /**
- * @brief Takes a syntax tree and expands arguments in it.
+ * @brief Takes a syntax tree and recursively expands arguments in it.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-int	expansion(t_ast *root, t_list *env)
+static int	perform_expansion(t_ast *root, t_list *env)
 {
-	(void)env;
 	if (root == NULL)
 		return (2);
-	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
-	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
 	if (root->type == AST_COMMAND)
 	{
 		if (expand_command_arguments(root) != 1)
@@ -180,15 +178,34 @@ int	expansion(t_ast *root, t_list *env)
 	}
 	if (root->left != NULL)
 	{
-		if (expansion(root->left, env) != 1)
+		if (perform_expansion(root->left, env) != 1)
 			return (0);
 	}
 	if (root->right != NULL)
 	{
-		if (expansion(root->right, env) != 1)
+		if (perform_expansion(root->right, env) != 1)
 			return (0);
 	}
-	printf("(DEBUG: Step 3.2: Printing New Variables)\n");
+	return (1);
+}
+
+/**
+ * @brief Starts the process of full expansion, word splitting
+ * and quote removal.
+ * @return 0 on failure, 1 on success, 2 on NULL root parameter.
+ */
+int	expansion(t_ast *root, t_list *env)
+{
+	if (root == NULL)
+		return (2);
+	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
+	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
+	if (perform_expansion(root, env) != 1)
+		return (0);
+	printf("(DEBUG: Step 3.2: Word Splitting)\n");
+	if (peform_word_split(root) != 1)
+		return (0);
+	printf("(DEBUG: Step 3.3: Printing New Variables)\n");
 	ast_traverse_preorder(root, print_command_args);
 	return (1);
 }
