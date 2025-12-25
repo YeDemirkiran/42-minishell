@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 23:30:55 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/25 05:03:22 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,9 @@ int	main(int argc, char **argv, char **envp)
 	t_list	*tokens;
 	char	first_run;
 	t_ast	*ast;
-	//t_envp_list *envp_list;
-	//char **envp_char_list;
 	char *prompt;
 	t_god_struct_envp *envp_struct;
 
-	//envp_list = create_envp_list(envp);
-	//envp_char_list = envp_list_to_char_arr(envp_list);
 	envp_struct = ft_malloc(sizeof(t_god_struct_envp), 0);
 	envp_struct->envp_list = create_envp_list(envp);
 	envp_struct->envp_char = envp_list_to_char_arr(envp_struct->envp_list);
