@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 02:44:04 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 14:51:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -252,10 +252,14 @@ static void	test_expansion(void)
 		TEST_EXPANSION("\"'$USER$USER'\"", "\"'yademirkyademirk'\""),
 		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "\"'yademirk'\"\"'yademirk'\""),
 
-		// TEST 9: Double quotes within single quotes
+		// TEST 10: Double quotes within single quotes
 		TEST_EXPANSION("'\"$USER\"'", "'\"$USER\"'"),
 		TEST_EXPANSION("'\"$USER$USER\"'", "'\"$USER$USER\"'"),
 		TEST_EXPANSION("'\"$USER\"''\"$USER\"'", "'\"$USER\"''\"$USER\"'"),
+
+		// TEST 11: Deep nested
+		TEST_EXPANSION("'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'", "'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'"),
+		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "\"''''''''''yademirk''''''''''\""),
 	};
 	t_test_result results;
 
