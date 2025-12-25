@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 16:51:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/25 17:48:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -256,10 +256,13 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 	i = 0;
 	root = NULL;
 	quote = 0;
-	while (word[i] != '\0')
+	while (1)
 	{
 		while (word[i] != '\0' && word[i] != '$')
 			set_quote(word[i++], &quote);
+		if (save_expansion_word(&root, word_start, i) == 0)
+			return (on_expansion_data_error(&root, NULL));
+		word_start = i;
 		if (word[i] == '\0')
 			break ;
 		if (quote == '\'' || is_variable_valid(word + (i + 1)) == 0)
@@ -267,8 +270,6 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 			i++;
 			continue ;
 		}
-		if (save_expansion_word(&root, word_start, i) == 0)
-			return (on_expansion_data_error(&root, NULL));
 		i += set_variable_key(word + (i + 1), &key);
 		if (key == NULL)
 			return (on_expansion_data_error(&root, NULL));
@@ -277,8 +278,5 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 		free(key);
 		word_start = i + 1;
 	}
-	if (i > word_start && word_start > 0)
-		if (save_expansion_word(&root, word_start, i) == 0)
-			return (on_expansion_data_error(&root, NULL));
 	return (root);
 }
