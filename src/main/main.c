@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 05:03:22 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/25 05:06:49 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,9 @@ int	main(int argc, char **argv, char **envp)
 			executor(ast, &envp_struct, 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
-		free(prompt);
 		sort_malloc(1, 1);
 	}
 	sort_malloc(1, 1);
 	clear_arr(&envp_struct->envp_char);
-	free(prompt);
 	return (EXIT_SUCCESS);
 }
