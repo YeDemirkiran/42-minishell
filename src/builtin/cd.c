@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 18:20:40 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/25 18:34:13 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,16 @@ char *cd_shortcut(t_envp_list **list, char *input)
 	return input;
 }
 
-void cd(t_envp_list **list, t_ast *ast)
+int cd(t_envp_list **list, t_ast *ast)
 {
     char buf[1024];
     char *old_pwd;
+	int check;
 
 	if(ft_lstsize(ast->data->ast_command.arguments) > 2)
 	{
 		printf("-babashell: cd: too many arguments\n");
-		return ;
+		return 1;
 	}
     getcwd(buf, 1024);
     update_envp_value(list, "OLDPWD", buf);
@@ -41,11 +42,16 @@ void cd(t_envp_list **list, t_ast *ast)
 		if(chdir(find_value_on_envp(list, "HOME")) != 0)
 		{
 			printf("-babashell: cd: HOME not set\n");
-			return ;
+			return 1;
 		}
 	}
 	else
-   		chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
+   		check =	chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
+	if(check < 0)
+	{
+		printf("babashell: Permission denied\n");
+		return -1;
+	}
     getcwd(buf, 1024);
     update_envp_value(list, "PWD", buf);
 }

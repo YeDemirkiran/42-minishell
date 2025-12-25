@@ -20,6 +20,7 @@
 void pwd(t_envp_list **list)
 {
 	char buf[1024];
+
 	getcwd(buf, 1024);
 	printf("%s\n", buf);
 }
