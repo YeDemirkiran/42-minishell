@@ -6,12 +6,14 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 18:34:13 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/26 19:23:02 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdio.h"
+#include <modules/builtin.h>
 #include <libft.h>
+#include <dirent.h>
 #include "unistd.h"
 
 #include "structs/s_ast.h"
@@ -20,7 +22,10 @@
 char *cd_shortcut(t_envp_list **list, char *input)
 {
 	if(input == NULL)
+	{
+		write(1, "a", 1);
 		return find_value_on_envp(list, "HOME");
+	}
 	return input;
 }
 
@@ -30,28 +35,18 @@ int cd(t_envp_list **list, t_ast *ast)
     char *old_pwd;
 	int check;
 
-	if(ft_lstsize(ast->data->ast_command.arguments) > 2)
-	{
-		printf("-babashell: cd: too many arguments\n");
+	if(check_cd_args_count(ast->data->ast_command.arguments) || check_envp_home_path((*list)))
 		return 1;
-	}
     getcwd(buf, 1024);
-    update_envp_value(list, "OLDPWD", buf);
 	if(ast->data->ast_command.arguments->next == NULL)
-	{
-		if(chdir(find_value_on_envp(list, "HOME")) != 0)
-		{
-			printf("-babashell: cd: HOME not set\n");
-			return 1;
-		}
-	}
+		check =	chdir(find_value_on_envp(list, "HOME"));	
 	else
    		check =	chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
 	if(check < 0)
-	{
-		printf("babashell: Permission denied\n");
-		return -1;
-	}
+		if(is_there_path(ast->data->ast_command.arguments->next->content, check))
+			return -1;
+	update_envp_value(list, "OLDPWD", buf);
     getcwd(buf, 1024);
     update_envp_value(list, "PWD", buf);
+	return 0;
 }
