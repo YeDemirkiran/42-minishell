@@ -6,15 +6,100 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 22:52:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/26 18:46:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
 
+#include <libft/string.h>
 #include <libft/linked_list.h>
 
 #include "structs/s_ast.h"
+
+static char	*get_ifs(void)
+{
+	static const char	*default_ifs = " \t\n";
+	char				*ifs;
+
+	ifs = getenv("IFS");
+	if (ifs == NULL)
+		ifs = (char *)default_ifs;
+	return (ifs);
+}
+
+static void	set_quote(char c, char *quote)
+{
+	if (c == '\'' && *quote != '"')
+	{
+		if (*quote == '\'')
+			*quote = 0;
+		else
+			*quote = '\'';
+	}
+	else if (c == '"' && *quote != '\'')
+	{
+		if (*quote == '"')
+			*quote = 0;
+		else
+			*quote = '"';
+	}
+}
+
+/**
+ * @brief Splits a string into words according to the IFS variable,
+ * and returns it in linked list form.
+ * @note IFS is retrieved by getenv. If it doesn't exist, then the default IFS is used.
+ * @note The defualt IFS is (space)(tab)(newline).
+ * @note If IFS is set but has no characters, word splitting is disabled.
+ */
+static t_list	*split_words(char *str)
+{
+	char	*ifs;
+	t_list	*root;
+	t_list	*node;
+	size_t	i;
+	char	q;
+	char	*str_tmp;
+
+	if (str == NULL)
+		return (NULL);
+	ifs = get_ifs();
+	if (ft_strlen(ifs) == 0)
+		return (NULL);
+	i = 0;
+	root = NULL;
+	q = 0;
+	while (str[i] != '\0')
+	{
+		while (str[i] != '\0' && ft_strchr(ifs, str[i]) != NULL)
+			i++;
+		if (str[i] == '\0')
+			break ;
+		str += i;
+		i = 0;
+		while (str[i] != '\0' && (q != 0 || ft_strchr(ifs, str[i]) == NULL))
+			set_quote(str[i++], &q);
+		// save word
+		str_tmp = ft_substr(str, 0, i);
+		if (str_tmp == NULL)
+		{
+			ft_lstclear(&root, free);
+			return (NULL);
+		}
+		node = ft_lstnew((void *)str_tmp);
+		if (node == NULL)
+		{
+			free(str_tmp);
+			ft_lstclear(&root, free);
+			return (NULL);
+		}
+		ft_lstadd_back(&root, node);
+	}
+	return (root);
+}
 
 /**
  * @brief Takes a list of arguments, and performs word splitting
@@ -38,7 +123,21 @@ static int	split_word_args(t_list **args)
 			node = tmp;
 		}
 		else
-			node = node->next;
+		{
+			tmp = split_words((char *)(node->content));
+			if (errno != 0)
+			{
+				perror("minishell");
+				return(0);
+			}
+			else if (tmp != NULL)
+			{
+				ft_lst_replace(args, node, tmp, free);
+				node = tmp->next;
+			}
+			else
+				node = node->next;
+		}
 	}
 	return (1);
 }
