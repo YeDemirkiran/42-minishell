@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/27 17:19:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/27 23:10:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -110,6 +110,26 @@ static t_list	*split_words(char *str)
 	return (root);
 }
 
+static int	split_word_advance_loop(t_list **args, t_list **node)
+{
+	t_list	*tmp;
+
+	tmp = split_words((char *)((*node)->content));
+	if (errno != 0)
+	{
+		perror("minishell");
+		return (0);
+	}
+	else if (tmp != NULL)
+	{
+		ft_lst_replace(args, *node, tmp, free);
+		*node = tmp->next;
+	}
+	else
+		*node = (*node)->next;
+	return (1);
+}
+
 /**
  * @brief Takes a list of arguments, and performs word splitting
  * on all of them.
@@ -133,20 +153,8 @@ static int	split_word_args(t_list **args)
 		}
 		else
 		{
-			tmp = split_words((char *)(node->content));
-			if (errno != 0)
-			{
-				perror("minishell");
+			if (split_word_advance_loop(args, &node) != 1)
 				return (0);
-			}
-			else if (tmp != NULL)
-			{
-				printf("\nheyayyoo\n");
-				ft_lst_replace(args, node, tmp, free);
-				node = tmp->next;
-			}
-			else
-				node = node->next;
 		}
 	}
 	return (1);
