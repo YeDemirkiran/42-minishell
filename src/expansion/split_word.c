@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/26 18:46:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/27 17:19:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -48,6 +48,32 @@ static void	set_quote(char c, char *quote)
 	}
 }
 
+static int	save_split_word(char *str, int i, t_list **root)
+{
+	char	*str_tmp;
+	t_list	*node;
+
+	if (str == NULL || root == NULL)
+		return (2);
+	if (str[i] == '\0' && *root == NULL)
+		return (0);
+	str_tmp = ft_substr(str, 0, i);
+	if (str_tmp == NULL)
+	{
+		ft_lstclear(root, free);
+		return (0);
+	}
+	node = ft_lstnew((void *)str_tmp);
+	if (node == NULL)
+	{
+		free(str_tmp);
+		ft_lstclear(root, free);
+		return (0);
+	}
+	ft_lstadd_back(root, node);
+	return (1);
+}
+
 /**
  * @brief Splits a string into words according to the IFS variable,
  * and returns it in linked list form.
@@ -59,13 +85,9 @@ static t_list	*split_words(char *str)
 {
 	char	*ifs;
 	t_list	*root;
-	t_list	*node;
 	size_t	i;
 	char	q;
-	char	*str_tmp;
 
-	if (str == NULL)
-		return (NULL);
 	ifs = get_ifs();
 	if (ft_strlen(ifs) == 0)
 		return (NULL);
@@ -82,21 +104,8 @@ static t_list	*split_words(char *str)
 		i = 0;
 		while (str[i] != '\0' && (q != 0 || ft_strchr(ifs, str[i]) == NULL))
 			set_quote(str[i++], &q);
-		// save word
-		str_tmp = ft_substr(str, 0, i);
-		if (str_tmp == NULL)
-		{
-			ft_lstclear(&root, free);
+		if (save_split_word(str, i, &root) == 0)
 			return (NULL);
-		}
-		node = ft_lstnew((void *)str_tmp);
-		if (node == NULL)
-		{
-			free(str_tmp);
-			ft_lstclear(&root, free);
-			return (NULL);
-		}
-		ft_lstadd_back(&root, node);
 	}
 	return (root);
 }
@@ -128,10 +137,11 @@ static int	split_word_args(t_list **args)
 			if (errno != 0)
 			{
 				perror("minishell");
-				return(0);
+				return (0);
 			}
 			else if (tmp != NULL)
 			{
+				printf("\nheyayyoo\n");
 				ft_lst_replace(args, node, tmp, free);
 				node = tmp->next;
 			}
@@ -146,7 +156,7 @@ static int	split_word_args(t_list **args)
  * @brief Takes a syntax tree and recursively splits words in their arguments.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-int	peform_word_split(t_ast *ast)
+int	perform_word_split(t_ast *ast)
 {
 	if (ast == NULL)
 		return (2);
@@ -157,12 +167,12 @@ int	peform_word_split(t_ast *ast)
 	}
 	if (ast->left != NULL)
 	{
-		if (peform_word_split(ast->left) != 1)
+		if (perform_word_split(ast->left) != 1)
 			return (0);
 	}
 	if (ast->right != NULL)
 	{
-		if (peform_word_split(ast->right) != 1)
+		if (perform_word_split(ast->right) != 1)
 			return (0);
 	}
 	return (1);
