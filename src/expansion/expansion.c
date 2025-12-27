@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 22:54:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/27 22:53:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -203,7 +203,7 @@ int	expansion(t_ast *root, t_list *env)
 	if (perform_expansion(root, env) != 1)
 		return (0);
 	printf("(DEBUG: Step 3.2: Word Splitting)\n");
-	if (peform_word_split(root) != 1)
+	if (perform_word_split(root) != 1)
 		return (0);
 	printf("(DEBUG: Step 3.3: Printing New Variables)\n");
 	ast_traverse_preorder(root, print_command_args);
