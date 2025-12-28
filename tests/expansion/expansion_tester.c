@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/26 20:20:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/28 19:42:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -244,30 +244,30 @@ static void	test_expansion(void)
 		TEST_EXPANSION("echo $@ test $$$$$$ echo test $@@@@ $... $. $", "echo $@ test $$$$$$ echo test $@@@@ $... $. $"),
 
 		// TEST 7: Single quotes
-		TEST_EXPANSION("'$USER'", "'$USER'"),
-		TEST_EXPANSION("'$USER$USER'", "'$USER$USER'"),
-		TEST_EXPANSION("'$USER''$USER'", "'$USER''$USER'"),
-		TEST_EXPANSION("'$USER'$USER'$USER'", "'$USER'yademirk'$USER'"),
+		TEST_EXPANSION("'$USER'", "$USER"),
+		TEST_EXPANSION("'$USER$USER'", "$USER$USER"),
+		TEST_EXPANSION("'$USER''$USER'", "$USER$USER"),
+		TEST_EXPANSION("'$USER'$USER'$USER'", "$USERyademirk$USER"),
 
 		// TEST 8: Double quotes
-		TEST_EXPANSION("\"$USER\"", "\"yademirk\""),
-		TEST_EXPANSION("\"$USER$USER\"", "\"yademirkyademirk\""),
-		TEST_EXPANSION("\"$USER\"\"$USER\"", "\"yademirk\"\"yademirk\""),
-		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", "\"yademirk\"yademirk\"yademirk\""),
+		TEST_EXPANSION("\"$USER\"", "yademirk"),
+		TEST_EXPANSION("\"$USER$USER\"", "yademirkyademirk"),
+		TEST_EXPANSION("\"$USER\"\"$USER\"", "yademirkyademirk"),
+		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", "yademirkyademirkyademirk"),
 
 		// TEST 9: Single quotes within double quotes
-		TEST_EXPANSION("\"'$USER'\"", "\"'yademirk'\""),
-		TEST_EXPANSION("\"'$USER$USER'\"", "\"'yademirkyademirk'\""),
-		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "\"'yademirk'\"\"'yademirk'\""),
+		TEST_EXPANSION("\"'$USER'\"", "'yademirk'"),
+		TEST_EXPANSION("\"'$USER$USER'\"", "'yademirkyademirk'"),
+		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "'yademirk''yademirk'"),
 
 		// TEST 10: Double quotes within single quotes
-		TEST_EXPANSION("'\"$USER\"'", "'\"$USER\"'"),
-		TEST_EXPANSION("'\"$USER$USER\"'", "'\"$USER$USER\"'"),
-		TEST_EXPANSION("'\"$USER\"''\"$USER\"'", "'\"$USER\"''\"$USER\"'"),
+		TEST_EXPANSION("'\"$USER\"'", "\"$USER\""),
+		TEST_EXPANSION("'\"$USER$USER\"'", "\"$USER$USER\""),
+		TEST_EXPANSION("'\"$USER\"''\"$USER\"'", "\"$USER\"\"$USER\""),
 
 		// TEST 11: Deep nested
-		TEST_EXPANSION("'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'", "'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'"),
-		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "\"''''''''''yademirk''''''''''\""),
+		TEST_EXPANSION("'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'", "\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\""),
+		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "''''''''''yademirk''''''''''"),
 
 		// TEST 12: Word Splitting
 		TEST_EXPANSION("$VAR_SPACE_1", "word1 word2"),
@@ -287,37 +287,37 @@ static void	test_expansion(void)
 		TEST_EXPANSION_EMPTY("$VAR_NEWL_5"),
 
 		// TEST 13: Word Splitting Inside Quotes
-		TEST_EXPANSION_C("\"$VAR_SPACE_1\"", "\"word1 word2\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_SPACE_1\"", "word1 word2", '.'),
 		//TEST_EXPANSION_C("\"$VAR_SPACE_1\"", getenv("VAR_SPACE_1"), '.'),
-		TEST_EXPANSION_C("\"$VAR_SPACE_2\"", "\"word1 word2 word3 word4 word5\"", '.'),
-		// TEST_EXPANSION_C("\"$VAR_SPACE_2\"", getenv("VAR_SPACE_2"), '.'),
-		TEST_EXPANSION_C("\"$VAR_SPACE_3\"", "\"     word1     word2     word3      word4     word5     \"", '.'),
-		// TEST_EXPANSION_C("\"$VAR_SPACE_3\"", getenv("VAR_SPACE_3"), '.'),
-		TEST_EXPANSION_C("\"$VAR_SPACE_4\"", "\" \"", '.'),
-		// TEST_EXPANSION_C("\"$VAR_SPACE_4\"", getenv("VAR_SPACE_4"), '.'),
-		TEST_EXPANSION_C("\"$VAR_SPACE_5\"", "\"                  \"", '.'),
-		// TEST_EXPANSION_C("\"$VAR_SPACE_5\"", getenv("VAR_SPACE_5"), '.'),
+		TEST_EXPANSION_C("\"$VAR_SPACE_2\"", "word1 word2 word3 word4 word5", '.'),
+		//TEST_EXPANSION_C("\"$VAR_SPACE_2\"", getenv("VAR_SPACE_2"), '.'),
+		TEST_EXPANSION_C("\"$VAR_SPACE_3\"", "     word1     word2     word3      word4     word5     ", '.'),
+		//TEST_EXPANSION_C("\"$VAR_SPACE_3\"", getenv("VAR_SPACE_3"), '.'),
+		TEST_EXPANSION_C("\"$VAR_SPACE_4\"", " ", '.'),
+		//TEST_EXPANSION_C("\"$VAR_SPACE_4\"", getenv("VAR_SPACE_4"), '.'),
+		TEST_EXPANSION_C("\"$VAR_SPACE_5\"", "                  ", '.'),
+		//TEST_EXPANSION_C("\"$VAR_SPACE_5\"", getenv("VAR_SPACE_5"), '.'),
 
-		TEST_EXPANSION_C("\"$VAR_TAB_1\"", "\"word1	word2\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_TAB_1\"", "word1	word2", '.'),
 		// TEST_EXPANSION_C("\"$VAR_TAB_1\"", getenv("VAR_TAB_1"), '.'),
-		TEST_EXPANSION_C("\"$VAR_TAB_2\"", "\"word1	word2	word3	word4	word5\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_TAB_2\"", "word1	word2	word3	word4	word5", '.'),
 		// TEST_EXPANSION_C("\"$VAR_TAB_2\"", getenv("VAR_TAB_2"), '.'),
-		TEST_EXPANSION_C("\"$VAR_TAB_3\"", "\"	word1	word2	word3	word4	word5	\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_TAB_3\"", "	word1	word2	word3	word4	word5	", '.'),
 		// TEST_EXPANSION_C("\"$VAR_TAB_3\"", getenv("VAR_TAB_3"), '.'),
-		TEST_EXPANSION_C("\"$VAR_TAB_4\"", "\"	\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_TAB_4\"", "	", '.'),
 		// TEST_EXPANSION_C("\"$VAR_TAB_4\"", getenv("VAR_TAB_4"), '.'),
-		TEST_EXPANSION_C("\"$VAR_TAB_5\"", "\"					\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_TAB_5\"", "					", '.'),
 		// TEST_EXPANSION_C("\"$VAR_TAB_5\"", getenv("VAR_TAB_5"), '.'),
 
-		TEST_EXPANSION_C("\"$VAR_NEWL_1\"", "\"word1\nword2\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_NEWL_1\"", "word1\nword2", '.'),
 		// TEST_EXPANSION_C("\"$VAR_NEWL_1\"", getenv("VAR_NEWL_1"), '.'),
-		TEST_EXPANSION_C("\"$VAR_NEWL_2\"", "\"word1\nword2\nword3\nword4\nword5\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_NEWL_2\"", "word1\nword2\nword3\nword4\nword5", '.'),
 		// TEST_EXPANSION_C("\"$VAR_NEWL_2\"", getenv("VAR_NEWL_2"), '.'),
-		TEST_EXPANSION_C("\"$VAR_NEWL_3\"", "\"\nword1\nword2\nword3\nword4\nword5\n\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_NEWL_3\"", "\nword1\nword2\nword3\nword4\nword5\n", '.'),
 		// TEST_EXPANSION_C("\"$VAR_NEWL_3\"", getenv("VAR_NEWL_3"), '.'),
-		TEST_EXPANSION_C("\"$VAR_NEWL_4\"", "\"\n\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_NEWL_4\"", "\n", '.'),
 		// TEST_EXPANSION_C("\"$VAR_NEWL_4\"", getenv("VAR_NEWL_4"), '.'),
-		TEST_EXPANSION_C("\"$VAR_NEWL_5\"", "\"\n\n\n\n\n\"", '.'),
+		TEST_EXPANSION_C("\"$VAR_NEWL_5\"", "\n\n\n\n\n", '.'),
 		// TEST_EXPANSION_C("\"$VAR_NEWL_5\"", getenv("VAR_NEWL_5"), '.'),
 	};
 	t_test_result results;
