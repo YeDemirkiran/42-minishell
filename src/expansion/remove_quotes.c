@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/28 16:00:54 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/28 16:26:55 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/28 19:24:10 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -14,6 +14,7 @@
 #include <stdio.h>
 
 #include <libft/string.h>
+#include <libft/memory.h>
 
 #include "structs/s_ast.h"
 
@@ -44,6 +45,7 @@ static void	remove_quotes(char *str)
 {
 	size_t	i;
 	char	quote;
+	char	c;
 
 	if (str == NULL)
 		return ;
@@ -51,14 +53,13 @@ static void	remove_quotes(char *str)
 	quote = 0;
 	while (str[i] != '\0')
 	{
-		if ((quote == 0 && (str[i] == '\'' || str[i] == '"')) || quote == str[i])
+		c = str[i];
+		if (quote == c || (quote == 0 && (c == '\'' || c == '"')))
 		{
-			if (str[i + 1] == '\0')
-				str[i] = '\0';
-			else
-				ft_strlcpy(str + i, str + i + 1, ft_strlen(str + i + 1));
+			set_quote(c, &quote);
+			ft_memmove(str + i, str + i + 1, ft_strlen(str + i + 1) + 1);
+			continue ;
 		}
-		set_quote(str[i], &quote);
 		i++;
 	}
 }
