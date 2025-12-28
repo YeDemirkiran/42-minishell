@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/27 23:10:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/28 15:01:10 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -55,8 +55,6 @@ static int	save_split_word(char *str, int i, t_list **root)
 
 	if (str == NULL || root == NULL)
 		return (2);
-	if (str[i] == '\0' && *root == NULL)
-		return (0);
 	str_tmp = ft_substr(str, 0, i);
 	if (str_tmp == NULL)
 	{
@@ -77,7 +75,8 @@ static int	save_split_word(char *str, int i, t_list **root)
 /**
  * @brief Splits a string into words according to the IFS variable,
  * and returns it in linked list form.
- * @note IFS is retrieved by getenv. If it doesn't exist, then the default IFS is used.
+ * @note IFS is retrieved by getenv. If it doesn't exist, then the default
+ * IFS is used.
  * @note The defualt IFS is (space)(tab)(newline).
  * @note If IFS is set but has no characters, word splitting is disabled.
  */
@@ -110,10 +109,36 @@ static t_list	*split_words(char *str)
 	return (root);
 }
 
+static int	does_need_split(char *str)
+{
+	size_t	i;
+	char	quote;
+	char	*ifs;
+
+	ifs = get_ifs();
+	if (ft_strlen(ifs) == 0)
+		return (0);
+	i = 0;
+	quote = 0;
+	while (str[i] != '\0')
+	{
+		set_quote(str[i], &quote);
+		if (str[i] != '\0' && (quote == 0 && ft_strchr(ifs, str[i]) != NULL))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 static int	split_word_advance_loop(t_list **args, t_list **node)
 {
 	t_list	*tmp;
 
+	if (does_need_split((char *)((*node)->content)) != 1)
+	{
+		*node = (*node)->next;
+		return (1);
+	}
 	tmp = split_words((char *)((*node)->content));
 	if (errno != 0)
 	{
@@ -126,7 +151,11 @@ static int	split_word_advance_loop(t_list **args, t_list **node)
 		*node = tmp->next;
 	}
 	else
-		*node = (*node)->next;
+	{
+		tmp = (*node)->next;
+		ft_lstdel_node(args, *node, free);
+		*node = tmp;
+	}
 	return (1);
 }
 
