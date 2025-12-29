@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/26 19:23:02 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/29 15:36:23 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,14 @@
 
 char *cd_shortcut(t_envp_list **list, char *input)
 {
-	if(input == NULL)
+	char *old_pwd;
+
+	if(input[0] == '-' && input[1] == '\0')
 	{
-		write(1, "a", 1);
-		return find_value_on_envp(list, "HOME");
-	}
+		old_pwd = find_value_on_envp(list, "OLDPWD");
+		printf("%s\n", old_pwd);
+		return old_pwd;
+	} 
 	return input;
 }
 
