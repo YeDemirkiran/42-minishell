@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 17:55:53 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/26 19:19:58 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/29 16:05:05 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,16 @@ int is_there_path(void *content, int chdir_value)
 		ft_putstr_fd(content, 2);
 		write(1, "\n", 1);
 		return 1;		
+	}
+	return 0;
+}
+
+int is_oldpwd_set(t_envp_list *list, char *input)
+{
+	if(!ft_strncmp(input, "-", ft_strlen(input)) && find_value_on_envp(&list, "OLDPWD") == NULL)
+	{
+		printf("babashell: cd: OLDPWD not set\n");
+		return 1;
 	}
 	return 0;
 }
