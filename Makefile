@@ -6,7 +6,7 @@
 #    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2025/12/26 19:20:08 by muayna           ###   ########.fr        #
+#    Updated: 2025/12/29 19:26:20 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,7 +66,7 @@ EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
-BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c)
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c)
 
 ## Signals
 SIGNAL_DIR = signal/
