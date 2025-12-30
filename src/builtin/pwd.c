@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 15:17:08 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/24 12:10:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:10:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,7 +21,6 @@ void pwd(t_envp_list **list)
 {
 	char buf[1024];
 
-	(void)list;
 	getcwd(buf, 1024);
 	printf("%s\n", buf);
 }

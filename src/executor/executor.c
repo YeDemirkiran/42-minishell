@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 21:41:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/24 23:36:02 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <libft.h>
@@ -26,23 +26,6 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 
-static void run_redirs(t_list **redirs)
-{
-	int fd;
-	t_redirection *redir;
-
-	fd = -1;
-	redir = (t_redirection *)(*redirs)->content;
-	if (redir->redir_type == REDIR_INPUT)
-		fd = open(redir->path, O_RDONLY);
-	else if (redir->redir_type == REDIR_OUTPUT)
-		fd = open(redir->path, O_WRONLY | O_CREAT , 0777);
-	if (fd >= 0)
-		dup2(fd, redir->target_fd);
-	(*redirs) = (*redirs)->next;
-	close(fd);
-}
-
 /*This function cut \n and \r in char* of end of the line */
 // void delete_new_line(char ***s1)
 // {
@@ -58,88 +41,48 @@ static void run_redirs(t_list **redirs)
 // 	}
 // }
 
-int isbuiltin(const char *command)
-{
-	char **b_names;
-	b_names = ft_split("cd pwd echo", ' ');
-	if(!ft_strncmp(command, b_names[1], ft_strlen(command)))
-	{
-		clear_arr(&b_names);
-		return 1;
-	}
-	if(!ft_strncmp(command, b_names[0], ft_strlen(command)))
-	{
-		clear_arr(&b_names);
-		return 1;
-	}
-	clear_arr(&b_names);
-	return 0;
-}
 
-void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
-{
-	char	**tmp;
-	char	*command;
-	size_t	len;
-
-	tmp = (*envp_char);
-	command = (char *)(ast->data->ast_command.arguments->content);
-	len = ft_strlen(command);
-	if(isbuiltin(command))
-	{
-		if(!ft_strncmp("cd", command, len))
-			cd(envp_list, ast);
-		else if(!ft_strncmp("pwd", command, len))
-			pwd(envp_list);
-		else if(!ft_strncmp("env", command, len))
-			env(envp_list);
-	}
-	(*envp_char) = envp_list_to_char_arr((*envp_list));
-	clear_arr(&tmp);
-}
-
-void run_command(t_ast *ast, char **envp, int fd_in, int fd_out)
+void run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
+	char **args;
 
-	pid = 1;
-	//delete_new_line(&ast->data->ast_command.arguments);
+	args = list_to_char_arr(ast->data->ast_command.arguments);
 	pid = fork();
 	if(pid == 0)
 	{
 		dup2(fd_in, 0);
 		dup2(fd_out, 1);
 		redirs = ast->data->ast_command.redirs;
-		//printf("REDIRS NULL: %i\n", redirs == NULL);
 		while (redirs != NULL)
 			run_redirs(&redirs);
 		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 		{
-			run_builtin(ast, &envp, NULL);
-			return ;
+			run_builtin(ast, &(*list)->envp_char, &(*list)->envp_list);
+			exit(EXIT_SUCCESS);
 		}
-		execve(ft_strjoin("/bin/", (char *)(ast->data->ast_command.arguments->content)), ft_lst_to_string_arr(ast->data->ast_command.arguments), envp);
+		execve(command_path(ast), args, (*list)->envp_char);
 		perror("-babashell: command not found");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	wait(NULL);
+	clear_arr(&args);
 }
 
-void	executor(t_ast *ast, char **envp, int fd_in, int fd_out)
+void	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	int pipefd[2];
 
 	if(ast->type == AST_COMMAND)
-		run_command(ast, envp, fd_in, fd_out);
+		run_command(ast, list, fd_in, fd_out);
 	else if (ast->type == AST_PIPE)
 	{
 		pipe(pipefd);
-		executor(ast->left, envp, fd_in, pipefd[1]);
+		executor(ast->left, list, fd_in, pipefd[1]);
 		close(pipefd[1]);
-		executor(ast->right, envp, pipefd[0], fd_out);
+		executor(ast->right, list, pipefd[0], fd_out);
 		close(pipefd[0]);
 	}
-	(void)envp;
 }
 

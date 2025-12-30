@@ -6,45 +6,52 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 12:10:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:10:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include "stdio.h"
+#include <modules/builtin.h>
 #include <libft.h>
+#include <dirent.h>
 #include "unistd.h"
 
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
-char *appen_speacial_chr(t_envp_list **list, char c)
-{
-	if(c == '~')
-		return (find_value_on_envp(list, "HOME"));
-	return NULL;
-}
-
 char *cd_shortcut(t_envp_list **list, char *input)
 {
-	if(input == NULL)
-		return find_value_on_envp(list, "HOME");
+	char *old_pwd;
+
+	if(!ft_strncmp(input, "-", ft_strlen(input)))
+	{
+		old_pwd = find_value_on_envp(list, "OLDPWD");
+		if(old_pwd != NULL)
+			printf("%s\n", old_pwd);
+		return old_pwd;
+	}
 	return input;
 }
 
-void cd(t_envp_list **list, t_ast *ast)
+int cd(t_envp_list **list, t_ast *ast)
 {
     char buf[1024];
+    char *old_pwd;
+	int check;
 
-	if(ft_lstsize(ast->data->ast_command.arguments) > 2)
-	{
-		printf("-babashell: cd: too many arguments\n");
-		return ;
-	}
+	if(check_cd_args_count(ast->data->ast_command.arguments) || check_envp_home_path((*list)))
+		return 1;
     getcwd(buf, 1024);
-    update_envp_value(list, "OLDPWD", buf);
-    //printf("DEBUG OLDPWD %s\n", find_value_on_envp(list, "OLDPWD"));
-    chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
+	if(ast->data->ast_command.arguments->next == NULL)
+		check =	chdir(find_value_on_envp(list, "HOME"));
+	else if(is_oldpwd_set((*list), ast->data->ast_command.arguments->next->content))
+		return 1;
+	else
+   		check =	chdir(cd_shortcut(list, (char *)(ast->data->ast_command.arguments->next->content)));
+	if(check < 0 && is_there_path(ast->data->ast_command.arguments->next->content, check))
+		return -1;
+	update_envp_value(list, "OLDPWD", buf);
     getcwd(buf, 1024);
     update_envp_value(list, "PWD", buf);
-    //printf("DEBUG PWD %s\n", find_value_on_envp(list, "PWD"));
+	return 0;
 }

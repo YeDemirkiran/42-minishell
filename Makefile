@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2025/12/30 21:33:04 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/30 22:10:50 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -62,11 +62,11 @@ EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c expansion_data.c exp
 
 ## Executor
 EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c)
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
-BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c pwd.c env.c)
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c)
 
 ## Signals
 SIGNAL_DIR = signal/
