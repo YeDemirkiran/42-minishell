@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 20:33:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 14:50:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -70,6 +70,26 @@ static char	*get_env_var(char *key, t_list *envp)
 	return (value);
 }
 
+int	is_special_variable(char *word)
+{
+	static const char	vars[] = {
+		'?',
+		'1', '2', '3', '4', '5', '6', '7', '8', '9'
+	};
+	size_t				i;
+
+	if (word == NULL || word[0] == '\0')
+		return (0);
+	i = 0;
+	while (i < sizeof(vars))
+	{
+		if (word[0] == vars[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 /**
  * @brief Checks whether a word starting from index 0 abides by the
  * minishell variable rules.
@@ -82,6 +102,8 @@ int	is_variable_valid(char *word)
 
 	if (word == NULL || word[0] == '\0')
 		return (0);
+	if (is_special_variable(word) == 1)
+		return (1);
 	i = 0;
 	while (word[i] != '\0' && (ft_isalnum(word[i]) || word[i] == '_'))
 		i++;
@@ -159,8 +181,13 @@ size_t	set_variable_key(char *word, char **key_holder)
 		return (0);
 	*key_holder = NULL;
 	i = 0;
-	while (word[i] != '\0' && (ft_isalnum(word[i]) || word[i] == '_'))
-		i++;
+	if (is_special_variable(word) == 1)
+		i = 1;
+	else
+	{
+		while (word[i] != '\0' && (ft_isalnum(word[i]) || word[i] == '_'))
+			i++;
+	}
 	if (i == 0)
 		return (0);
 	*key_holder = ft_substr(word, (unsigned int)0, i);
