@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 21:40:00 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:38:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -97,6 +97,8 @@ static int	read_heredoc(t_redirection *redir, int fd)
 			break ;
 		write(fd, line, ft_strlen(line));
 	}
+	if (line != NULL)
+		free(line);
 	return (1);
 }
 
