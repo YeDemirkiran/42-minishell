@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/28 16:24:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 13:10:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,7 @@
 #include <libft/predicate.h>
 
 #include "structs/s_ast.h"
+#include "structs/s_redirection.h"
 #include "modules/ast.h"
 
 #include "expansion_data.h"
@@ -124,6 +125,34 @@ static int	expand_word_list(t_list *node, t_list *envp)
 	return (1);
 }
 
+static int	expand_redir_list(t_list *node, t_list *envp)
+{
+	t_list			*data;
+	t_redirection	*redir;
+	char			*word;
+
+	if (node == NULL || node->content == NULL)
+		return (2);
+	redir = (t_redirection *)(node->content);
+	if (redir->path == NULL)
+		return (2);
+	while (node != NULL)
+	{
+		data = get_expansion_data(redir->path, envp);
+		if (data != NULL)
+		{
+			word = get_expanded_word(redir->path, data);
+			ft_lstclear(&data, free);
+			free(redir->path);
+			redir->path = word;
+		}
+		else if (errno != 0)
+			return (0);
+		node = node->next;
+	}
+	return (1);
+}
+
 /**
  * @brief Takes an AST node, checks if it's of type AST_COMMAND
  * and then performs expansion on it.
@@ -132,6 +161,7 @@ static int	expand_word_list(t_list *node, t_list *envp)
 static int	expand_command_arguments(t_ast *ast)
 {
 	t_list	*args;
+	t_list	*redirs;
 
 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
 		return (2);
@@ -140,6 +170,10 @@ static int	expand_command_arguments(t_ast *ast)
 		return (2);
 	if (expand_word_list(args, NULL) != 1)
 		return (0);
+	redirs = ast->data->ast_command.redirs;
+	if (redirs != NULL)
+		if (expand_redir_list(redirs, NULL) != 1)
+			return (0);
 	return (1);
 }
 
