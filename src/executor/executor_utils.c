@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/29 20:48:19 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/30 22:34:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "stdio.h"
 #include <libft.h>
@@ -68,7 +68,7 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 		if(!ft_strncmp("cd", command, len))
 			cd(envp_list, ast);
 		else if(!ft_strncmp("pwd", command, len))
-			pwd(envp_list);
+			pwd();
 		else if(!ft_strncmp("env", command, len))
 			env(envp_list);
 		else if(!ft_strncmp("export", command, len))
@@ -85,10 +85,14 @@ void run_redirs(t_list **redirs)
 
 	fd = -1;
 	redir = (t_redirection *)(*redirs)->content;
-	if (redir->redir_type == REDIR_INPUT)
+	if (redir->redir_type == REDIR_INPUT || redir->redir_type == REDIR_HEREDOC)
 		fd = open(redir->path, O_RDONLY);
 	else if (redir->redir_type == REDIR_OUTPUT)
-		fd = open(redir->path, O_WRONLY | O_CREAT , 0777);
+		fd = open(redir->path, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	else if (redir->redir_type == REDIR_APPEND)
+		fd = open(redir->path, O_WRONLY | O_CREAT | O_APPEND, 0777);
+	if (redir->redir_type == REDIR_HEREDOC)
+		unlink(redir->path);
 	if (fd >= 0)
 		dup2(fd, redir->target_fd);
 	(*redirs) = (*redirs)->next;

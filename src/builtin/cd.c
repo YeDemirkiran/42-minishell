@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 22:10:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:31:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,7 +36,6 @@ char *cd_shortcut(t_envp_list **list, char *input)
 int cd(t_envp_list **list, t_ast *ast)
 {
     char buf[1024];
-    char *old_pwd;
 	int check;
 
 	if(check_cd_args_count(ast->data->ast_command.arguments) || check_envp_home_path((*list)))

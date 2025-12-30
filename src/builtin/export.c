@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 19:19:32 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/29 19:19:32 by muayna           ###   ########.fr       */
+/*   Updated: 2025/12/30 22:31:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "stdio.h"
 #include <modules/builtin.h>
@@ -28,7 +28,7 @@ static int special_strlen(char *str, char until_char)
 	i = 0;
 	while(str[i] && str[i] != until_char)
 		i++;
-	return i;	
+	return i;
 }
 
 static void take_id_name(char *ast_input, t_envp_list **envp_list)
@@ -83,7 +83,6 @@ static t_envp_list *sort_for_enpvlist(t_envp_list *list)
 	t_envp_list *small;
 	t_envp_list *tmp;
 	int i;
-	int cmp;
 
 	tmp = list;
 	small = tmp;
