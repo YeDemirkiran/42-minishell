@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/15 17:36:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/30 21:32:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,6 +19,7 @@
 #include "structs/s_redirection.h"
 
 #include "parse_result.h"
+#include "parse_heredoc.h"
 
 // Returns the default FD value for a redirection.
 static int	get_redir_default_fd(t_redir_type type)
@@ -112,5 +113,8 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 		return (parse_runtime_error(token->next));
 	}
 	ft_lstadd_back(redirs, redir_node);
+	if (redirection->redir_type == REDIR_HEREDOC
+		&& parse_heredoc(redirection) != 1)
+		return (parse_runtime_error(token->next));
 	return (parse_success(NULL, token->next->next));
 }
