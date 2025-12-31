@@ -19,65 +19,6 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
-static int special_strlen(char *str, char until_char)
-{
-	int i;
-
-	if(str == NULL || until_char == '\0')
-		return 0;
-	i = 0;
-	while(str[i] && str[i] != until_char)
-		i++;
-	return i;
-}
-
-static void take_id_name(char *ast_input, t_envp_list **envp_list)
-{
-	int i;
-	t_envp_list *tmp;
-	int strlen;
-
-	strlen = special_strlen(ast_input, '=');
-	tmp = (*envp_list);
-	i = 0;
-	tmp->id_name = ft_malloc(sizeof(char) * (strlen + 1), 0);
-	while(ast_input[i] != '=' && ast_input[i])
-	{
-		tmp->id_name[i] = ast_input[i];
-		i++;
-	}
-	tmp->id_name[i] = '\0';
-}
-
-static void take_id_value(char *ast_input, t_envp_list **envp_list)
-{
-	int i;
-	char *value_tmp_ast;
-	t_envp_list *tmp;
-	int strlen;
-
-	tmp = (*envp_list);
-	i = 0;
-	if(ft_strchr(ast_input, '='))
-	{
-		strlen = ft_strlen((ft_strchr(ast_input, '=') + 1));
-		value_tmp_ast = (ft_strchr(ast_input, '=') + 1);
-		tmp->value = ft_malloc(strlen + 1, 0);
-		while(i < strlen)
-		{
-			tmp->value[i] = value_tmp_ast[i];
-			i++;
-		}
-		tmp->isvaluempty = 0;
-		tmp->value[i] = '\0';
-	}
-	else
-	{
-		tmp->isvaluempty = 1;
-		tmp->value = NULL;
-	}
-}
-
 static t_envp_list *sort_for_enpvlist(t_envp_list *list)
 {
 	t_envp_list *small;
@@ -153,20 +94,21 @@ static void print_variable_on_export(t_envp_list *list)
 	int size_list;
 	t_envp_list *sorted;
 	t_envp_list *back_of_sorted;
-	t_envp_list *root;
 
 	size_list = size_of_envp_list(list);
-	root = list;
 	i = 0;
 	while(i < size_list)
 	{
-		sorted = sort_for_enpvlist(root);
-		back_of_sorted = find_node_back(root, sorted);
-		printf("%s=\"%s\"\n", sorted->id_name, sorted->value);
+		sorted = sort_for_enpvlist(list);
+		back_of_sorted = find_node_back(list, sorted);
+		if(sorted->isvaluempty == 0)
+			printf("declare -x %s=\"%s\"\n", sorted->id_name, sorted->value);
+		else
+			printf("declare -x %s\n", sorted->id_name);
 		if(back_of_sorted != NULL && back_of_sorted->next != NULL)
 			back_of_sorted->next = sorted->next;
 		else
-			root = sorted->next;
+			list = sorted->next;
 		free(sorted->id_name);
 		free(sorted->value);
 		free(sorted);
@@ -176,29 +118,15 @@ static void print_variable_on_export(t_envp_list *list)
 
 void export(t_envp_list **list, t_ast *ast)
 {
-	t_envp_list *tmp;
 	t_envp_list *copy_list;
-	t_list *root;
 
-	root = ast->data->ast_command.arguments->next;
-	tmp = (*list);
 	if(ast->data->ast_command.arguments->next == NULL)
 	{
 		copy_list = envp_list_copy((*list));
 		print_variable_on_export(copy_list);
-		printf("DEBUG EXPORT : SUCCES\n");
 		return ;
 	}
-	while(tmp->next != NULL)
-		tmp = tmp->next;
-	while(root != NULL)
-	{
-		tmp->next = ft_malloc(sizeof(t_envp_list), 0);
-		tmp = tmp->next;
-		take_id_name(((char *)root->content), &tmp);
-		take_id_value(((char *)root->content), &tmp);
-		root = root->next;
-	}
-	tmp->next = NULL;
+	else
+		add_variable_envp_list(list, ast);
 	return ;
 }

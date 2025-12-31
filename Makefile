@@ -1,14 +1,14 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2025/12/30 22:10:50 by yademirk         ###   ########.fr        #
+#    Updated: 2025/12/31 12:33:52 by muayna           ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
 NAME = minishell
 
@@ -66,7 +66,7 @@ EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
-BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c)
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c export_utils.c)
 
 ## Signals
 SIGNAL_DIR = signal/
