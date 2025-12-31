@@ -19,6 +19,18 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
+static int for_norm(char a, char b, t_envp_list **small, t_envp_list **tmp)
+{
+	if(a - b > 0)
+	{
+		(*small) = (*tmp);
+		return 1;
+	}
+	else if(a - b < 0)
+		return 1;
+	return 0;
+}
+
 static t_envp_list *sort_for_enpvlist(t_envp_list *list)
 {
 	t_envp_list *small;
@@ -36,12 +48,7 @@ static t_envp_list *sort_for_enpvlist(t_envp_list *list)
 		{
 			while(small->id_name[i] && tmp->id_name[i])
 			{
-				if((small->id_name[i] - tmp->id_name[i]) > 0)
-				{
-					small = tmp;
-					break ;
-				}
-				else if(small->id_name[i] - tmp->id_name[i] < 0)
+				if(for_norm(small->id_name[i], tmp->id_name[i], &small, &tmp))
 					break ;
 				i++;
 			}
