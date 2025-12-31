@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/31 20:06:37 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/31 20:08:45 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -236,7 +236,7 @@ int	expand_and_replace_string(char **str_ptr)
 	if (str_ptr == NULL || *str_ptr == NULL)
 		return (2);
 	errno = 0;
-	data = get_expansion_data(str_ptr, NULL);
+	data = get_expansion_data(*str_ptr, NULL);
 	if (data == NULL)
 	{
 		if (errno != 0)
