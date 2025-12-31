@@ -88,9 +88,9 @@ static int is_start_wrong_character(char *str)
 		printf("-babashell: export: %s: not a valid identifier\n", str);
 		return 1;		
 	}
-	while(str[i] != '=')
+	while(str[i] != '=' && str[i])
 	{
-		if(!ft_isalpha(str[i]))
+		if(!ft_isalpha(str[i]) && !ft_isdigit(str[i]))
 		{
 			printf("-babashell: export: %s: not a valid identifier\n", str);
 			return 1;
@@ -100,7 +100,7 @@ static int is_start_wrong_character(char *str)
 	return 0;
 }
 
-void add_variable_envp_list(t_envp_list **list, t_ast *ast)
+int add_variable_envp_list(t_envp_list **list, t_ast *ast)
 {
 	t_list *root;
 	t_envp_list *tmp;
@@ -112,7 +112,10 @@ void add_variable_envp_list(t_envp_list **list, t_ast *ast)
 	while(root != NULL)
 	{
 		if(is_start_wrong_character(((char *)root->content)))
-			break ;
+		{
+			root = root->next;
+			continue;
+		}
 		tmp->next = ft_malloc(sizeof(t_envp_list), 0);
 		tmp = tmp->next;
 		take_id_name(((char *)root->content), &tmp);
@@ -120,4 +123,5 @@ void add_variable_envp_list(t_envp_list **list, t_ast *ast)
 		root = root->next;
 	}
 	tmp->next = NULL;
+	return 0;
 }
