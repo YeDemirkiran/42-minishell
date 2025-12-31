@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/31 19:14:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/31 20:14:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -22,8 +22,7 @@
 
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
-
-#include "../expansion/remove_quotes.h"
+#include "modules/expansion.h"
 
 #ifndef TMP_HEREDOC_NAME
 # define TMP_HEREDOC_NAME "minishell-thd"
@@ -120,7 +119,7 @@ static int	read_heredoc(char *delimiter, int fd)
 	if (fd < 0 || delimiter == NULL)
 		return (2);
 	line = NULL;
-	should_expand = delimiter_remove_quotes(delimiter);
+	should_expand = delimiter_remove_quotes(delimiter) == 0;
 	while (1)
 	{
 		write(2, "> ", 2);
@@ -136,7 +135,15 @@ static int	read_heredoc(char *delimiter, int fd)
 				return (1);
 			}
 		}
-		(void)should_expand;
+		if (should_expand)
+		{
+			expand_and_replace_string(&line);
+			if (line == NULL && errno != 0)
+			{
+				perror("minishell: here-document");
+				return (0);
+			}
+		}
 		if (is_delimiter(line, delimiter) == 1)
 			break ;
 		write(fd, line, ft_strlen(line));
