@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 22:38:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/31 18:48:36 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -60,7 +60,7 @@ static char	*get_random_heredoc_path(void)
 	return (path);
 }
 
-static int	create_temp_heredoc_file(char *path)
+static int	create_temp_heredoc_file(const char *path)
 {
 	int		fd;
 
@@ -68,6 +68,20 @@ static int	create_temp_heredoc_file(char *path)
 		return (-1);
 	fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
 	return (fd);
+}
+
+static int	is_delimiter(const char *line, const char *delimiter)
+{
+	size_t	len;
+
+	if (line == NULL || delimiter == NULL)
+		return (0);
+	len = ft_strlen(line);
+	if (len > 0 && line[len - 1] == '\n')
+		len--;
+	if (len != ft_strlen(delimiter))
+		return (0);
+	return (ft_strncmp(line, delimiter, len) == 0);
 }
 
 static int	read_heredoc(t_redirection *redir, int fd)
@@ -79,9 +93,7 @@ static int	read_heredoc(t_redirection *redir, int fd)
 	line = NULL;
 	while (1)
 	{
-		write(1, "> ", 2);
-		if (line != NULL)
-			free(line);
+		write(2, "> ", 2);
 		line = get_next_line(0);
 		if (line == NULL)
 		{
@@ -93,9 +105,10 @@ static int	read_heredoc(t_redirection *redir, int fd)
 				return (1);
 			}
 		}
-		if (ft_strncmp(line, redir->path, ft_strlen(line) - 1) == 0)
+		if (is_delimiter(line, redir->path) == 1)
 			break ;
 		write(fd, line, ft_strlen(line));
+		free(line);
 	}
 	if (line != NULL)
 		free(line);
