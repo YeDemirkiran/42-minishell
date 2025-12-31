@@ -104,7 +104,9 @@ int add_variable_envp_list(t_envp_list **list, t_ast *ast)
 {
 	t_list *root;
 	t_envp_list *tmp;
+	int check;
 
+	check = 0;
 	root = ast->data->ast_command.arguments->next;
 	tmp = (*list);
 	while(tmp->next != NULL)
@@ -113,6 +115,7 @@ int add_variable_envp_list(t_envp_list **list, t_ast *ast)
 	{
 		if(is_start_wrong_character(((char *)root->content)))
 		{
+			check = 1;
 			root = root->next;
 			continue;
 		}
@@ -123,5 +126,5 @@ int add_variable_envp_list(t_envp_list **list, t_ast *ast)
 		root = root->next;
 	}
 	tmp->next = NULL;
-	return 0;
+	return check;
 }
