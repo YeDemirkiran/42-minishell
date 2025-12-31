@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 13:10:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/31 20:06:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -221,6 +221,35 @@ static int	perform_expansion(t_ast *root, t_list *env)
 		if (perform_expansion(root->right, env) != 1)
 			return (0);
 	}
+	return (1);
+}
+
+/**
+ * @brief Takes a string, performs expansion on it if it's needed and
+ * replaces the old one with the new one.
+ */
+int	expand_and_replace_string(char **str_ptr)
+{
+	char	*new;
+	t_list	*data;
+
+	if (str_ptr == NULL || *str_ptr == NULL)
+		return (2);
+	errno = 0;
+	data = get_expansion_data(str_ptr, NULL);
+	if (data == NULL)
+	{
+		if (errno != 0)
+			return (0);
+		else
+			return (1);
+	}
+	new = get_expanded_word(*str_ptr, data);
+	ft_lstclear(&data, free);
+	if (new == NULL && errno != 0)
+		return (0);
+	free(*str_ptr);
+	*str_ptr = new;
 	return (1);
 }
 
