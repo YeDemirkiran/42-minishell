@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/28 16:00:54 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/28 19:24:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2025/12/31 19:12:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,12 +36,11 @@ static void	set_quote(char c, char *quote)
 	}
 }
 
-// asdsadsda"asdasfasfasfasfsaasdsadasd"
 /**
  * @brief Takes a string and removes outer-level quotes from it.
  * @note Quotes inside quotes are preserved.
  */
-static void	remove_quotes(char *str)
+void	remove_quotes(char *str)
 {
 	size_t	i;
 	char	quote;
