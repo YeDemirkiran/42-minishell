@@ -6,11 +6,12 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 12:58:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/01 13:48:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -18,7 +19,6 @@
 #include <libft/string.h>
 #include <libft/memory.h>
 #include <get_next_line.h>
-#include <minishell_lb.h>
 
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
