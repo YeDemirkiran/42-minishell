@@ -6,13 +6,14 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 15:51:04 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/01 14:16:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <libft/string.h>
 
@@ -152,6 +153,10 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 				t_redir = (t_redirection *)(t_redirs->content);
 				if (exp_redir->redir_type != t_redir->redir_type)
 					return (0);
+				else if (t_redir->redir_type == REDIR_HEREDOC)
+				{
+					unlink(t_redir->path);
+				}
 				else if (strcmp(exp_redir->path, t_redir->path) != 0)
 					return (0);
 				else if (exp_redir->target_fd != t_redir->target_fd)
