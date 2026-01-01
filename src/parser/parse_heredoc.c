@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 13:48:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/01 20:48:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -105,6 +105,32 @@ static int	delimiter_remove_quotes(char *delimiter)
 	return (1);
 }
 
+static int	check_errno_and_print_error(void)
+{
+	if (errno != 0)
+		return (0);
+	else
+	{
+		ft_putstr_fd("\nminishell: warning: here-document "
+			"delimited by end-of-file\n", 2);
+		return (1);
+	}
+}
+
+static int	expand_delimiter(int should_expand, char **line_ptr)
+{
+	if (should_expand)
+	{
+		expand_and_replace_string(line_ptr);
+		if (*line_ptr == NULL && errno != 0)
+		{
+			perror("minishell: here-document");
+			return (0);
+		}
+	}
+	return (1);
+}
+
 /**
  * @brief Takes a delimiter and a file descriptor to an already open file,
  * starts reading from STDIN and writes it to the file, and exits on delimiter
@@ -126,24 +152,9 @@ static int	read_heredoc(char *delimiter, int fd)
 		errno = 0;
 		line = get_next_line(STDIN_FILENO);
 		if (line == NULL)
-		{
-			if (errno != 0)
-				return (0);
-			else
-			{
-				write(2, "\nminishell: warning: here-document delimited by end-of-file\n", 59);
-				return (1);
-			}
-		}
-		if (should_expand)
-		{
-			expand_and_replace_string(&line);
-			if (line == NULL && errno != 0)
-			{
-				perror("minishell: here-document");
-				return (0);
-			}
-		}
+			return (check_errno_and_print_error());
+		if (expand_delimiter(should_expand, &line) != 1)
+			return (0);
 		if (is_delimiter(line, delimiter) == 1)
 			break ;
 		write(fd, line, ft_strlen(line));
