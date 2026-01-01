@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/31 20:14:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/01 12:58:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -53,7 +53,7 @@ static char	*get_random_heredoc_path(void)
 	while (--read_len >= 0)
 	{
 		suffix[read_len * 2] = hex[(unsigned char)suffix[read_len] >> 4];
-        suffix[read_len * 2 + 1] = hex[(unsigned char)suffix[read_len] & 0x0f];
+		suffix[read_len * 2 + 1] = hex[(unsigned char)suffix[read_len] & 0x0f];
 	}
 	if (close(fd) < 0)
 		return (NULL);

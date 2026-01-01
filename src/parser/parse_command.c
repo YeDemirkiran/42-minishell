@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 14:40:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/01 13:00:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -133,8 +133,6 @@ static t_parse_result	parse_simple_command_loop_body(t_list **token,
 	return (parse_success(NULL, *token));
 }
 
-
-#include "stdio.h"
 /**
  * @brief Parses a simple command with arguments and redirections.
  * @returns A struct of t_parse_result.
@@ -158,13 +156,11 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 		result = parse_simple_command_loop_body(&tokens, &redirs, &args);
 		if (result.type != PARSE_RESULT_SUCCESS)
 			return (free_parse_lists(&args, &redirs, result));
-		//printf("\nNEW TOKEN NULL: %i\n", tokens == old_token);
 		if (tokens == old_token)
 			break ;
 	}
 	if (save_command_ast_node(args, &(result.ast), redirs) != 1)
 		return (free_parse_lists(&args, &redirs, parse_runtime_error(tokens)));
-	//ft_lstclear(&args, NULL);
 	return (parse_success(result.ast, tokens));
 }
 
