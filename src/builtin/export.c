@@ -123,6 +123,8 @@ static void print_variable_on_export(t_envp_list *list)
 	}
 }
 
+static void update_same_variable(t_envp_list *copy_list, t_ast *ast);
+
 int export(t_envp_list **list, t_ast *ast)
 {
 	t_envp_list *copy_list;
@@ -133,7 +135,12 @@ int export(t_envp_list **list, t_ast *ast)
 		print_variable_on_export(copy_list);
 	}
 	else
+	{
+
 		if(add_variable_envp_list(list, ast))
+		{
 			return 1;
+		}
+	}
 	return 0;
 }
