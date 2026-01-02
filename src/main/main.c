@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 23:59:14 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/02 15:32:56 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -58,7 +58,13 @@ static void	set_quote(char c, char *quote_addr)
 	}
 }
 
-static int	is_input_incomplete(char *input)
+/**
+ * @brief Checks if an input has unclosed quotes, and returns the type of
+ * quote.
+ * @return 0 (nul) character if input is complete, and the uncomplete quote
+ * character if it's not.
+ */
+static char	is_input_incomplete(char *input)
 {
 	size_t	i;
 	char	quote;
@@ -70,18 +76,34 @@ static int	is_input_incomplete(char *input)
 		set_quote(input[i], &quote);
 		i++;
 	}
-	return (quote != 0);
+	return (quote);
 }
 
+static void	print_uncompleted_eof_error(char quote)
+{
+	ft_putstr_fd("minishell: unexpected EOF while looking for matching ", 2);
+	if (quote == '"')
+		ft_putstr_fd("'\"'", 2);
+	else
+		ft_putstr_fd("(')", 2);
+	ft_putstr_fd("\nminishell: syntax error: unexpected end of file\n", 2);
+}
+
+/**
+ * @brief Uses GNU Readline, prepares a multi-line input by the user
+ * and returns it.
+ */
 static char	*read_input(char *primary_prompt, char *secondary_prompt)
 {
 	char	*input;
 	char	*tmp;
 	char	*tmp_2;
 	char	*prompt;
+	char	quote;
 
 	errno = 0;
 	input = NULL;
+	quote = 0;
 	while (1)
 	{
 		if (input == NULL)
@@ -90,7 +112,17 @@ static char	*read_input(char *primary_prompt, char *secondary_prompt)
 			prompt = secondary_prompt;
 		tmp = readline(prompt);
 		if (tmp == NULL)
-			break ;
+		{
+			if (input != NULL)
+			{
+				free(input);
+				input = NULL;
+				print_uncompleted_eof_error(quote);
+				continue ;
+			}
+			else
+				break ;
+		}
 		tmp_2 = ft_strjoin(tmp, "\n");
 		free(tmp);
 		if (tmp_2 == NULL)
@@ -111,7 +143,8 @@ static char	*read_input(char *primary_prompt, char *secondary_prompt)
 				return (NULL);
 			input = tmp_2;
 		}
-		if (is_input_incomplete(input) == 0)
+		quote = is_input_incomplete(input);
+		if (quote == 0)
 			break ;
 	}
 	return (input);
