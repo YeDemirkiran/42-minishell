@@ -18,129 +18,110 @@
 
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
-
-static int for_norm(char a, char b, t_envp_list **small, t_envp_list **tmp)
+/*
+static char* take_variable_value(t_list *arguments)
 {
-	if(a - b > 0)
-	{
-		(*small) = (*tmp);
-		return 1;
-	}
-	else if(a - b < 0)
-		return 1;
-	return 0;
-}
+	char *variable_value;
+	char *value;
 
-static t_envp_list *sort_for_enpvlist(t_envp_list *list)
-{
-	t_envp_list *small;
-	t_envp_list *tmp;
-	int i;
-
-	tmp = list;
-	small = tmp;
-	while(tmp != NULL)
-	{
-		i = 0;
-		if((small->id_name[i] - tmp->id_name[i]) > 0)
-			small = tmp;
-		else if((small->id_name[i] - tmp->id_name[i]) == 0)
-		{
-			while(small->id_name[i] && tmp->id_name[i])
-			{
-				if(for_norm(small->id_name[i], tmp->id_name[i], &small, &tmp))
-					break ;
-				i++;
-			}
-		}
-		tmp = tmp->next;
-	}
-	return small;
-}
-
-static t_envp_list *find_node_back(t_envp_list *source, t_envp_list *find)
-{
-	t_envp_list *tmp;
-
-	tmp = source;
-	while(tmp != NULL && tmp->next != find)
-		tmp = tmp->next;
-	return tmp;
-}
-
-static t_envp_list *envp_list_copy(t_envp_list *list)
-{
-	t_envp_list *new_list;
-	t_envp_list *tmp;
-	t_envp_list *new_list_root;
-
-	tmp = list;
-	if(list == NULL)
+	if(arguments == NULL)
 		return NULL;
-	new_list = malloc(sizeof(t_envp_list));
-	new_list_root = new_list;
-	while(tmp != NULL)
-	{
-		new_list->id_name = ft_strdup(tmp->id_name);
-		new_list->value = ft_strdup(tmp->value);
-		new_list->isvaluempty = tmp->isvaluempty;
-		if(tmp->next != NULL)
-		{
-			new_list->next = malloc(sizeof(t_envp_list));
-			new_list = new_list->next;
-		}
-		tmp = tmp->next;
-	}
-	new_list->next = NULL;
-	return new_list_root;
-}
-
-static void print_variable_on_export(t_envp_list *list)
-{
-	int i;
-	int size_list;
-	t_envp_list *sorted;
-	t_envp_list *back_of_sorted;
-
-	size_list = size_of_envp_list(list);
-	i = 0;
-	while(i < size_list)
-	{
-		sorted = sort_for_enpvlist(list);
-		back_of_sorted = find_node_back(list, sorted);
-		if(sorted->isvaluempty == 0)
-			printf("declare -x %s=\"%s\"\n", sorted->id_name, sorted->value);
-		else
-			printf("declare -x %s\n", sorted->id_name);
-		if(back_of_sorted != NULL && back_of_sorted->next != NULL)
-			back_of_sorted->next = sorted->next;
-		else
-			list = sorted->next;
-		free(sorted->id_name);
-		free(sorted->value);
-		free(sorted);
-		i++;
-	}
-}
-
-static void update_same_variable(t_envp_list *copy_list, t_ast *ast);
-
-int export(t_envp_list **list, t_ast *ast)
-{
-	t_envp_list *copy_list;
-
-	if(ast->data->ast_command.arguments->next == NULL)
-	{
-		copy_list = envp_list_copy((*list));
-		print_variable_on_export(copy_list);
-	}
+	value = (ft_strchr(arguments->content, '='));
+	if(value == NULL)
+		return NULL;
 	else
 	{
+		value++;
+		variable_value = ft_strdup((value));
+	}
+	return variable_value;
+}*/
 
-		if(add_variable_envp_list(list, ast))
+static char* take_variable_name(t_list *arguments)
+{
+	char **splitted_command;
+	char *variable_name;
+
+	if(arguments == NULL)
+		return NULL;
+	if(((char *)arguments->content)[0] == '=')
+	{
+		return ft_strdup(arguments->content);
+	}
+	splitted_command = ft_split(arguments->content, '=');
+	variable_name = ft_strdup(splitted_command[0]);
+	clear_arr(&splitted_command);
+	return variable_name;
+}
+
+static void print_list(t_envp_list *list)
+{
+	t_envp_list *tmp;
+
+	tmp = list;
+	while(tmp != NULL)
+	{
+		if(tmp->isvaluempty == 0)
+			printf("declare -x %s=\"%s\"\n", tmp->id_name, tmp->value);
+		else
+			printf("declare -x %s\n", tmp->id_name);
+		tmp = tmp->next;
+	}
+}
+
+static int check_error_utils(char *variable_name)
+{
+	int i;
+
+	i = 0;
+	if(variable_name[0] == '=' || ft_isdigit(variable_name[0]))
+	{
+		printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+		return 1;
+	}
+	while(variable_name[i])
+	{
+		if(variable_name[i] == '_');
+		else if(!ft_isalnum(variable_name[i]))
 		{
+			printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
 			return 1;
 		}
+		i++;
 	}
 	return 0;
+}
+
+static int check_error_variables(t_list *args)
+{
+	t_list *tmp;
+	char *variable_name;
+	int return_value;
+
+	return_value = 0;
+	tmp = args;
+	tmp = tmp->next;
+	while(tmp != NULL)
+	{
+		variable_name = take_variable_name(tmp);
+		if(check_error_utils(variable_name))
+			return_value = 1;
+		free(variable_name);
+		tmp = tmp->next;
+	}
+	return return_value;
+}
+
+void export(t_envp_list **list, t_ast *ast)
+{
+	t_list *command;
+
+	command = ast->data->ast_command.arguments;
+	if(command->next == NULL)
+		print_list((*list));
+	else
+	{
+		check_error_variables(command);
+	}
+	return ;
 }
