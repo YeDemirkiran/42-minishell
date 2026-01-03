@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/28 19:42:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 23:05:04 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,6 +17,7 @@
 #include <libft/string.h>
 
 #include <structs/s_ast.h>
+#include <structs/s_shell.h>
 #include <structs/s_token.h>
 #include <structs/s_redirection.h>
 #include <types/t_bool.h>
@@ -162,7 +163,7 @@ t_test_result	conduct_expansion_test(t_expansion_test test)
 
 	printf("Calling expansion()...\n");
 	printf("=============================================================\n");
-	expansion(test.testee, NULL);
+	expansion(test.testee, (t_shell){.env = NULL, .last_exit_status = 31});
 	printf("=============================================================\n");
 
 	result = compare_asts(test.expected, test.testee);
@@ -226,7 +227,7 @@ static void	test_expansion(void)
 		TEST_EXPANSION("hello$no.world", "hello.world"),
 		TEST_EXPANSION("hello$a.world", "hello.world"),
 		TEST_EXPANSION("hello$.world", "hello$.world"),
-		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$1e112$asfafsasf_asfasfasf.world", "hello.world"),
+		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$e112$asfafsasf_asfasfasf.world", "hello.world"),
 		TEST_EXPANSION("hello$$$$$$$$$$.world", "hello$$$$$$$$$$.world"),
 		TEST_EXPANSION("$USER$no$HOME", "yademirk/home/yademirk"),
 		TEST_EXPANSION("$no$USER$SHELL$no$HOME$no$", "yademirk/bin/bash/home/yademirk$"),
