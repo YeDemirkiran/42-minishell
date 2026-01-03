@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 16:11:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 19:28:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,9 +19,13 @@
 
 #include <libft/linked_list.h>
 #include <libft/string.h>
+#include <get_next_line.h>
+#include <minishell_lb.h>
+#include <gb.h>
 
 #include "macros/m_colors.h"
 #include "structs/s_ast.h"
+#include "structs/s_shell.h"
 
 #include "modules/lexer.h"
 #include "modules/ast.h"
@@ -30,9 +34,6 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
-#include <get_next_line.h>
-#include <minishell_lb.h>
-#include <gb.h>
 
 #include "../lexer/token.h"
 #include "read_input.h"
@@ -49,22 +50,23 @@ static void	shell_exit(int status)
 
 int	main(int argc, char **argv, char **envp)
 {
+	t_shell	shell;
 	char	*input;
 	t_list	*tokens;
 	t_ast	*ast;
 	char *prompt;
-	t_god_struct_envp *envp_struct;
 
-	envp_struct = ft_malloc(sizeof(t_god_struct_envp), 0);
-	envp_struct->envp_list = create_envp_list(envp);
-	envp_struct->envp_char = envp_list_to_char_arr(envp_struct->envp_list);
 	(void)argc;
 	(void)argv;
 	input = NULL;
 	signal(SIGINT, on_sigint);
+
+	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
+	shell.env->envp_list = create_envp_list(envp);
+	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
 	while (1)
 	{
-		prompt = rl_header(&envp_struct->envp_list, envp);
+		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
 		input = read_input(prompt, "> ");
 		if (input == NULL)
 		{
@@ -85,14 +87,14 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		}
 		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-			run_builtin(ast, &envp_struct->envp_char, &envp_struct->envp_list);
+			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
 		else
-			executor(ast, &envp_struct, 0, 1);
+			executor(ast, &(shell.env), 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}
 	sort_malloc(1, 1);
-	clear_arr(&envp_struct->envp_char);
+	clear_arr(&(shell.env->envp_char));
 	shell_exit(EXIT_SUCCESS);
 }
