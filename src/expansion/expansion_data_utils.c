@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 14:50:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 22:55:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,9 @@
 #include <libft/string.h>
 #include <libft/linked_list.h>
 #include <libft/write.h>
+#include <libft/math.h>
+
+#include "structs/s_shell.h"
 
 #include "expansion_data.h"
 
@@ -38,36 +41,6 @@ static char	*get_value_from_env(char *str, char *key)
 	if (key[i] != '\0' || str[i] != '=')
 		return (NULL);
 	return (str + (i + 1));
-}
-
-/**
- * @brief Searches for a variable key in an environment
- * list and returns its value.
- * @note - Calls getenv() if envp is NULL.
- * @note - The returned pointer is not malloc'd, don't try to free it.
- */
-static char	*get_env_var(char *key, t_list *envp)
-{
-	char	*str;
-	char	*value;
-
-	if (key == NULL)
-		return (NULL);
-	else if (envp == NULL)
-		return (getenv((const char *)key));
-	value = NULL;
-	while (envp != NULL)
-	{
-		if (envp->content != NULL)
-		{
-			str = (char *)(envp->content);
-			value = get_value_from_env(str, key);
-			if (value != NULL)
-				break ;
-		}
-		envp = envp->next;
-	}
-	return (value);
 }
 
 int	is_special_variable(char *word)
@@ -112,6 +85,48 @@ int	is_variable_valid(char *word)
 	return (1);
 }
 
+static char	*get_special_variable(const char *key, t_shell shell)
+{
+	char	*value;
+
+	value = NULL;
+	if (key[0] == '?')
+		value = ft_itoa(shell.last_exit_status);
+	return (value);
+}
+
+/**
+ * @brief Searches for a variable key in an environment
+ * list and returns its value.
+ * @note - Calls getenv() if envp is NULL.
+ * @note - The returned pointer is not malloc'd, don't try to free it.
+ */
+static char	*get_env_var(char *key, t_list *envp, t_shell shell)
+{
+	char	*str;
+	char	*value;
+
+	if (key == NULL)
+		return (NULL);
+	if (is_special_variable(key))
+		return (get_special_variable(key, shell));
+	else if (envp == NULL)
+		return (getenv((const char *)key));
+	value = NULL;
+	while (envp != NULL)
+	{
+		if (envp->content != NULL)
+		{
+			str = (char *)(envp->content);
+			value = get_value_from_env(str, key);
+			if (value != NULL)
+				break ;
+		}
+		envp = envp->next;
+	}
+	return (value);
+}
+
 /**
  * @brief Saves an expansion data block of type WORD
  * to an expansion data list.
@@ -146,7 +161,7 @@ int	save_expansion_word(t_list **root, size_t word_start, size_t word_end)
  * @return 0 on failure, 1 on success, 2 on NULL node or root parameters.
  * @note Calls getenv() function if envp is NULL.
  */
-int	save_expansion_variable(t_list **root, char *key, t_list *envp)
+int	save_expansion_variable(t_list **root, char *key, t_shell shell)
 {
 	t_list		*lst;
 	t_expansion	*expansion;
@@ -157,7 +172,7 @@ int	save_expansion_variable(t_list **root, char *key, t_list *envp)
 	if (expansion == NULL)
 		return (0);
 	expansion->type = EXPANSION_VARIABLE;
-	expansion->data.variable_value = get_env_var(key, envp);
+	expansion->data.variable_value = get_env_var(key, NULL, shell);
 	lst = ft_lstnew((void *)expansion);
 	if (lst == NULL)
 	{

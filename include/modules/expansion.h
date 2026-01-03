@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/31 20:07:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 23:00:46 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -14,6 +14,7 @@
 # define EXPANSION_H
 
 #include "structs/s_ast.h"
+#include "structs/s_shell.h"
 
 /**
  * @brief Takes a string and removes outer-level quotes from it.
@@ -32,6 +33,6 @@ int	expand_and_replace_string(char **str_ptr);
  * and quote removal.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-int	expansion(t_ast *root, t_list *env);
+int	expansion(t_ast *root, t_shell shell);
 
 #endif

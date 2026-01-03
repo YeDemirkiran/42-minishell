@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/25 20:32:21 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 22:55:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -54,7 +54,7 @@ static int	expansion_data_init(size_t *word_start, size_t *i,
 	return (1);
 }
 
-static int	init_and_save_variable(t_list **root, t_list *envp,
+static int	init_and_save_variable(t_list **root, t_shell shell,
 	char *word, size_t *i)
 {
 	char	*key;
@@ -64,7 +64,7 @@ static int	init_and_save_variable(t_list **root, t_list *envp,
 	*i += set_variable_key(word + (*i + 1), &key);
 	if (key == NULL)
 		return (0);
-	res = save_expansion_variable(root, key, envp);
+	res = save_expansion_variable(root, key, shell);
 	free(key);
 	if (res != 1)
 		return (0);
@@ -76,7 +76,7 @@ static int	init_and_save_variable(t_list **root, t_list *envp,
  *
  * These blocks are required for the second step of expansion: Concatenation.
  */
-t_list	*get_expansion_data(char *word, t_list *envp)
+t_list	*get_expansion_data(char *word, t_shell shell)
 {
 	t_list	*root;
 	size_t	i;
@@ -98,7 +98,7 @@ t_list	*get_expansion_data(char *word, t_list *envp)
 			i++;
 			continue ;
 		}
-		if (init_and_save_variable(&root, envp, word, &i) != 1)
+		if (init_and_save_variable(&root, shell, word, &i) != 1)
 			return (on_expansion_data_error(&root, NULL));
 		word_start = i + 1;
 	}

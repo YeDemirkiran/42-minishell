@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 19:28:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 23:00:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -64,6 +64,7 @@ int	main(int argc, char **argv, char **envp)
 	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
 	shell.env->envp_list = create_envp_list(envp);
 	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
+	shell.last_exit_status = 31;
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
@@ -80,7 +81,7 @@ int	main(int argc, char **argv, char **envp)
 		tokens = lexical_analyze(input);
 		free(input);
 		ast = parse(tokens);
-		if (expansion(ast, NULL) != 1)
+		if (expansion(ast, shell) != 1)
 		{
 			free_tokens(&tokens);
 			ast_free_tree(ast);
