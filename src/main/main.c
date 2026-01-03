@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 15:44:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 15:51:51 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -45,7 +45,6 @@ int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	t_list	*tokens;
-	char	first_run;
 	t_ast	*ast;
 	char *prompt;
 	t_god_struct_envp *envp_struct;
@@ -55,14 +54,10 @@ int	main(int argc, char **argv, char **envp)
 	envp_struct->envp_char = envp_list_to_char_arr(envp_struct->envp_list);
 	(void)argc;
 	(void)argv;
-	(void)envp;
 	input = NULL;
-	first_run = 1;
 	signal(SIGINT, on_sigint);
-	while (input || first_run)
+	while (1)
 	{
-		if (!first_run && input != NULL)
-			free(input);
 		prompt = rl_header(&envp_struct->envp_list, envp);
 		input = read_input(prompt, "> ");
 		if (input == NULL)
@@ -75,6 +70,7 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		}
 		tokens = lexical_analyze(input);
+		free(input);
 		ast = parse(tokens);
 		if (expansion(ast, NULL) != 1)
 		{
@@ -89,7 +85,6 @@ int	main(int argc, char **argv, char **envp)
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
-		first_run = 0;
 	}
 	sort_malloc(1, 1);
 	clear_arr(&envp_struct->envp_char);
