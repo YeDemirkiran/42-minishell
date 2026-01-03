@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 22:55:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 23:55:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <minishell_lb.h>
 #include <libft/predicate.h>
 #include <libft/string.h>
 #include <libft/linked_list.h>
@@ -23,25 +24,6 @@
 #include "structs/s_shell.h"
 
 #include "expansion_data.h"
-
-/**
- * @brief Extracts the value part from a key-value pair if the keys match.
- * @return Address of the value.
- * @note The returned pointer is not malloc'd, don't try to free it.
- */
-static char	*get_value_from_env(char *str, char *key)
-{
-	size_t	i;
-
-	if (str == NULL || key == NULL)
-		return (NULL);
-	i = 0;
-	while (str[i] != '\0' && key[i] != '\0' && str[i] == key[i])
-		i++;
-	if (key[i] != '\0' || str[i] != '=')
-		return (NULL);
-	return (str + (i + 1));
-}
 
 int	is_special_variable(char *word)
 {
@@ -101,29 +83,21 @@ static char	*get_special_variable(const char *key, t_shell shell)
  * @note - Calls getenv() if envp is NULL.
  * @note - The returned pointer is not malloc'd, don't try to free it.
  */
-static char	*get_env_var(char *key, t_list *envp, t_shell shell)
+static char	*get_env_var(char *key, t_shell shell)
 {
-	char	*str;
 	char	*value;
 
 	if (key == NULL)
 		return (NULL);
+	value = NULL;
 	if (is_special_variable(key))
 		return (get_special_variable(key, shell));
-	else if (envp == NULL)
-		return (getenv((const char *)key));
-	value = NULL;
-	while (envp != NULL)
-	{
-		if (envp->content != NULL)
-		{
-			str = (char *)(envp->content);
-			value = get_value_from_env(str, key);
-			if (value != NULL)
-				break ;
-		}
-		envp = envp->next;
-	}
+	else if (shell.env == NULL)
+		value = getenv((const char *)key);
+	else
+		value = find_value_on_envp(&(shell.env->envp_list), key);
+	if (value != NULL)
+		value = ft_strdup(value);
 	return (value);
 }
 
@@ -172,7 +146,7 @@ int	save_expansion_variable(t_list **root, char *key, t_shell shell)
 	if (expansion == NULL)
 		return (0);
 	expansion->type = EXPANSION_VARIABLE;
-	expansion->data.variable_value = get_env_var(key, NULL, shell);
+	expansion->data.variable_value = get_env_var(key, shell);
 	lst = ft_lstnew((void *)expansion);
 	if (lst == NULL)
 	{
@@ -211,6 +185,18 @@ size_t	set_variable_key(char *word, char **key_holder)
 	return (i);
 }
 
+void	free_expansion_data(void *data)
+{
+	t_expansion	*exp_data;
+
+	if (data == NULL)
+		return ;
+	exp_data = (t_expansion *)data;
+	if (exp_data->type == EXPANSION_VARIABLE)
+		free(exp_data->data.variable_value);
+	free(exp_data);
+}
+
 /**
  * @brief Frees the given parameters if they are not NULL,
  * and then appropiate error message when an error occurs during
@@ -220,7 +206,7 @@ size_t	set_variable_key(char *word, char **key_holder)
 void	*on_expansion_data_error(t_list **root, char *key)
 {
 	if (root != NULL)
-		ft_lstclear(root, free);
+		ft_lstclear(root, free_expansion_data);
 	if (key != NULL)
 		free(key);
 	if (errno != 0)

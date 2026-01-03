@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:24:31 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 22:55:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 23:55:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -48,6 +48,8 @@ size_t	set_variable_key(char *word, char **key_holder);
  * @note Calls getenv() function if envp is NULL.
  */
 int		save_expansion_variable(t_list **root, char *key, t_shell shell);
+
+void	free_expansion_data(void *data);
 
 /**
  * @brief Frees the given parameters if they are not NULL,

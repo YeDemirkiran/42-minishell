@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 22:59:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 23:55:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -22,6 +22,7 @@
 #include "modules/ast.h"
 
 #include "expansion_data.h"
+#include "expansion_data_utils.h"
 #include "split_word.h"
 #include "remove_quotes.h"
 
@@ -114,7 +115,7 @@ static int	expand_word_list(t_list *node, t_shell shell)
 		if (data != NULL)
 		{
 			word = get_expanded_word(word, data);
-			ft_lstclear(&data, free);
+			ft_lstclear(&data, free_expansion_data);
 			free(node->content);
 			node->content = (void *)word;
 		}
@@ -142,7 +143,7 @@ static int	expand_redir_list(t_list *node, t_shell shell)
 		if (data != NULL)
 		{
 			word = get_expanded_word(redir->path, data);
-			ft_lstclear(&data, free);
+			ft_lstclear(&data, free_expansion_data);
 			free(redir->path);
 			redir->path = word;
 		}
@@ -245,7 +246,7 @@ int	expand_and_replace_string(char **str_ptr)
 			return (1);
 	}
 	new = get_expanded_word(*str_ptr, data);
-	ft_lstclear(&data, free);
+	ft_lstclear(&data, free_expansion_data);
 	if (new == NULL && errno != 0)
 		return (0);
 	free(*str_ptr);
