@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 14:28:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 15:44:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -63,14 +63,13 @@ int	main(int argc, char **argv, char **envp)
 	{
 		if (!first_run && input != NULL)
 			free(input);
-		first_run = 0;
 		prompt = rl_header(&envp_struct->envp_list, envp);
 		input = read_input(prompt, "> ");
 		if (input == NULL)
 		{
 			if (errno != 0)
 			{
-				perror("minishell");
+				perror("minishell: fatal error");
 				continue ;
 			}
 			break ;
@@ -90,6 +89,7 @@ int	main(int argc, char **argv, char **envp)
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
+		first_run = 0;
 	}
 	sort_malloc(1, 1);
 	clear_arr(&envp_struct->envp_char);
