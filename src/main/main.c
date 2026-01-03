@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 15:51:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 16:11:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -41,6 +41,12 @@
 #define RL_START "\001"
 #define RL_END "\002"
 
+static void	shell_exit(int status)
+{
+	ft_putstr_fd("exit\n", STDERR_FILENO);
+	exit(status);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
@@ -65,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 			if (errno != 0)
 			{
 				perror("minishell: fatal error");
-				continue ;
+				shell_exit(EXIT_FAILURE);
 			}
 			break ;
 		}
@@ -88,6 +94,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	sort_malloc(1, 1);
 	clear_arr(&envp_struct->envp_char);
-	ft_putstr_fd("exit\n", 2);
-	return (EXIT_SUCCESS);
+	shell_exit(EXIT_SUCCESS);
 }
