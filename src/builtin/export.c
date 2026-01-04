@@ -18,7 +18,7 @@
 
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
-/*
+
 static char* take_variable_value(t_list *arguments)
 {
 	char *variable_value;
@@ -35,7 +35,7 @@ static char* take_variable_value(t_list *arguments)
 		variable_value = ft_strdup((value));
 	}
 	return variable_value;
-}*/
+}
 
 static char* take_variable_name(t_list *arguments)
 {
@@ -54,22 +54,7 @@ static char* take_variable_name(t_list *arguments)
 	return variable_name;
 }
 
-static void print_list(t_envp_list *list)
-{
-	t_envp_list *tmp;
-
-	tmp = list;
-	while(tmp != NULL)
-	{
-		if(tmp->isvaluempty == 0)
-			printf("declare -x %s=\"%s\"\n", tmp->id_name, tmp->value);
-		else
-			printf("declare -x %s\n", tmp->id_name);
-		tmp = tmp->next;
-	}
-}
-
-static int check_error_utils(char *variable_name)
+static int is_variable_name_correct(char *variable_name)
 {
 	int i;
 
@@ -92,36 +77,47 @@ static int check_error_utils(char *variable_name)
 	return 0;
 }
 
-static int check_error_variables(t_list *args)
+static int add_variable_on_envplist(t_envp_list **list, t_list *command)
 {
 	t_list *tmp;
-	char *variable_name;
-	int return_value;
+	t_envp_list *envp_tmp;
 
-	return_value = 0;
-	tmp = args;
-	tmp = tmp->next;
+	envp_tmp = (*list);
+	tmp = command;
+	while(envp_tmp->next != NULL)
+		envp_tmp = envp_tmp->next;
 	while(tmp != NULL)
 	{
-		variable_name = take_variable_name(tmp);
-		if(check_error_utils(variable_name))
-			return_value = 1;
-		free(variable_name);
+		if(is_variable_name_correct(take_variable_name(tmp)))
+		{
+			tmp = tmp->next;
+			continue;
+		}
+		envp_tmp->next = ft_malloc(sizeof(t_envp_list), 0);
+		envp_tmp = envp_tmp->next;
+		envp_tmp->id_name = ft_strdup(take_variable_name(tmp));
+		envp_tmp->value = ft_strdup(take_variable_value(tmp));
+		envp_tmp->next = NULL;
 		tmp = tmp->next;
 	}
-	return return_value;
+	return 0;
 }
 
 void export(t_envp_list **list, t_ast *ast)
 {
 	t_list *command;
+	t_envp_list *copy_list;
 
 	command = ast->data->ast_command.arguments;
 	if(command->next == NULL)
-		print_list((*list));
+	{
+		copy_list = copy_envplist((*list));
+		print_list(&copy_list);
+	}
 	else
 	{
-		check_error_variables(command);
+		command = command->next;
+		add_variable_on_envplist(list, command);
 	}
 	return ;
 }

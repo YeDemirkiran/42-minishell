@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/02 16:55:51 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/04 16:10:13 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ int is_there_path(void *content, int chdir_value);
 int is_oldpwd_set(t_envp_list *list, char *input);
 /*CD ERROR CHECK*/
 /*EXPORT*/
+void print_list(t_envp_list **list);
 void export(t_envp_list **list, t_ast *ast);
+t_envp_list *copy_envplist(t_envp_list *source);
 /*EXPORT*/
 int cd(t_envp_list **list, t_ast *ast);
 void	pwd(void);
