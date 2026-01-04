@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 23:55:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 09:06:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -179,25 +179,25 @@ static int	expand_command_arguments(t_ast *ast, t_shell shell)
 }
 
 //TODO: Remove
-static void	print_command_args(t_ast *ast)
-{
-	t_list	*lst;
+// static void	print_command_args(t_ast *ast)
+// {
+// 	t_list	*lst;
 
-	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
-		return ;
-	lst = ast->data->ast_command.arguments;
-	if (lst == NULL)
-		return ;
-	printf("CMD: %s, Args: ", (char *)(lst->content));
-	while (lst != NULL)
-	{
-		printf("%s", (char *)(lst->content));
-		if (lst->next != NULL)
-			printf(", ");
-		lst = lst->next;
-	}
-	printf("\n");
-}
+// 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
+// 		return ;
+// 	lst = ast->data->ast_command.arguments;
+// 	if (lst == NULL)
+// 		return ;
+// 	printf("CMD: %s, Args: ", (char *)(lst->content));
+// 	while (lst != NULL)
+// 	{
+// 		printf("%s", (char *)(lst->content));
+// 		if (lst->next != NULL)
+// 			printf(", ");
+// 		lst = lst->next;
+// 	}
+// 	printf("\n");
+// }
 
 /**
  * @brief Takes a syntax tree and recursively expands arguments in it.
@@ -263,16 +263,16 @@ int	expansion(t_ast *root, t_shell shell)
 {
 	if (root == NULL)
 		return (2);
-	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
-	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
+	// printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
+	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
 	if (perform_expansion(root, shell) != 1)
 		return (0);
-	printf("(DEBUG: Step 3.2: Word Splitting)\n");
+	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
 	if (perform_word_split(root) != 1)
 		return (0);
-	printf("(DEBUG: Step 3.3: Quote Removal)\n");
+	//printf("(DEBUG: Step 3.3: Quote Removal)\n");
 	perform_quote_removal(root);
-	printf("(DEBUG: Step 3.4: Printing New Variables)\n");
-	ast_traverse_preorder(root, print_command_args);
+	// printf("(DEBUG: Step 3.4: Printing New Variables)\n");
+	// ast_traverse_preorder(root, print_command_args);
 	return (1);
 }
