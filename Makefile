@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2026/01/03 15:34:44 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/04 10:07:34 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -42,7 +42,7 @@ C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXPANSION_
 
 ## Main
 MAIN_DIR = main/
-MAIN_FILES = $(addprefix $(MAIN_DIR), main.c read_input.c read_input_utils.c)
+MAIN_FILES = $(addprefix $(MAIN_DIR), main.c read_input.c read_input_utils.c history.c)
 
 ## Lexer
 LEXER_DIR = lexer/

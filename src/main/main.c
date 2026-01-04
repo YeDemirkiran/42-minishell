@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 23:00:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 10:07:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,6 +19,7 @@
 
 #include <libft/linked_list.h>
 #include <libft/string.h>
+#include <libft/predicate.h>
 #include <get_next_line.h>
 #include <minishell_lb.h>
 #include <gb.h>
@@ -37,6 +38,7 @@
 
 #include "../lexer/token.h"
 #include "read_input.h"
+#include "history.h"
 
 #define SHELL_NAME "babashell"
 #define RL_START "\001"
@@ -78,6 +80,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 			break ;
 		}
+		add_line_to_history(input);
 		tokens = lexical_analyze(input);
 		free(input);
 		ast = parse(tokens);
@@ -97,5 +100,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
+	rl_clear_history();
 	shell_exit(EXIT_SUCCESS);
 }
