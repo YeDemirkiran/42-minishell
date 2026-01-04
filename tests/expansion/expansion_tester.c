@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 23:05:04 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 19:58:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -29,6 +29,15 @@
 #define COLOR_GREEN "\e[0;32m"
 #define COLOR_RED "\e[0;31m"
 #define COLOR_WHITE "\e[0;37m"
+
+#ifndef TEST_EXIT_STATUS
+# define TEST_EXIT_STATUS 0
+#endif
+
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+#define TEST_EXIT_STATUS_STR STR(TEST_EXIT_STATUS)
 
 typedef struct s_expansion_test
 {
@@ -163,7 +172,7 @@ t_test_result	conduct_expansion_test(t_expansion_test test)
 
 	printf("Calling expansion()...\n");
 	printf("=============================================================\n");
-	expansion(test.testee, (t_shell){.env = NULL, .last_exit_status = 31});
+	expansion(test.testee, (t_shell){.env = NULL, .last_exit_status = TEST_EXIT_STATUS});
 	printf("=============================================================\n");
 
 	result = compare_asts(test.expected, test.testee);
@@ -289,37 +298,28 @@ static void	test_expansion(void)
 
 		// TEST 13: Word Splitting Inside Quotes
 		TEST_EXPANSION_C("\"$VAR_SPACE_1\"", "word1 word2", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_1\"", getenv("VAR_SPACE_1"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_2\"", "word1 word2 word3 word4 word5", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_2\"", getenv("VAR_SPACE_2"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_3\"", "     word1     word2     word3      word4     word5     ", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_3\"", getenv("VAR_SPACE_3"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_4\"", " ", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_4\"", getenv("VAR_SPACE_4"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_5\"", "                  ", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_5\"", getenv("VAR_SPACE_5"), '.'),
 
 		TEST_EXPANSION_C("\"$VAR_TAB_1\"", "word1	word2", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_1\"", getenv("VAR_TAB_1"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_2\"", "word1	word2	word3	word4	word5", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_2\"", getenv("VAR_TAB_2"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_3\"", "	word1	word2	word3	word4	word5	", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_3\"", getenv("VAR_TAB_3"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_4\"", "	", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_4\"", getenv("VAR_TAB_4"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_5\"", "					", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_5\"", getenv("VAR_TAB_5"), '.'),
 
 		TEST_EXPANSION_C("\"$VAR_NEWL_1\"", "word1\nword2", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_1\"", getenv("VAR_NEWL_1"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_2\"", "word1\nword2\nword3\nword4\nword5", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_2\"", getenv("VAR_NEWL_2"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_3\"", "\nword1\nword2\nword3\nword4\nword5\n", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_3\"", getenv("VAR_NEWL_3"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_4\"", "\n", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_4\"", getenv("VAR_NEWL_4"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_5\"", "\n\n\n\n\n", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_5\"", getenv("VAR_NEWL_5"), '.'),
+
+		// TEST 15: $? var
+		TEST_EXPANSION("$?", TEST_EXIT_STATUS_STR),
+		TEST_EXPANSION("       $?      ", TEST_EXIT_STATUS_STR),
+		TEST_EXPANSION("WORD$?WORD", "WORD" TEST_EXIT_STATUS_STR "WORD"),
+		TEST_EXPANSION("$?$?$?$?$?$?$?$?$?$?", TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR),
 	};
 	t_test_result results;
 
