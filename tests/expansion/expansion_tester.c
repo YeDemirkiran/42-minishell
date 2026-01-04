@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 19:58:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 20:20:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -32,6 +32,14 @@
 
 #ifndef TEST_EXIT_STATUS
 # define TEST_EXIT_STATUS 0
+#endif
+
+#ifndef TEST_USER
+# define TEST_USER "yademirk"
+#endif
+
+#ifndef TEST_HOME
+# define TEST_HOME "/home/" TEST_USER
 #endif
 
 #define STR_HELPER(x) #x
@@ -208,28 +216,21 @@ static void	test_expansion(void)
 {
 	t_expansion_test	tests[] = {
 		// TEST 1: Basic tests
-		TEST_EXPANSION("$USER", "yademirk"),
-		TEST_EXPANSION("echo $USER", "echo yademirk"),
-		TEST_EXPANSION("echo $USER two", "echo yademirk two"),
-		TEST_EXPANSION("word$USER", "wordyademirk"),
-		TEST_EXPANSION("$USER$USER", "yademirkyademirk"),
-		TEST_EXPANSION("$USER$USER$USER", "yademirkyademirkyademirk"),
-		TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
-		TEST_EXPANSION("word1-$USER-word2-$USER-word3-$USER", "word1-yademirk-word2-yademirk-word3-yademirk"),
+		TEST_EXPANSION("$USER", TEST_USER),
+		TEST_EXPANSION("echo $USER", "echo " TEST_USER),
+		TEST_EXPANSION("echo $USER two", "echo " TEST_USER " two"),
+		TEST_EXPANSION("word$USER", "word" TEST_USER),
+		TEST_EXPANSION("$USER$USER", TEST_USER TEST_USER),
+		TEST_EXPANSION("$USER$USER$USER", TEST_USER TEST_USER TEST_USER),
+		TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER),
+		TEST_EXPANSION("word1-$USER-word2-$USER-word3-$USER", "word1-" TEST_USER "-word2-" TEST_USER "-word3-" TEST_USER),
 
 		// TEST 2: Mixed valid variables
-		TEST_EXPANSION("$USER $HOME", "yademirk /home/yademirk"),
-		TEST_EXPANSION("$USER$HOME", "yademirk/home/yademirk"),
-		TEST_EXPANSION("$USER$HOME$USER", "yademirk/home/yademirkyademirk"),
-		TEST_EXPANSION("$USER$USER$HOME$HOME", "yademirkyademirk/home/yademirk/home/yademirk"),
-		TEST_EXPANSION("$HOME$PWD$DISPLAY$PATH$USERNAME$DESKTOP_SESSION$SHELL", "/home/yademirk" "/home/yademirk/Desktop/42-projects/minishell/tests/expansion" ":0" "/home/yademirk/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin" "yademirk" "ubuntu" "/bin/bash"),
-
-		// TEST 3: High count of variables
-		// 100 here
-		//TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
-
-		// 1000 here
-		//TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
+		TEST_EXPANSION("$USER $HOME", TEST_USER " " TEST_HOME),
+		TEST_EXPANSION("$USER$HOME", TEST_USER TEST_HOME),
+		TEST_EXPANSION("$USER$HOME$USER", TEST_USER TEST_HOME TEST_USER),
+		TEST_EXPANSION("$USER$USER$HOME$HOME", TEST_USER TEST_USER TEST_HOME TEST_HOME),
+		TEST_EXPANSION("$HOME$PWD$DISPLAY$PATH$USERNAME$DESKTOP_SESSION$SHELL", TEST_HOME "/home/yademirk/Desktop/42-projects/minishell/tests/expansion" ":0" "/home/yademirk/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin" TEST_USER "ubuntu" "/bin/bash"),
 
 		// TEST 4: Non-existing variables
 		TEST_EXPANSION_EMPTY("$no"),
@@ -238,12 +239,12 @@ static void	test_expansion(void)
 		TEST_EXPANSION("hello$.world", "hello$.world"),
 		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$e112$asfafsasf_asfasfasf.world", "hello.world"),
 		TEST_EXPANSION("hello$$$$$$$$$$.world", "hello$$$$$$$$$$.world"),
-		TEST_EXPANSION("$USER$no$HOME", "yademirk/home/yademirk"),
-		TEST_EXPANSION("$no$USER$SHELL$no$HOME$no$", "yademirk/bin/bash/home/yademirk$"),
+		TEST_EXPANSION("$USER$no$HOME", TEST_USER TEST_HOME),
+		TEST_EXPANSION("$no$USER$SHELL$no$HOME$no$", TEST_USER "/bin/bash" TEST_HOME "$"),
 
 		// TEST 5: Invalid variables
 		TEST_EXPANSION("$", "$"),
-		TEST_EXPANSION("$$$$$$$$$$", "$$$$$$$$$$"),
+		TEST_EXPANSION("$ $ $ $ $ $ $ $ $ $", "$ $ $ $ $ $ $ $ $ $"),
 		TEST_EXPANSION("$.", "$."),
 		TEST_EXPANSION("$...........", "$..........."),
 		TEST_EXPANSION("$ ", "$ "),
@@ -260,15 +261,15 @@ static void	test_expansion(void)
 		TEST_EXPANSION("'$USER'$USER'$USER'", "$USERyademirk$USER"),
 
 		// TEST 8: Double quotes
-		TEST_EXPANSION("\"$USER\"", "yademirk"),
-		TEST_EXPANSION("\"$USER$USER\"", "yademirkyademirk"),
-		TEST_EXPANSION("\"$USER\"\"$USER\"", "yademirkyademirk"),
-		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", "yademirkyademirkyademirk"),
+		TEST_EXPANSION("\"$USER\"", TEST_USER),
+		TEST_EXPANSION("\"$USER$USER\"", TEST_USER TEST_USER),
+		TEST_EXPANSION("\"$USER\"\"$USER\"", TEST_USER TEST_USER),
+		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", TEST_USER TEST_USER TEST_USER),
 
 		// TEST 9: Single quotes within double quotes
-		TEST_EXPANSION("\"'$USER'\"", "'yademirk'"),
-		TEST_EXPANSION("\"'$USER$USER'\"", "'yademirkyademirk'"),
-		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "'yademirk''yademirk'"),
+		TEST_EXPANSION("\"'$USER'\"", "'" TEST_USER "'"),
+		TEST_EXPANSION("\"'$USER$USER'\"", "'" TEST_USER TEST_USER "'"),
+		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "'" TEST_USER "'" "'" TEST_USER "'"),
 
 		// TEST 10: Double quotes within single quotes
 		TEST_EXPANSION("'\"$USER\"'", "\"$USER\""),
@@ -277,7 +278,7 @@ static void	test_expansion(void)
 
 		// TEST 11: Deep nested
 		TEST_EXPANSION("'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'", "\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\""),
-		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "''''''''''yademirk''''''''''"),
+		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "''''''''''" TEST_USER "''''''''''"),
 
 		// TEST 12: Word Splitting
 		TEST_EXPANSION("$VAR_SPACE_1", "word1 word2"),
