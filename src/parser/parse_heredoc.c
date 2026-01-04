@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 20:48:03 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 11:14:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include <readline/readline.h>
 #include <libft/string.h>
 #include <libft/memory.h>
 #include <get_next_line.h>
@@ -148,9 +149,8 @@ static int	read_heredoc(char *delimiter, int fd)
 	should_expand = delimiter_remove_quotes(delimiter) == 0;
 	while (1)
 	{
-		write(2, "> ", 2);
 		errno = 0;
-		line = get_next_line(STDIN_FILENO);
+		line = readline("> ");
 		if (line == NULL)
 			return (check_errno_and_print_error());
 		if (expand_delimiter(should_expand, &line) != 1)
@@ -158,6 +158,7 @@ static int	read_heredoc(char *delimiter, int fd)
 		if (is_delimiter(line, delimiter) == 1)
 			break ;
 		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
 		free(line);
 	}
 	if (line != NULL)
