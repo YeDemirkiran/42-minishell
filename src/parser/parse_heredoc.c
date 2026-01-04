@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 11:14:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 11:16:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,7 +19,6 @@
 #include <readline/readline.h>
 #include <libft/string.h>
 #include <libft/memory.h>
-#include <get_next_line.h>
 
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
