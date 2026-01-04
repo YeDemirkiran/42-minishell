@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 20:20:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 20:42:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -321,6 +321,19 @@ static void	test_expansion(void)
 		TEST_EXPANSION("       $?      ", TEST_EXIT_STATUS_STR),
 		TEST_EXPANSION("WORD$?WORD", "WORD" TEST_EXIT_STATUS_STR "WORD"),
 		TEST_EXPANSION("$?$?$?$?$?$?$?$?$?$?", TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR),
+
+		// TEST 16: $$ var
+		TEST_EXPANSION("$$", ft_itoa(getpid())),
+		TEST_EXPANSION("       $$      ", ft_itoa(getpid())),
+
+		// TEST 17: ~ (tilde)
+		TEST_EXPANSION("~", TEST_HOME),
+		TEST_EXPANSION("            ~           ", TEST_HOME),
+		TEST_EXPANSION("WORD~", "WORD~"),
+
+		// TEST 18: * wildcard (globbing)
+		TEST_EXPANSION("*", "expansion_tester expansion_tester.c glob_test Makefile"),
+		TEST_EXPANSION("            *           ", "expansion_tester expansion_tester.c glob_test Makefile"),
 	};
 	t_test_result results;
 
