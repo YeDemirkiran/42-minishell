@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 09:06:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 22:06:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,6 +23,7 @@
 
 #include "expansion_data.h"
 #include "expansion_data_utils.h"
+#include "tilde_expansion.h"
 #include "split_word.h"
 #include "remove_quotes.h"
 
@@ -265,6 +266,8 @@ int	expansion(t_ast *root, t_shell shell)
 		return (2);
 	// printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
 	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
+	if (perform_tilde_expansion(root, &(shell.env->envp_list)) != 1)
+		return (0);
 	if (perform_expansion(root, shell) != 1)
 		return (0);
 	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
