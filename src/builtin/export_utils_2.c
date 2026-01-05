@@ -32,7 +32,7 @@ static char* take_variable_value(t_list *arguments)
 	else
 	{
 		value++;
-		variable_value = long_term_strdup((value));
+		variable_value = ft_strdup((value));
 	}
 	return variable_value;
 }
@@ -46,10 +46,10 @@ static char* take_variable_name(t_list *arguments)
 		return NULL;
 	if(((char *)arguments->content)[0] == '=')
 	{
-		return long_term_strdup(arguments->content);
+		return ft_strdup(arguments->content);
 	}
 	splitted_command = ft_split(arguments->content, '=');
-	variable_name = long_term_strdup(splitted_command[0]);
+	variable_name = ft_strdup(splitted_command[0]);
 	clear_arr(&splitted_command);
 	return variable_name;
 }
@@ -89,6 +89,17 @@ static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 	(*list)->next = NULL;
 }
 
+static int issamevariable(t_envp_list **list, t_list *command)
+{
+	char *value_name;
+
+	value_name = take_variable_name(command);
+	if(isvaluein_envplist(list, value_name))
+		return 1;
+	else
+		return 0;
+}
+
 int add_variable_on_envplist(t_envp_list **list, t_list *command)
 {
 	t_list *tmp;
@@ -100,8 +111,9 @@ int add_variable_on_envplist(t_envp_list **list, t_list *command)
 		envp_tmp = envp_tmp->next;
 	while(tmp != NULL)
 	{
-		if(is_variable_name_correct(take_variable_name(tmp)))
+		if(issamevariable(list, tmp) || is_variable_name_correct(take_variable_name(tmp)))
 		{
+			update_envp_value(list, take_variable_name(tmp), take_variable_value(tmp));
 			tmp = tmp->next;
 			continue;
 		}

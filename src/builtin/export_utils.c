@@ -69,9 +69,7 @@ static t_envp_list *find_smallest_node(t_envp_list *list)
 {
 	t_envp_list *small;
 	t_envp_list *tmp;
-	int i;
 
-	i = 0;
 	tmp = list;
 	small = tmp;
 	while(tmp != NULL)
