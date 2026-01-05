@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   read_input.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 15:45:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:59:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 #include <errno.h>
@@ -52,6 +52,29 @@ static const char	*get_prompt(const char *primary_prompt,
 		return (primary_prompt);
 	else
 		return (secondary_prompt);
+}
+
+/**
+ * @brief Checks if 0 is a TTY and decides between GNU Readline and 
+ * 42 GNL.
+ */
+char	*get_input_line(const char *prompt, int interactive)
+{
+	char	*str;
+	char	*newl;
+
+	if (interactive == 1)
+		str = readline(prompt);
+	else
+	{
+		str = get_next_line(STDIN_FILENO);
+		if (str == NULL)
+			return (NULL);
+		newl = ft_strrchr(str, '\n');
+		if (newl != NULL)
+			*newl = '\0';
+	}
+	return (str);
 }
 
 /**
