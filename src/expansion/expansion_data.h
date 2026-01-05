@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:47:41 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 22:42:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/03 22:57:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,6 +16,8 @@
 # include <stddef.h>
 
 # include <libft/linked_list.h>
+
+# include "structs/s_shell.h"
 
 typedef enum e_expansion_type
 {
@@ -44,6 +46,6 @@ typedef struct s_expansion
  *
  * These blocks are required for the second step of expansion: Concatenation.
  */
-t_list	*get_expansion_data(char *word, t_list *envp);
+t_list	*get_expansion_data(char *word, t_shell shell);
 
 #endif

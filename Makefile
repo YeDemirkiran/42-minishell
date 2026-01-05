@@ -5,10 +5,11 @@
 #                                                     +:+ +:+         +:+      #
 #    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2026/01/05 08:20:26 by muayna           ###   ########.fr        #
+#    Created: Invalid date        by                   #+#    #+#              #
+#    Updated: 2026/01/05 15:42:19 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 NAME = minishell
 
@@ -42,7 +43,7 @@ C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXPANSION_
 
 ## Main
 MAIN_DIR = main/
-MAIN_FILES = $(addprefix $(MAIN_DIR), main.c)
+MAIN_FILES = $(addprefix $(MAIN_DIR), main.c read_input.c read_input_utils.c history.c get_pid.c)
 
 ## Lexer
 LEXER_DIR = lexer/
@@ -58,7 +59,7 @@ AST_FILES = $(addprefix $(AST_DIR), ast.c ast_traversal.c ast_helper.c)
 
 ## Expansion
 EXPANSION_DIR = expansion/
-EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c expansion_data.c expansion_data_utils.c split_word.c remove_quotes.c)
+EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c expansion_data.c expansion_data_utils.c split_word.c remove_quotes.c tilde_expansion.c)
 
 ## Executor
 EXECUTOR_DIR = executor/
@@ -111,6 +112,7 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+	make -C $(LIBFT_DIR) fclean
 	make -C $(LIBMNL_DIR) fclean
 	make -C $(LIBGB_DIR) fclean
 	make -C $(LIBGNL_DIR) fclean

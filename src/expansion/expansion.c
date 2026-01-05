@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 13:10:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/04 22:06:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -22,6 +22,8 @@
 #include "modules/ast.h"
 
 #include "expansion_data.h"
+#include "expansion_data_utils.h"
+#include "tilde_expansion.h"
 #include "split_word.h"
 #include "remove_quotes.h"
 
@@ -100,7 +102,7 @@ static char	*get_expanded_word(char *str, t_list *expansion_data)
  * to be expanded and does so.
  * @return 0 on failure, 1 on success, 2 on NULL node.
  */
-static int	expand_word_list(t_list *node, t_list *envp)
+static int	expand_word_list(t_list *node, t_shell shell)
 {
 	char	*word;
 	t_list	*data;
@@ -110,11 +112,11 @@ static int	expand_word_list(t_list *node, t_list *envp)
 	while (node != NULL)
 	{
 		word = (char *)(node->content);
-		data = get_expansion_data(word, envp);
+		data = get_expansion_data(word, shell);
 		if (data != NULL)
 		{
 			word = get_expanded_word(word, data);
-			ft_lstclear(&data, free);
+			ft_lstclear(&data, free_expansion_data);
 			free(node->content);
 			node->content = (void *)word;
 		}
@@ -125,7 +127,7 @@ static int	expand_word_list(t_list *node, t_list *envp)
 	return (1);
 }
 
-static int	expand_redir_list(t_list *node, t_list *envp)
+static int	expand_redir_list(t_list *node, t_shell shell)
 {
 	t_list			*data;
 	t_redirection	*redir;
@@ -138,11 +140,11 @@ static int	expand_redir_list(t_list *node, t_list *envp)
 		return (2);
 	while (node != NULL)
 	{
-		data = get_expansion_data(redir->path, envp);
+		data = get_expansion_data(redir->path, shell);
 		if (data != NULL)
 		{
 			word = get_expanded_word(redir->path, data);
-			ft_lstclear(&data, free);
+			ft_lstclear(&data, free_expansion_data);
 			free(redir->path);
 			redir->path = word;
 		}
@@ -158,7 +160,7 @@ static int	expand_redir_list(t_list *node, t_list *envp)
  * and then performs expansion on it.
  * @return 0 on failure, 1 on success, 2 on NULL ast parameter.
  */
-static int	expand_command_arguments(t_ast *ast)
+static int	expand_command_arguments(t_ast *ast, t_shell shell)
 {
 	t_list	*args;
 	t_list	*redirs;
@@ -168,59 +170,88 @@ static int	expand_command_arguments(t_ast *ast)
 	args = ast->data->ast_command.arguments;
 	if (args == NULL)
 		return (2);
-	if (expand_word_list(args, NULL) != 1)
+	if (expand_word_list(args, shell) != 1)
 		return (0);
 	redirs = ast->data->ast_command.redirs;
 	if (redirs != NULL)
-		if (expand_redir_list(redirs, NULL) != 1)
+		if (expand_redir_list(redirs, shell) != 1)
 			return (0);
 	return (1);
 }
 
 //TODO: Remove
-static void	print_command_args(t_ast *ast)
-{
-	t_list	*lst;
+// static void	print_command_args(t_ast *ast)
+// {
+// 	t_list	*lst;
 
-	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
-		return ;
-	lst = ast->data->ast_command.arguments;
-	if (lst == NULL)
-		return ;
-	printf("CMD: %s, Args: ", (char *)(lst->content));
-	while (lst != NULL)
-	{
-		printf("%s", (char *)(lst->content));
-		if (lst->next != NULL)
-			printf(", ");
-		lst = lst->next;
-	}
-	printf("\n");
-}
+// 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
+// 		return ;
+// 	lst = ast->data->ast_command.arguments;
+// 	if (lst == NULL)
+// 		return ;
+// 	printf("CMD: %s, Args: ", (char *)(lst->content));
+// 	while (lst != NULL)
+// 	{
+// 		printf("%s", (char *)(lst->content));
+// 		if (lst->next != NULL)
+// 			printf(", ");
+// 		lst = lst->next;
+// 	}
+// 	printf("\n");
+// }
 
 /**
  * @brief Takes a syntax tree and recursively expands arguments in it.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-static int	perform_expansion(t_ast *root, t_list *env)
+static int	perform_expansion(t_ast *root, t_shell shell)
 {
 	if (root == NULL)
 		return (2);
 	if (root->type == AST_COMMAND)
 	{
-		if (expand_command_arguments(root) != 1)
+		if (expand_command_arguments(root, shell) != 1)
 			return (0);
 	}
 	if (root->left != NULL)
 	{
-		if (perform_expansion(root->left, env) != 1)
+		if (perform_expansion(root->left, shell) != 1)
 			return (0);
 	}
 	if (root->right != NULL)
 	{
-		if (perform_expansion(root->right, env) != 1)
+		if (perform_expansion(root->right, shell) != 1)
 			return (0);
 	}
+	return (1);
+}
+
+/**
+ * @brief Takes a string, performs expansion on it if it's needed and
+ * replaces the old one with the new one.
+ */
+int	expand_and_replace_string(char **str_ptr)
+{
+	char	*new;
+	t_list	*data;
+
+	if (str_ptr == NULL || *str_ptr == NULL)
+		return (2);
+	errno = 0;
+	data = get_expansion_data(*str_ptr, (t_shell){.env = NULL, .last_exit_status = 31});
+	if (data == NULL)
+	{
+		if (errno != 0)
+			return (0);
+		else
+			return (1);
+	}
+	new = get_expanded_word(*str_ptr, data);
+	ft_lstclear(&data, free_expansion_data);
+	if (new == NULL && errno != 0)
+		return (0);
+	free(*str_ptr);
+	*str_ptr = new;
 	return (1);
 }
 
@@ -229,20 +260,22 @@ static int	perform_expansion(t_ast *root, t_list *env)
  * and quote removal.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-int	expansion(t_ast *root, t_list *env)
+int	expansion(t_ast *root, t_shell shell)
 {
 	if (root == NULL)
 		return (2);
-	printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
-	printf("(DEBUG: Step 3.1: Variable Substiton)\n");
-	if (perform_expansion(root, env) != 1)
+	// printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
+	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
+	if (perform_tilde_expansion(root, &(shell.env->envp_list)) != 1)
 		return (0);
-	printf("(DEBUG: Step 3.2: Word Splitting)\n");
+	if (perform_expansion(root, shell) != 1)
+		return (0);
+	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
 	if (perform_word_split(root) != 1)
 		return (0);
-	printf("(DEBUG: Step 3.3: Quote Removal)\n");
+	//printf("(DEBUG: Step 3.3: Quote Removal)\n");
 	perform_quote_removal(root);
-	printf("(DEBUG: Step 3.4: Printing New Variables)\n");
-	ast_traverse_preorder(root, print_command_args);
+	// printf("(DEBUG: Step 3.4: Printing New Variables)\n");
+	// ast_traverse_preorder(root, print_command_args);
 	return (1);
 }

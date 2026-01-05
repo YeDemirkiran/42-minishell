@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/31 12:14:37 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/05 15:43:22 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 // }
 
 
-void run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
@@ -66,23 +66,49 @@ void run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		perror("-babashell: command not found");
 		exit(EXIT_FAILURE);
 	}
-	wait(NULL);
+	//wait(NULL);
 	clear_arr(&args);
+	return pid;
+}
+
+t_list *exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+{
+	static t_list *lst;
+	int pipefd[2];
+	pid_t	*pid;
+
+	if (ast == NULL)
+		return (lst);
+	if(ast->type == AST_COMMAND)
+	{
+		pid = malloc(sizeof(pid_t));
+		*pid = run_command(ast, list, fd_in, fd_out);
+		ft_lstadd_back(&lst, ft_lstnew(pid));
+	}
+	else if (ast->type == AST_PIPE)
+	{
+		pipe(pipefd);
+		exec_utils(ast->left, list, fd_in, pipefd[1]);
+		close(pipefd[1]);
+		exec_utils(ast->right, list, pipefd[0], fd_out);
+		close(pipefd[0]);
+	}
+	return (lst);
+	
 }
 
 void	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
-	int pipefd[2];
-
-	if(ast->type == AST_COMMAND)
-		run_command(ast, list, fd_in, fd_out);
-	else if (ast->type == AST_PIPE)
+	t_list	*lst;
+	int		exit_status;
+	
+	lst = exec_utils(ast, list, fd_in, fd_out);
+	exit_status = 0;
+	while (lst != NULL)
 	{
-		pipe(pipefd);
-		executor(ast->left, list, fd_in, pipefd[1]);
-		close(pipefd[1]);
-		executor(ast->right, list, pipefd[0], fd_out);
-		close(pipefd[0]);
+		waitpid(*((pid_t *)(lst->content)), &exit_status, 0);
+		lst = lst->next;
 	}
+	ft_lstclear(&lst, free);
 }
 

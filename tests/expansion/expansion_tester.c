@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_tester.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/28 19:42:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 12:38:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +17,7 @@
 #include <libft/string.h>
 
 #include <structs/s_ast.h>
+#include <structs/s_shell.h>
 #include <structs/s_token.h>
 #include <structs/s_redirection.h>
 #include <types/t_bool.h>
@@ -29,9 +30,25 @@
 #define COLOR_RED "\e[0;31m"
 #define COLOR_WHITE "\e[0;37m"
 
+#ifndef TEST_EXIT_STATUS
+# define TEST_EXIT_STATUS 0
+#endif
+
+#ifndef TEST_USER
+# define TEST_USER "yademirk"
+#endif
+
+#ifndef TEST_HOME
+# define TEST_HOME "/home/" TEST_USER
+#endif
+
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+#define TEST_EXIT_STATUS_STR STR(TEST_EXIT_STATUS)
+
 typedef struct s_expansion_test
 {
-	int		number;
 	t_ast	*testee;
 	t_ast	*expected;
 }			t_expansion_test;
@@ -156,13 +173,14 @@ t_bool	compare_asts(t_ast *expected, t_ast *testee)
 t_test_result	conduct_expansion_test(t_expansion_test test)
 {
 	t_bool	result;
+	static int	number = 1;
 	static t_test_result test_result;
 
-	printf("Test %i\n", test.number);
+	printf("Test %i\n", number++);
 
 	printf("Calling expansion()...\n");
 	printf("=============================================================\n");
-	expansion(test.testee, NULL);
+	expansion(test.testee, (t_shell){.env = NULL, .last_exit_status = TEST_EXIT_STATUS, .pid = getpid()});
 	printf("=============================================================\n");
 
 	result = compare_asts(test.expected, test.testee);
@@ -189,51 +207,44 @@ int	test_number = 0;
 #define TEST_COMMAND_NULL ast_new_node(AST_COMMAND, ast_command_data(NULL, NULL), NULL, NULL)
 #define TEST_COMMAND_EMPTY ast_new_node(AST_COMMAND, ast_command_data(NULL, NULL), NULL, NULL)
 #define TEST_PIPE(left, right) ast_new_node(AST_PIPE, NULL, left, right)
-#define TEST_EXPANSION(testee_str, expected_str) { .number = (++test_number), .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND(expected_str)}
-#define TEST_EXPANSION_C(testee_str, expected_str, c) { .number = (++test_number), .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND_C(expected_str, c)}
-#define TEST_EXPANSION_NULL(testee_str) { .number = (++test_number), .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND_NULL}
-#define TEST_EXPANSION_EMPTY(testee_str) { .number = (++test_number), .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND_EMPTY}
+#define TEST_EXPANSION(testee_str, expected_str) { .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND(expected_str)}
+#define TEST_EXPANSION_C(testee_str, expected_str, c) { .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND_C(expected_str, c)}
+#define TEST_EXPANSION_NULL(testee_str) { .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND_NULL}
+#define TEST_EXPANSION_EMPTY(testee_str) { .testee = TEST_COMMAND(testee_str), .expected = TEST_COMMAND_EMPTY}
 
 static void	test_expansion(void)
 {
 	t_expansion_test	tests[] = {
 		// TEST 1: Basic tests
-		TEST_EXPANSION("$USER", "yademirk"),
-		TEST_EXPANSION("echo $USER", "echo yademirk"),
-		TEST_EXPANSION("echo $USER two", "echo yademirk two"),
-		TEST_EXPANSION("word$USER", "wordyademirk"),
-		TEST_EXPANSION("$USER$USER", "yademirkyademirk"),
-		TEST_EXPANSION("$USER$USER$USER", "yademirkyademirkyademirk"),
-		TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
-		TEST_EXPANSION("word1-$USER-word2-$USER-word3-$USER", "word1-yademirk-word2-yademirk-word3-yademirk"),
+		TEST_EXPANSION("$USER", TEST_USER),
+		TEST_EXPANSION("echo $USER", "echo " TEST_USER),
+		TEST_EXPANSION("echo $USER two", "echo " TEST_USER " two"),
+		TEST_EXPANSION("word$USER", "word" TEST_USER),
+		TEST_EXPANSION("$USER$USER", TEST_USER TEST_USER),
+		TEST_EXPANSION("$USER$USER$USER", TEST_USER TEST_USER TEST_USER),
+		TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER TEST_USER),
+		TEST_EXPANSION("word1-$USER-word2-$USER-word3-$USER", "word1-" TEST_USER "-word2-" TEST_USER "-word3-" TEST_USER),
 
 		// TEST 2: Mixed valid variables
-		TEST_EXPANSION("$USER $HOME", "yademirk /home/yademirk"),
-		TEST_EXPANSION("$USER$HOME", "yademirk/home/yademirk"),
-		TEST_EXPANSION("$USER$HOME$USER", "yademirk/home/yademirkyademirk"),
-		TEST_EXPANSION("$USER$USER$HOME$HOME", "yademirkyademirk/home/yademirk/home/yademirk"),
-		TEST_EXPANSION("$HOME$PWD$DISPLAY$PATH$USERNAME$DESKTOP_SESSION$SHELL", "/home/yademirk" "/home/yademirk/Desktop/42-projects/minishell/tests/expansion" ":0" "/home/yademirk/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin" "yademirk" "ubuntu" "/bin/bash"),
-
-		// TEST 3: High count of variables
-		// 100 here
-		//TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
-
-		// 1000 here
-		//TEST_EXPANSION("$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER$USER", "yademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirkyademirk"),
+		TEST_EXPANSION("$USER $HOME", TEST_USER " " TEST_HOME),
+		TEST_EXPANSION("$USER$HOME", TEST_USER TEST_HOME),
+		TEST_EXPANSION("$USER$HOME$USER", TEST_USER TEST_HOME TEST_USER),
+		TEST_EXPANSION("$USER$USER$HOME$HOME", TEST_USER TEST_USER TEST_HOME TEST_HOME),
+		// TEST_EXPANSION("$HOME$PWD$DISPLAY$PATH$USERNAME$DESKTOP_SESSION$SHELL", TEST_HOME "/home/yademirk/Desktop/42-projects/minishell/tests/expansion" ":0" "/home/yademirk/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin" TEST_USER "ubuntu" "/bin/bash"),
 
 		// TEST 4: Non-existing variables
 		TEST_EXPANSION_EMPTY("$no"),
 		TEST_EXPANSION("hello$no.world", "hello.world"),
 		TEST_EXPANSION("hello$a.world", "hello.world"),
 		TEST_EXPANSION("hello$.world", "hello$.world"),
-		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$1e112$asfafsasf_asfasfasf.world", "hello.world"),
-		TEST_EXPANSION("hello$$$$$$$$$$.world", "hello$$$$$$$$$$.world"),
-		TEST_EXPANSION("$USER$no$HOME", "yademirk/home/yademirk"),
-		TEST_EXPANSION("$no$USER$SHELL$no$HOME$no$", "yademirk/bin/bash/home/yademirk$"),
+		TEST_EXPANSION("hello$asdasasd$asfagagagf$afafaafafaafaf$e112$asfafsasf_asfasfasf.world", "hello.world"),
+		TEST_EXPANSION("hello$ $ $ $.world", "hello$ $ $ $.world"),
+		TEST_EXPANSION("$USER$no$HOME", TEST_USER TEST_HOME),
+		//TEST_EXPANSION("$no$USER$SHELL$no$HOME$no$", TEST_USER "/bin/bash" TEST_HOME "$"),
 
 		// TEST 5: Invalid variables
 		TEST_EXPANSION("$", "$"),
-		TEST_EXPANSION("$$$$$$$$$$", "$$$$$$$$$$"),
+		TEST_EXPANSION("$ $ $ $ $ $ $ $ $ $", "$ $ $ $ $ $ $ $ $ $"),
 		TEST_EXPANSION("$.", "$."),
 		TEST_EXPANSION("$...........", "$..........."),
 		TEST_EXPANSION("$ ", "$ "),
@@ -241,7 +252,7 @@ static void	test_expansion(void)
 		// TEST 6: Invalid variables with words
 		TEST_EXPANSION("echo $ test", "echo $ test"),
 		TEST_EXPANSION("echo $ test $ echo test $ $ $ $", "echo $ test $ echo test $ $ $ $"),
-		TEST_EXPANSION("echo $@ test $$$$$$ echo test $@@@@ $... $. $", "echo $@ test $$$$$$ echo test $@@@@ $... $. $"),
+		TEST_EXPANSION("echo $@ test $ $ $ $ $ $ echo test $@@@@ $... $. $", "echo $@ test $ $ $ $ $ $ echo test $@@@@ $... $. $"),
 
 		// TEST 7: Single quotes
 		TEST_EXPANSION("'$USER'", "$USER"),
@@ -250,15 +261,15 @@ static void	test_expansion(void)
 		TEST_EXPANSION("'$USER'$USER'$USER'", "$USERyademirk$USER"),
 
 		// TEST 8: Double quotes
-		TEST_EXPANSION("\"$USER\"", "yademirk"),
-		TEST_EXPANSION("\"$USER$USER\"", "yademirkyademirk"),
-		TEST_EXPANSION("\"$USER\"\"$USER\"", "yademirkyademirk"),
-		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", "yademirkyademirkyademirk"),
+		TEST_EXPANSION("\"$USER\"", TEST_USER),
+		TEST_EXPANSION("\"$USER$USER\"", TEST_USER TEST_USER),
+		TEST_EXPANSION("\"$USER\"\"$USER\"", TEST_USER TEST_USER),
+		TEST_EXPANSION("\"$USER\"$USER\"$USER\"", TEST_USER TEST_USER TEST_USER),
 
 		// TEST 9: Single quotes within double quotes
-		TEST_EXPANSION("\"'$USER'\"", "'yademirk'"),
-		TEST_EXPANSION("\"'$USER$USER'\"", "'yademirkyademirk'"),
-		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "'yademirk''yademirk'"),
+		TEST_EXPANSION("\"'$USER'\"", "'" TEST_USER "'"),
+		TEST_EXPANSION("\"'$USER$USER'\"", "'" TEST_USER TEST_USER "'"),
+		TEST_EXPANSION("\"'$USER'\"\"'$USER'\"", "'" TEST_USER "'" "'" TEST_USER "'"),
 
 		// TEST 10: Double quotes within single quotes
 		TEST_EXPANSION("'\"$USER\"'", "\"$USER\""),
@@ -267,7 +278,7 @@ static void	test_expansion(void)
 
 		// TEST 11: Deep nested
 		TEST_EXPANSION("'\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\"'", "\"\"\"\"\"\"\"\"\"\"$USER\"\"\"\"\"\"\"\"\"\""),
-		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "''''''''''yademirk''''''''''"),
+		TEST_EXPANSION("\"''''''''''$USER''''''''''\"", "''''''''''" TEST_USER "''''''''''"),
 
 		// TEST 12: Word Splitting
 		TEST_EXPANSION("$VAR_SPACE_1", "word1 word2"),
@@ -288,37 +299,41 @@ static void	test_expansion(void)
 
 		// TEST 13: Word Splitting Inside Quotes
 		TEST_EXPANSION_C("\"$VAR_SPACE_1\"", "word1 word2", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_1\"", getenv("VAR_SPACE_1"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_2\"", "word1 word2 word3 word4 word5", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_2\"", getenv("VAR_SPACE_2"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_3\"", "     word1     word2     word3      word4     word5     ", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_3\"", getenv("VAR_SPACE_3"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_4\"", " ", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_4\"", getenv("VAR_SPACE_4"), '.'),
 		TEST_EXPANSION_C("\"$VAR_SPACE_5\"", "                  ", '.'),
-		//TEST_EXPANSION_C("\"$VAR_SPACE_5\"", getenv("VAR_SPACE_5"), '.'),
 
 		TEST_EXPANSION_C("\"$VAR_TAB_1\"", "word1	word2", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_1\"", getenv("VAR_TAB_1"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_2\"", "word1	word2	word3	word4	word5", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_2\"", getenv("VAR_TAB_2"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_3\"", "	word1	word2	word3	word4	word5	", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_3\"", getenv("VAR_TAB_3"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_4\"", "	", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_4\"", getenv("VAR_TAB_4"), '.'),
 		TEST_EXPANSION_C("\"$VAR_TAB_5\"", "					", '.'),
-		// TEST_EXPANSION_C("\"$VAR_TAB_5\"", getenv("VAR_TAB_5"), '.'),
 
 		TEST_EXPANSION_C("\"$VAR_NEWL_1\"", "word1\nword2", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_1\"", getenv("VAR_NEWL_1"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_2\"", "word1\nword2\nword3\nword4\nword5", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_2\"", getenv("VAR_NEWL_2"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_3\"", "\nword1\nword2\nword3\nword4\nword5\n", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_3\"", getenv("VAR_NEWL_3"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_4\"", "\n", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_4\"", getenv("VAR_NEWL_4"), '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_5\"", "\n\n\n\n\n", '.'),
-		// TEST_EXPANSION_C("\"$VAR_NEWL_5\"", getenv("VAR_NEWL_5"), '.'),
+
+		// TEST 15: $? var
+		TEST_EXPANSION("$?", TEST_EXIT_STATUS_STR),
+		TEST_EXPANSION("       $?      ", TEST_EXIT_STATUS_STR),
+		TEST_EXPANSION("WORD$?WORD", "WORD" TEST_EXIT_STATUS_STR "WORD"),
+		TEST_EXPANSION("$?$?$?$?$?$?$?$?$?$?", TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR TEST_EXIT_STATUS_STR),
+
+		// TEST 16: $$ var
+		TEST_EXPANSION("$$", ft_itoa(getpid())),
+		TEST_EXPANSION("       $$      ", ft_itoa(getpid())),
+
+		// // TEST 17: ~ (tilde)
+		// TEST_EXPANSION("~", TEST_HOME),
+		// TEST_EXPANSION("            ~           ", TEST_HOME),
+		// TEST_EXPANSION("WORD~", "WORD~"),
+
+		// // TEST 18: * wildcard (globbing)
+		// TEST_EXPANSION("*", "expansion_tester expansion_tester.c glob_test Makefile"),
+		// TEST_EXPANSION("            *           ", "expansion_tester expansion_tester.c glob_test Makefile"),
 	};
 	t_test_result results;
 

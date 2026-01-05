@@ -5,22 +5,29 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 14:59:57 by muayna           ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2026/01/05 15:42:49 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <errno.h>
 #include <readline/readline.h>
 
 #include <libft/linked_list.h>
 #include <libft/string.h>
+#include <libft/predicate.h>
+#include <get_next_line.h>
+#include <minishell_lb.h>
+#include <gb.h>
 
 #include "macros/m_colors.h"
 #include "structs/s_ast.h"
+#include "structs/s_shell.h"
 
 #include "modules/lexer.h"
 #include "modules/ast.h"
@@ -29,66 +36,80 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
-#include <get_next_line.h>
-#include <minishell_lb.h>
-#include <gb.h>
 
 #include "../lexer/token.h"
+#include "read_input.h"
+#include "history.h"
+#include "get_pid.h"
 
 #define SHELL_NAME "babashell"
 #define RL_START "\001"
 #define RL_END "\002"
 
+static void	shell_exit(int status)
+{
+	ft_putstr_fd("exit\n", STDERR_FILENO);
+	exit(status);
+}
+
+static t_shell	init_shell(int argc, char **argv, char **envp)
+{
+	t_shell	shell;
+
+	shell.argc = argc;
+	shell.args = argv;
+	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
+	shell.env->envp_list = create_envp_list(envp);
+	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
+	shell.last_exit_status = 0;
+	shell.pid = get_pid();
+	return (shell);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
+	t_shell	shell;
 	char	*input;
-	char	*tmp;
 	t_list	*tokens;
-	char	first_run;
 	t_ast	*ast;
 	char *prompt;
-	t_god_struct_envp *envp_struct;
 
-	envp_struct = ft_malloc(sizeof(t_god_struct_envp), 0);
-	envp_struct->envp_list = create_envp_list(envp);
-	envp_struct->envp_char = envp_list_to_char_arr(envp_struct->envp_list);
-	(void)argc;
-	(void)argv;
-	(void)envp;
 	input = NULL;
-	tmp = NULL;
-	first_run = 1;
 	signal(SIGINT, on_sigint);
-	while (input || first_run)
+	shell = init_shell(argc, argv, envp);
+	while (1)
 	{
-		if (!first_run && input != NULL)
-			free(input);
-		first_run = 0;
-		prompt = rl_header(&envp_struct->envp_list, envp);
-		tmp = readline(prompt);
-		if (tmp == NULL)
-			break ;
-		input = ft_strjoin(tmp, "\n");
-		free(tmp);
+		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
+		input = read_input(prompt, "> ");
 		if (input == NULL)
-			break;
+		{
+			if (errno != 0)
+			{
+				perror("minishell: fatal error");
+				shell_exit(EXIT_FAILURE);
+			}
+			break ;
+		}
+		add_line_to_history(input);
 		tokens = lexical_analyze(input);
+		free(input);
 		ast = parse(tokens);
-		if (expansion(ast, NULL) != 1)
+		if (expansion(ast, shell) != 1)
 		{
 			free_tokens(&tokens);
 			ast_free_tree(ast);
 			continue ;
 		}
 		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-			run_builtin(ast, &envp_struct->envp_char, &envp_struct->envp_list);
+			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
 		else
-			executor(ast, &envp_struct, 0, 1);
+			executor(ast, &(shell.env), 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}
 	sort_malloc(1, 1);
-	clear_arr(&envp_struct->envp_char);
-	return (EXIT_SUCCESS);
+	clear_arr(&(shell.env->envp_char));
+	rl_clear_history();
+	shell_exit(EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 17:36:50 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/18 10:15:46 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/01 14:55:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,13 +15,39 @@
 #include "modules/ast.h"
 #include "parse_command.h"
 
+static t_parse_result	free_and_return(t_ast *left, t_ast *right,
+	t_parse_result result)
+{
+	if (left != NULL)
+		ast_free_tree(left);
+	if (right != NULL)
+		ast_free_tree(right);
+	return (result);
+}
+
+static t_parse_result	parse_pipe(t_list *token, t_ast *left)
+{
+	t_ast			*node;
+	t_parse_result	result;
+
+	if (token->next == NULL || token->next->content == NULL)
+		return (free_and_return(left, NULL, parse_uncomplete_error(token)));
+	result = parse_command(token->next);
+	if (result.type != PARSE_RESULT_SUCCESS)
+		return (free_and_return(left, NULL, result));
+	else if (result.ast == NULL)
+		return (free_and_return(left, NULL, parse_syntax_error(token->next)));
+	token = result.current_token;
+	node = ast_new_node(AST_PIPE, NULL, left, result.ast);
+	if (node == NULL)
+		return (free_and_return(left, result.ast, parse_runtime_error(token)));
+	return (parse_success(node, token));
+}
+
 t_parse_result	parse_pipeline(t_list *token)
 {
 	t_parse_result	result;
-	t_ast			*node_tmp;
 	t_ast			*left;
-	t_ast			*right;
-	t_token			*token_obj;
 
 	result = parse_command(token);
 	if (result.type != PARSE_RESULT_SUCCESS)
@@ -30,34 +56,13 @@ t_parse_result	parse_pipeline(t_list *token)
 	token = result.current_token;
 	while (token != NULL && token->content != NULL)
 	{
-		token_obj = (t_token *)(token->content);
-		if (token_obj->type == TOKEN_PIPE)
+		if (((t_token *)(token->content))->type == TOKEN_PIPE)
 		{
-			if (token->next == NULL || token->next->content == NULL)
-			{
-				ast_free_tree(left);
-				return (parse_uncomplete_error(token));
-			}
-			result = parse_command(token->next);
+			result = parse_pipe(token, left);
 			if (result.type != PARSE_RESULT_SUCCESS)
-			{
-				ast_free_tree(left);
 				return (result);
-			}
-			else if (result.ast == NULL)
-			{
-				ast_free_tree(left);
-				return (parse_syntax_error(token->next));
-			}
+			left = result.ast;
 			token = result.current_token;
-			right = result.ast;
-			node_tmp = ast_new_node(AST_PIPE, NULL, left, right);
-			if (node_tmp == NULL)
-			{
-				ast_free_tree(left);
-				return (parse_runtime_error(token));
-			}
-			left = node_tmp;
 		}
 		else
 			break ;

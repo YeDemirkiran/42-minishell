@@ -1,19 +1,20 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:23:43 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 23:30:40 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/03 23:01:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-#include <minishell_lb.h>
+# include "structs/s_ast.h"
+# include <minishell_lb.h>
 /*BUILTIN NAMES*/
 
 typedef struct s_god_struct_envp
