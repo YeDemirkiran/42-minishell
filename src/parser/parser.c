@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 12:57:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:48:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -161,13 +161,13 @@ static void	print_token_error(t_parse_result result)
 /**
  * @brief Main entry point for the parser. Calls the required grammar rules.
  */
-static t_parse_result	parse_token(t_list *tokens)
+static t_parse_result	parse_token(t_list *tokens, t_shell shell)
 {
 	t_parse_result	result;
 
 	if (tokens == NULL || tokens->content == NULL)
 		return (parse_runtime_error(NULL));
-	result = parse_pipeline(tokens);
+	result = parse_pipeline(tokens, shell);
 	return (result);
 }
 
@@ -176,7 +176,7 @@ static t_parse_result	parse_token(t_list *tokens)
  * @returns Full AST on success, NULL on failure.
  * @note Prints the error itself in case of failure.
  */
-t_ast	*parse(t_list *tokens)
+t_ast	*parse(t_list *tokens, t_shell shell)
 {
 	t_ast			*root;
 	t_parse_result	result;
@@ -187,7 +187,7 @@ t_ast	*parse(t_list *tokens)
 
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
-	result = parse_token(tokens);
+	result = parse_token(tokens, shell);
 	if (result.type != PARSE_RESULT_SUCCESS)
 	{
 		// Time to give an error

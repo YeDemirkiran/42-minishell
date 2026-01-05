@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 12:38:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 17:54:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ t_test_result	conduct_expansion_test(t_expansion_test test)
 
 	printf("Calling expansion()...\n");
 	printf("=============================================================\n");
-	expansion(test.testee, (t_shell){.env = NULL, .last_exit_status = TEST_EXIT_STATUS, .pid = getpid()});
+	expansion(test.testee, (t_shell){.env = NULL, .exit_status = TEST_EXIT_STATUS, .pid = getpid()});
 	printf("=============================================================\n");
 
 	result = compare_asts(test.expected, test.testee);

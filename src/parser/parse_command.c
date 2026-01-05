@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 13:00:22 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:47:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -108,7 +108,7 @@ static t_parse_result	free_parse_lists(t_list **args, t_list **redirs,
  * but the current_token pointer is NULL.
  */
 static t_parse_result	parse_simple_command_loop_body(t_list **token,
-	t_list **redirs, t_list **args)
+	t_list **redirs, t_list **args, t_shell shell)
 {
 	t_token			*token_obj;
 	t_parse_result	redir_result;
@@ -116,7 +116,7 @@ static t_parse_result	parse_simple_command_loop_body(t_list **token,
 	token_obj = (t_token *)((*token)->content);
 	if (get_redir_type(token_obj->type) != REDIR_NONE)
 	{
-		redir_result = parse_redirection(*token, redirs);
+		redir_result = parse_redirection(*token, redirs, shell);
 		if (redir_result.type != PARSE_RESULT_SUCCESS)
 			return (redir_result);
 		*token = redir_result.current_token;
@@ -138,7 +138,7 @@ static t_parse_result	parse_simple_command_loop_body(t_list **token,
  * @returns A struct of t_parse_result.
  * This structs holds the data about the operation.
  */
-static t_parse_result	parse_simple_command(t_list *tokens)
+static t_parse_result	parse_simple_command(t_list *tokens, t_shell shell)
 {
 	t_parse_result	result;
 	t_list			*redirs;
@@ -153,7 +153,7 @@ static t_parse_result	parse_simple_command(t_list *tokens)
 	while (tokens != NULL && tokens->content != NULL)
 	{
 		old_token = tokens;
-		result = parse_simple_command_loop_body(&tokens, &redirs, &args);
+		result = parse_simple_command_loop_body(&tokens, &redirs, &args, shell);
 		if (result.type != PARSE_RESULT_SUCCESS)
 			return (free_parse_lists(&args, &redirs, result));
 		if (tokens == old_token)
@@ -185,7 +185,7 @@ static t_parse_result	parse_subshell(t_list *tokens)
  * The process is decided by whether the first token is either a word,
  * a redirection token, or a left parenthesis token.
  */
-t_parse_result	parse_command(t_list *tokens)
+t_parse_result	parse_command(t_list *tokens, t_shell shell)
 {
 	t_parse_result	result;
 	t_token			*token;
@@ -197,7 +197,7 @@ t_parse_result	parse_command(t_list *tokens)
 		result = parse_success(NULL, tokens->next);
 	else if (token->type == TOKEN_WORD
 		|| get_redir_type(token->type) != REDIR_NONE)
-		result = parse_simple_command(tokens);
+		result = parse_simple_command(tokens, shell);
 	else if (token->type == TOKEN_PAREN_LEFT)
 		result = parse_subshell(tokens);
 	else

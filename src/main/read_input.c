@@ -6,16 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 18:59:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 19:00:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <errno.h>
 #include <readline/readline.h>
 
 #include <libft/string.h>
 #include <libft/write.h>
+#include <get_next_line.h>
 
 #include "read_input_utils.h"
 
@@ -81,7 +83,8 @@ char	*get_input_line(const char *prompt, int interactive)
  * @brief Uses GNU Readline, prepares a multi-line input by the user
  * and returns it.
  */
-char	*read_input(const char *primary_prompt, const char *secondary_prompt)
+char	*read_input(const char *primary_prompt, const char *secondary_prompt,
+	int interactive)
 {
 	char	*input;
 	char	*new;
@@ -91,7 +94,7 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt)
 	input = NULL;
 	while (1)
 	{
-		new = readline(get_prompt(primary_prompt, secondary_prompt, input));
+		new = get_input_line(get_prompt(primary_prompt, secondary_prompt, input), interactive);
 		if (new == NULL)
 		{
 			if (input == NULL)
