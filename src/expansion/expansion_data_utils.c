@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 13:07:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 17:54:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static char	*get_special_variable(const char *key, t_shell shell)
 	value = NULL;
 	c = key[0];
 	if (c == '?')
-		value = ft_itoa(shell.last_exit_status);
+		value = ft_itoa(shell.exit_status);
 	else if (c == '$')
 		value = ft_itoa(shell.pid);
 	else if (c == '#')

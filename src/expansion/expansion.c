@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 22:06:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 17:54:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -238,7 +238,7 @@ int	expand_and_replace_string(char **str_ptr)
 	if (str_ptr == NULL || *str_ptr == NULL)
 		return (2);
 	errno = 0;
-	data = get_expansion_data(*str_ptr, (t_shell){.env = NULL, .last_exit_status = 31});
+	data = get_expansion_data(*str_ptr, (t_shell){.env = NULL, .exit_status = 31});
 	if (data == NULL)
 	{
 		if (errno != 0)
