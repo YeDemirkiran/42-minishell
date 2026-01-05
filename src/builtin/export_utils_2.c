@@ -92,10 +92,15 @@ static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 static int issamevariable(t_envp_list **list, t_list *command)
 {
 	char *value_name;
+	char *value;
 
 	value_name = take_variable_name(command);
+	value = take_variable_value(command);
 	if(isvaluein_envplist(list, value_name))
+	{
+		update_envp_value(list, value_name, value);
 		return 1;
+	}
 	else
 		return 0;
 }
@@ -113,7 +118,6 @@ int add_variable_on_envplist(t_envp_list **list, t_list *command)
 	{
 		if(issamevariable(list, tmp) || is_variable_name_correct(take_variable_name(tmp)))
 		{
-			update_envp_value(list, take_variable_name(tmp), take_variable_value(tmp));
 			tmp = tmp->next;
 			continue;
 		}
