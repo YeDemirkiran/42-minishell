@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 12:26:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 13:07:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@
 int	is_special_variable(char *word)
 {
 	static const char	vars[] = {
-		'?', '$',
-		'1', '2', '3', '4', '5', '6', '7', '8', '9'
+		'?', '$', '#',
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 	};
 	size_t				i;
 
@@ -78,6 +78,10 @@ static char	*get_special_variable(const char *key, t_shell shell)
 		value = ft_itoa(shell.last_exit_status);
 	else if (c == '$')
 		value = ft_itoa(shell.pid);
+	else if (c == '#')
+		value = ft_itoa(shell.argc - 1);
+	else if (ft_isdigit(c) == 1 && (c - '0') < shell.argc)
+		value = ft_strdup(shell.args[c - '0']);
 	return (value);
 }
 
