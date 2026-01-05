@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/05 15:43:22 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/05 15:45:19 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ t_list *exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	
 }
 
-void	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	t_list	*lst;
 	int		exit_status;
@@ -110,5 +110,6 @@ void	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		lst = lst->next;
 	}
 	ft_lstclear(&lst, free);
+	return (WEXITSTATUS(exit_status));
 }
 

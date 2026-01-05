@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 15:42:49 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/05 15:46:17 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	main(int argc, char **argv, char **envp)
 		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
 		else
-			executor(ast, &(shell.env), 0, 1);
+			shell.last_exit_status = executor(ast, &(shell.env), 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
