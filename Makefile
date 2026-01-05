@@ -1,14 +1,14 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/19 12:32:47 by muayna            #+#    #+#              #
-#    Updated: 2026/01/04 22:05:57 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/05 11:20:02 by yademirk         ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
 NAME = minishell
 
@@ -111,6 +111,7 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+	make -C $(LIBFT_DIR) fclean
 	make -C $(LIBMNL_DIR) fclean
 	make -C $(LIBGB_DIR) fclean
 	make -C $(LIBGNL_DIR) fclean
