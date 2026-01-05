@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 18:11:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:15:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
-		input = read_input(prompt, "> ");
+		input = read_input(prompt, "> ", shell.interactive);
 		if (input == NULL)
 		{
 			if (errno != 0)

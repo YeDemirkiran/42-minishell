@@ -1,21 +1,23 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   read_input.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 15:45:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:19:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <errno.h>
 #include <readline/readline.h>
 
 #include <libft/string.h>
 #include <libft/write.h>
+#include <get_next_line.h>
 
 #include "read_input_utils.h"
 
@@ -55,10 +57,34 @@ static const char	*get_prompt(const char *primary_prompt,
 }
 
 /**
+ * @brief Checks if 0 is a TTY and decides between GNU Readline and 
+ * 42 GNL.
+ */
+static char	*get_input_line(const char *prompt, int interactive)
+{
+	char	*str;
+	char	*newl;
+
+	if (interactive == 1)
+		str = readline(prompt);
+	else
+	{
+		str = get_next_line(STDIN_FILENO);
+		if (str == NULL)
+			return (NULL);
+		newl = ft_strrchr(str, '\n');
+		if (newl != NULL)
+			*newl = '\0';
+	}
+	return (str);
+}
+
+/**
  * @brief Uses GNU Readline, prepares a multi-line input by the user
  * and returns it.
  */
-char	*read_input(const char *primary_prompt, const char *secondary_prompt)
+char	*read_input(const char *primary_prompt, const char *secondary_prompt,
+	int interactive)
 {
 	char	*input;
 	char	*new;
@@ -68,7 +94,7 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt)
 	input = NULL;
 	while (1)
 	{
-		new = readline(get_prompt(primary_prompt, secondary_prompt, input));
+		new = get_input_line(get_prompt(primary_prompt, secondary_prompt, input), interactive);
 		if (new == NULL)
 		{
 			if (input == NULL)
