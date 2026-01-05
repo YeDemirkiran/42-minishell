@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_heredoc.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 11:16:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:44:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,6 +23,8 @@
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
 #include "modules/expansion.h"
+
+#include "../main/read_input.h"
 
 #ifndef TMP_HEREDOC_NAME
 # define TMP_HEREDOC_NAME "minishell-thd"
@@ -117,11 +119,11 @@ static int	check_errno_and_print_error(void)
 	}
 }
 
-static int	expand_delimiter(int should_expand, char **line_ptr)
+static int	expand_delimiter(int should_expand, char **line_ptr, t_shell shell)
 {
 	if (should_expand)
 	{
-		expand_and_replace_string(line_ptr);
+		expand_and_replace_string(line_ptr, shell);
 		if (*line_ptr == NULL && errno != 0)
 		{
 			perror("minishell: here-document");
@@ -137,7 +139,7 @@ static int	expand_delimiter(int should_expand, char **line_ptr)
  * match, EOF or SIGINT.
  * @return 0 on failure, 1 on success, 2 on negative FD or null DELIMITER.
  */
-static int	read_heredoc(char *delimiter, int fd)
+static int	read_heredoc(char *delimiter, int fd, t_shell shell)
 {
 	char	*line;
 	int		should_expand;
@@ -149,15 +151,14 @@ static int	read_heredoc(char *delimiter, int fd)
 	while (1)
 	{
 		errno = 0;
-		line = readline("> ");
+		line = get_input_line("> ", shell.interactive);
 		if (line == NULL)
 			return (check_errno_and_print_error());
-		if (expand_delimiter(should_expand, &line) != 1)
+		if (expand_delimiter(should_expand, &line, shell) != 1)
 			return (0);
 		if (is_delimiter(line, delimiter) == 1)
 			break ;
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
+		ft_putendl_fd(line,  fd);
 		free(line);
 	}
 	if (line != NULL)
@@ -171,7 +172,7 @@ static int	read_heredoc(char *delimiter, int fd)
  * @return 0 on failure, 1 on success, 2 if REDIR is null,
  * it's PATH is empty or is not a heredoc.
  */
-int	parse_heredoc(t_redirection *redir)
+int	parse_heredoc(t_redirection *redir, t_shell shell)
 {
 	char	*hd_path;
 	int		fd;
@@ -187,7 +188,7 @@ int	parse_heredoc(t_redirection *redir)
 		free(hd_path);
 		return (0);
 	}
-	if (read_heredoc(redir->path, fd) == 0)
+	if (read_heredoc(redir->path, fd, shell) == 0)
 	{
 		free(hd_path);
 		close(fd);

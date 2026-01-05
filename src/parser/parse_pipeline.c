@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_pipeline.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 17:36:50 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 14:55:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:48:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stddef.h>
 #include "stdio.h"
@@ -25,14 +25,14 @@ static t_parse_result	free_and_return(t_ast *left, t_ast *right,
 	return (result);
 }
 
-static t_parse_result	parse_pipe(t_list *token, t_ast *left)
+static t_parse_result	parse_pipe(t_list *token, t_ast *left, t_shell shell)
 {
 	t_ast			*node;
 	t_parse_result	result;
 
 	if (token->next == NULL || token->next->content == NULL)
 		return (free_and_return(left, NULL, parse_uncomplete_error(token)));
-	result = parse_command(token->next);
+	result = parse_command(token->next, shell);
 	if (result.type != PARSE_RESULT_SUCCESS)
 		return (free_and_return(left, NULL, result));
 	else if (result.ast == NULL)
@@ -44,12 +44,12 @@ static t_parse_result	parse_pipe(t_list *token, t_ast *left)
 	return (parse_success(node, token));
 }
 
-t_parse_result	parse_pipeline(t_list *token)
+t_parse_result	parse_pipeline(t_list *token, t_shell shell)
 {
 	t_parse_result	result;
 	t_ast			*left;
 
-	result = parse_command(token);
+	result = parse_command(token, shell);
 	if (result.type != PARSE_RESULT_SUCCESS)
 		return (result);
 	left = result.ast;
@@ -58,7 +58,7 @@ t_parse_result	parse_pipeline(t_list *token)
 	{
 		if (((t_token *)(token->content))->type == TOKEN_PIPE)
 		{
-			result = parse_pipe(token, left);
+			result = parse_pipe(token, left, shell);
 			if (result.type != PARSE_RESULT_SUCCESS)
 				return (result);
 			left = result.ast;

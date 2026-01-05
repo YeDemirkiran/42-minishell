@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 18:37:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:49:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int	main(int argc, char **argv, char **envp)
 			add_line_to_history(input);
 		tokens = lexical_analyze(input);
 		free(input);
-		ast = parse(tokens);
+		ast = parse(tokens, shell);
 		if (expansion(ast, shell) != 1)
 		{
 			free_tokens(&tokens);

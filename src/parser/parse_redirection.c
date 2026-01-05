@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/30 21:32:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:46:03 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 
@@ -93,7 +93,8 @@ static t_redirection	*create_redirection(t_list *token)
  * @brief Takes a token and saves it in redirections linked list if it's
  * a redirection token.
  */
-t_parse_result	parse_redirection(t_list *token, t_list **redirs)
+t_parse_result	
+	parse_redirection(t_list *token, t_list **redirs, t_shell shell)
 {
 	t_parse_result	result;
 	t_redirection	*redirection;
@@ -114,7 +115,7 @@ t_parse_result	parse_redirection(t_list *token, t_list **redirs)
 	}
 	ft_lstadd_back(redirs, redir_node);
 	if (redirection->redir_type == REDIR_HEREDOC
-		&& parse_heredoc(redirection) != 1)
+		&& parse_heredoc(redirection, shell) != 1)
 		return (parse_runtime_error(token->next));
 	return (parse_success(NULL, token->next->next));
 }
