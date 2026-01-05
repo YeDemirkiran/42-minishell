@@ -29,16 +29,16 @@ t_envp_list *copy_envplist(t_envp_list *source)
 	tmp = source;
 	if(source == NULL)
 		return NULL;
-	new_list = malloc(sizeof(t_envp_list));
+	new_list = sort_malloc(sizeof(t_envp_list), 0);
 	new_list_root = new_list;
 	while(tmp != NULL)
 	{
-		new_list->id_name = ft_strdup(tmp->id_name);
-		new_list->value = ft_strdup(tmp->value);
+		new_list->id_name = sort_term_strdup(tmp->id_name);
+		new_list->value = sort_term_strdup(tmp->value);
 		new_list->isvaluempty = tmp->isvaluempty;
 		if(tmp->next != NULL)
 		{
-			new_list->next = malloc(sizeof(t_envp_list));
+			new_list->next = sort_malloc(sizeof(t_envp_list), 0);
 			new_list = new_list->next;
 		}
 		tmp = tmp->next;
