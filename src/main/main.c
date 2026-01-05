@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 18:15:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:28:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,14 @@
 #define RL_START "\001"
 #define RL_END "\002"
 
-static void	shell_exit(int status)
+/**
+ * @brief Prints an optional exit messsage depending on 'interactive'
+ * and exits with status.
+ */
+static void	shell_exit(int status, int interactive)
 {
-	ft_putstr_fd("exit\n", STDERR_FILENO);
+	if (interactive == 1)
+		ft_putstr_fd("exit\n", STDERR_FILENO);
 	exit(status);
 }
 
@@ -109,7 +114,7 @@ int	main(int argc, char **argv, char **envp)
 			if (errno != 0)
 			{
 				perror("minishell: fatal error");
-				shell_exit(EXIT_FAILURE);
+				shell_exit(EXIT_FAILURE, shell.interactive);
 			}
 			break ;
 		}
@@ -134,5 +139,5 @@ int	main(int argc, char **argv, char **envp)
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
 	rl_clear_history();
-	shell_exit(EXIT_SUCCESS);
+	shell_exit(EXIT_SUCCESS, shell.interactive);
 }
