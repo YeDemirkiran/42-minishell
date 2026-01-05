@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_data_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 23:55:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 12:26:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,7 +28,7 @@
 int	is_special_variable(char *word)
 {
 	static const char	vars[] = {
-		'?',
+		'?', '$',
 		'1', '2', '3', '4', '5', '6', '7', '8', '9'
 	};
 	size_t				i;
@@ -70,10 +70,14 @@ int	is_variable_valid(char *word)
 static char	*get_special_variable(const char *key, t_shell shell)
 {
 	char	*value;
+	char	c;
 
 	value = NULL;
-	if (key[0] == '?')
+	c = key[0];
+	if (c == '?')
 		value = ft_itoa(shell.last_exit_status);
+	else if (c == '$')
+		value = ft_itoa(shell.pid);
 	return (value);
 }
 

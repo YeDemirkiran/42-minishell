@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_data.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 22:55:27 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 12:26:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 
@@ -100,7 +100,7 @@ t_list	*get_expansion_data(char *word, t_shell shell)
 		}
 		if (init_and_save_variable(&root, shell, word, &i) != 1)
 			return (on_expansion_data_error(&root, NULL));
-		word_start = i + 1;
+		word_start = ++i;
 	}
 	return (root);
 }
