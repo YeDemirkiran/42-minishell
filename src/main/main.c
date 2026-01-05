@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 10:07:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 11:59:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -39,6 +39,7 @@
 #include "../lexer/token.h"
 #include "read_input.h"
 #include "history.h"
+#include "get_pid.h"
 
 #define SHELL_NAME "babashell"
 #define RL_START "\001"
@@ -48,6 +49,18 @@ static void	shell_exit(int status)
 {
 	ft_putstr_fd("exit\n", STDERR_FILENO);
 	exit(status);
+}
+
+static t_shell	init_shell(char **envp)
+{
+	t_shell	shell;
+
+	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
+	shell.env->envp_list = create_envp_list(envp);
+	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
+	shell.last_exit_status = 0;
+	shell.pid = get_pid();
+	return (shell);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -62,11 +75,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	input = NULL;
 	signal(SIGINT, on_sigint);
-
-	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
-	shell.env->envp_list = create_envp_list(envp);
-	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
-	shell.last_exit_status = 31;
+	shell = init_shell(envp);
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
