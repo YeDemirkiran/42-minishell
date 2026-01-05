@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:56:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 11:59:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 13:00:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,12 @@ static void	shell_exit(int status)
 	exit(status);
 }
 
-static t_shell	init_shell(char **envp)
+static t_shell	init_shell(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 
+	shell.argc = argc;
+	shell.args = argv;
 	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
 	shell.env->envp_list = create_envp_list(envp);
 	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
@@ -71,11 +73,9 @@ int	main(int argc, char **argv, char **envp)
 	t_ast	*ast;
 	char *prompt;
 
-	(void)argc;
-	(void)argv;
 	input = NULL;
 	signal(SIGINT, on_sigint);
-	shell = init_shell(envp);
+	shell = init_shell(argc, argv, envp);
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
