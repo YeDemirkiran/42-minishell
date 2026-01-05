@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 15:46:17 by muayna           ###   ########.fr       */
+/*   Created: Invalid Date        by                   #+#    #+#             */
+/*   Updated: 2026/01/05 18:11:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,27 @@ static void	shell_exit(int status)
 	exit(status);
 }
 
+/**
+ * @brief Determines whether the current session is interactive.
+ * @return 0 if non-interactive, 1 if interactive, -1 on error.
+ */
+static int	is_interactive(void)
+{
+	int	interactive;
+
+	interactive = 0;
+	if (isatty(STDIN_FILENO) == 1)
+		interactive++;
+	else if (errno != ENOTTY)
+		return (-1);
+	if (isatty(STDERR_FILENO) == 1)
+		interactive++;
+	else if (errno != ENOTTY)
+		return (-1);
+	errno = 0;
+	return (interactive == 2);
+}
+
 static t_shell	init_shell(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
@@ -61,8 +82,10 @@ static t_shell	init_shell(int argc, char **argv, char **envp)
 	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
 	shell.env->envp_list = create_envp_list(envp);
 	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
-	shell.last_exit_status = 0;
+	shell.exit_status = 0;
 	shell.pid = get_pid();
+	shell.interactive = is_interactive();
+	rl_outstream = stderr;
 	return (shell);
 }
 
@@ -103,7 +126,7 @@ int	main(int argc, char **argv, char **envp)
 		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
 		else
-			shell.last_exit_status = executor(ast, &(shell.env), 0, 1);
+			shell.exit_status = executor(ast, &(shell.env), 0, 1);
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);

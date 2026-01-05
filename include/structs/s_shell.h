@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:20:17 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 17:54:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:07:34 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ typedef struct s_shell
 	int					argc;
 	unsigned char		exit_status;
 	int					pid;
+	int					interactive;
 }	t_shell;
 
 #endif
