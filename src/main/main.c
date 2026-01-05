@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 18:28:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/05 18:37:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,15 @@
  * @brief Prints an optional exit messsage depending on 'interactive'
  * and exits with status.
  */
-static void	shell_exit(int status, int interactive)
+static void	shell_exit(int status, t_shell shell)
 {
-	if (interactive == 1)
+	sort_malloc(1, 1);
+	clear_arr(&(shell.env->envp_char));
+	if (shell.interactive == 1)
+	{
+		rl_clear_history();	
 		ft_putstr_fd("exit\n", STDERR_FILENO);
+	}
 	exit(status);
 }
 
@@ -114,11 +119,12 @@ int	main(int argc, char **argv, char **envp)
 			if (errno != 0)
 			{
 				perror("minishell: fatal error");
-				shell_exit(EXIT_FAILURE, shell.interactive);
+				shell_exit(EXIT_FAILURE, shell);
 			}
 			break ;
 		}
-		add_line_to_history(input);
+		if (shell.interactive == 1)
+			add_line_to_history(input);
 		tokens = lexical_analyze(input);
 		free(input);
 		ast = parse(tokens);
@@ -136,8 +142,5 @@ int	main(int argc, char **argv, char **envp)
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}
-	sort_malloc(1, 1);
-	clear_arr(&(shell.env->envp_char));
-	rl_clear_history();
-	shell_exit(EXIT_SUCCESS, shell.interactive);
+	shell_exit(EXIT_SUCCESS, shell);
 }
