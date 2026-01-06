@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/01/05 18:49:16 by yademirk         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2026/01/06 20:20:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 
 #include <unistd.h>
@@ -42,9 +42,25 @@
 #include "history.h"
 #include "get_pid.h"
 
-#define SHELL_NAME "babashell"
 #define RL_START "\001"
 #define RL_END "\002"
+
+static void	shell_error_message(t_shell shell, char *extra_field)
+{
+	char	*shell_name;
+
+	shell_name = "minishell";
+	if (shell.args != NULL && shell.args[0] != NULL)
+		shell_name = shell.args[0];
+	ft_putstr_fd(shell_name, STDERR_FILENO);
+	if (extra_field != NULL)
+	{
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(extra_field, STDERR_FILENO);
+	}
+	ft_putstr_fd(": ", STDERR_FILENO);
+	perror(NULL);
+}
 
 /**
  * @brief Prints an optional exit messsage depending on 'interactive'
@@ -56,7 +72,7 @@ static void	shell_exit(int status, t_shell shell)
 	clear_arr(&(shell.env->envp_char));
 	if (shell.interactive == 1)
 	{
-		rl_clear_history();	
+		rl_clear_history();
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 	}
 	exit(status);
@@ -86,16 +102,43 @@ static int	is_interactive(void)
 static t_shell	init_shell(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
+	int		fd;
 
+	shell.pid = get_pid();
+	shell.interactive = -1;
+	shell.exit_status = 0;
 	shell.argc = argc;
 	shell.args = argv;
 	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
 	shell.env->envp_list = create_envp_list(envp);
 	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
-	shell.exit_status = 0;
-	shell.pid = get_pid();
-	shell.interactive = is_interactive();
-	rl_outstream = stderr;
+	if (argc > 1)
+	{
+		shell.interactive = 0;
+		shell.argc = -1;
+		fd = open(argv[1], O_RDONLY);
+		if (fd < 0)
+		{
+			shell_error_message(shell, argv[1]);
+			return (shell);
+		}
+		else if (fd != STDIN_FILENO)
+		{
+			if (dup2(fd, STDIN_FILENO) < 0)
+			{
+				close(fd);
+				shell_error_message(shell, argv[1]);
+				return (shell);
+			}
+			close(fd);
+		}
+		shell.argc = argc - 1;
+		shell.args = argv + 1;
+	}
+	if (shell.interactive == -1)
+		shell.interactive = is_interactive();
+	if (shell.interactive == 1)
+		rl_outstream = stderr;
 	return (shell);
 }
 
@@ -110,6 +153,8 @@ int	main(int argc, char **argv, char **envp)
 	input = NULL;
 	signal(SIGINT, on_sigint);
 	shell = init_shell(argc, argv, envp);
+	if (shell.argc == -1)
+		shell_exit(1, shell);
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
