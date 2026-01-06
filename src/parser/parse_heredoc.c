@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_heredoc.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 18:44:15 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/06 13:10:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -111,12 +111,9 @@ static int	check_errno_and_print_error(void)
 {
 	if (errno != 0)
 		return (0);
-	else
-	{
-		ft_putstr_fd("\nminishell: warning: here-document "
-			"delimited by end-of-file\n", 2);
-		return (1);
-	}
+	ft_putstr_fd("minishell: warning: here-document "
+			"delimited by end-of-file\n", STDERR_FILENO);
+	return (1);
 }
 
 static int	expand_delimiter(int should_expand, char **line_ptr, t_shell shell)
