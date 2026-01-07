@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/28 15:01:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 22:09:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,7 @@
 #include <libft/linked_list.h>
 
 #include "structs/s_ast.h"
+#include "modules/utils.h"
 
 static char	*get_ifs(void)
 {
@@ -28,24 +29,6 @@ static char	*get_ifs(void)
 	if (ifs == NULL)
 		ifs = (char *)default_ifs;
 	return (ifs);
-}
-
-static void	set_quote(char c, char *quote)
-{
-	if (c == '\'' && *quote != '"')
-	{
-		if (*quote == '\'')
-			*quote = 0;
-		else
-			*quote = '\'';
-	}
-	else if (c == '"' && *quote != '\'')
-	{
-		if (*quote == '"')
-			*quote = 0;
-		else
-			*quote = '"';
-	}
 }
 
 static int	save_split_word(char *str, int i, t_list **root)

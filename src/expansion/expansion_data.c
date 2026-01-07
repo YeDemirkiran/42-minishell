@@ -1,37 +1,21 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_data.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 12:26:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 22:09:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 
+#include "modules/utils.h"
+
 #include "expansion_data.h"
 #include "expansion_data_utils.h"
-
-static void	set_quote(char c, char *quote_addr)
-{
-	if (c == '\'' && *quote_addr != '"')
-	{
-		if (*quote_addr == '\'')
-			*quote_addr = 0;
-		else
-			*quote_addr = '\'';
-	}
-	else if (c == '"' && *quote_addr != '\'')
-	{
-		if (*quote_addr == '"')
-			*quote_addr = 0;
-		else
-			*quote_addr = '"';
-	}
-}
 
 static void	advance_expansion_loop(char *word, size_t *i, char *quote)
 {

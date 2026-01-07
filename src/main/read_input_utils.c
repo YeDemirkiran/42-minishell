@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 15:30:24 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 15:33:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 21:55:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,23 +15,7 @@
 
 #include <libft/write.h>
 
-static void	set_quote(char c, char *quote_addr)
-{
-	if (c == '\'' && *quote_addr != '"')
-	{
-		if (*quote_addr == '\'')
-			*quote_addr = 0;
-		else
-			*quote_addr = '\'';
-	}
-	else if (c == '"' && *quote_addr != '\'')
-	{
-		if (*quote_addr == '"')
-			*quote_addr = 0;
-		else
-			*quote_addr = '"';
-	}
-}
+#include "modules/utils.h"
 
 /**
  * @brief Checks if an input has unclosed quotes, and returns the type of

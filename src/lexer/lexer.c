@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/24 12:09:24 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 22:07:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,7 @@
 
 // Project headers
 #include "structs/s_token.h"
+#include "modules/utils.h"
 
 // Local headers
 #include "lexer_utils.h"
@@ -90,8 +91,7 @@ static t_list	*get_tokens(char *string)
 	{
 		if (string[i] == '#' && quote == '\0' && token_start == i)
 			break ;
-		if (string[i] == '"' || string[i] == '\'')
-			set_quote(&quote, string[i]);
+		set_quote(string[i], &quote);
 		if (quote == '\0' && is_metachar(string[i]))
 		{
 			if (on_metachar(&tokens, string, &token_start, &i) != 1)

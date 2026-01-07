@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:33 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:25:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 22:09:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #ifndef LEXER_UTILS_H
 # define LEXER_UTILS_H
@@ -23,11 +23,6 @@
 * @returns 0 if the character is not a metacharacter, 1 if it is.
 */
 t_bool			is_metachar(unsigned char c);
-
-/**
- * @brief Sets the quote char.
-*/
-void			set_quote(char *quote_char, char quote_target);
 
 /**
  * @brief Returns the token type of a string.

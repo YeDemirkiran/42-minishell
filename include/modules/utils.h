@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:32:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 21:41:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 21:50:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -14,6 +14,19 @@
 # define UTILS_H
 
 # include "structs/s_shell.h"
+
+// quotes.c
+/**
+ * @brief Takes a character and a pointer to a quote character,
+ * and sets it according to the value of the C character.
+ *
+ * - If C is a single quote ('), and the current quote is not a
+ * double quote ("), then the current quote is either set to a single quote or
+ * the \0 character.
+ *
+ * - Vice versa for double quotes.
+ */
+void	set_quote(char c, char *quote_addr);
 
 // error_handling.c
 /**

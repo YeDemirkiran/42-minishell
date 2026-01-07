@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/14 16:25:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 22:00:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -55,18 +55,18 @@ t_bool	is_metachar(unsigned char c)
 	return (0);
 }
 
-/**
- * @brief Sets the quote char.
-*/
-void	set_quote(char *quote_char, char quote_target)
-{
-	if (quote_char == NULL)
-		return ;
-	if (*quote_char == '\0')
-		*quote_char = quote_target;
-	else if (*quote_char == quote_target)
-		*quote_char = '\0';
-}
+// /**
+//  * @brief Sets the quote char.
+// */
+// void	set_quote(char *quote_char, char quote_target)
+// {
+// 	if (quote_char == NULL)
+// 		return ;
+// 	if (*quote_char == '\0')
+// 		*quote_char = quote_target;
+// 	else if (*quote_char == quote_target)
+// 		*quote_char = '\0';
+// }
 
 /**
  * @brief Returns the one-character token type of a string, or TOKEN_NONE.
