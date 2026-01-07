@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 18:48:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:11:10 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -176,24 +176,25 @@ static t_parse_result	parse_token(t_list *tokens, t_shell shell)
  * @returns Full AST on success, NULL on failure.
  * @note Prints the error itself in case of failure.
  */
-t_ast	*parse(t_list *tokens, t_shell shell)
+t_ast	*parse(t_list *tokens, t_shell *shell)
 {
 	t_ast			*root;
 	t_parse_result	result;
 
-	// todo: remove printf logs
 	//printf("(DEBUG: Starting shell step 2: Parser)\n");
 	//printf("(DEBUG: Step 2: Parse AST)\n");
-
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
-	result = parse_token(tokens, shell);
+	result = parse_token(tokens, *shell);
 	if (result.type != PARSE_RESULT_SUCCESS)
 	{
-		// Time to give an error
+		shell->exit_status = 1;
 		if (result.type == PARSE_RESULT_TOKEN_ERROR
 			|| result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
+		{
+			shell->exit_status = 2;
 			print_token_error(result);
+		}
 		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
 			perror("minishell");
 		else

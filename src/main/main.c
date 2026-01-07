@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 18:08:30 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:11:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -269,7 +269,7 @@ int	main(int argc, char **argv, char **envp)
 				shell_error_message(shell, "fatal error", NULL);
 			continue ;
 		}
-		ast = parse(tokens, shell);
+		ast = parse(tokens, &shell);
 		free_tokens(&tokens);
 		if (ast == NULL)
 			continue ;
