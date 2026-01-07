@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 12:40:45 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 12:53:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -105,6 +105,18 @@ static int	is_interactive(void)
 	return (interactive == 2);
 }
 
+static int	errno_to_exit_code(void)
+{
+	int	code;
+
+	code = 0;
+	if (errno == EACCES)
+		code = 126;
+	else if (errno = ENOENT)
+		code = 127;
+	return (code);
+}
+
 /**
  * @brief Opens the script from argv's second argument (index 1)
  * and redirects it to STDIN via dup2, and modifies the given shell struct
@@ -121,7 +133,7 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 	if (fd < 0)
 	{
 		shell_error_message(*shell, argv[1]);
-		return (0);
+		return (errno_to_exit_code());
 	}
 	else if (fd != STDIN_FILENO)
 	{
@@ -169,12 +181,13 @@ int	main(int argc, char **argv, char **envp)
 	t_list	*tokens;
 	t_ast	*ast;
 	char *prompt;
+	int		init_result;
 
 	input = NULL;
 	signal(SIGINT, on_sigint);
-	init_shell(&shell, argc, argv, envp);
-	if (shell.argc == -1)
-		shell_exit(1, shell);
+	init_result = init_shell(&shell, argc, argv, envp);
+	if (init_result != 1)
+		shell_exit(init_result, shell);
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
