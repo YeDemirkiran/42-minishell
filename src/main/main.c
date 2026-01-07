@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/06 20:20:50 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 12:40:45 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -45,6 +45,11 @@
 #define RL_START "\001"
 #define RL_END "\002"
 
+/**
+ * @brief Prints out an error message with perror in this format:
+ *
+ * shell_name: [optional_field: ] perror() message
+ */
 static void	shell_error_message(t_shell shell, char *extra_field)
 {
 	char	*shell_name;
@@ -70,6 +75,7 @@ static void	shell_exit(int status, t_shell shell)
 {
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
+
 	if (shell.interactive == 1)
 	{
 		rl_clear_history();
@@ -99,47 +105,61 @@ static int	is_interactive(void)
 	return (interactive == 2);
 }
 
-static t_shell	init_shell(int argc, char **argv, char **envp)
+/**
+ * @brief Opens the script from argv's second argument (index 1)
+ * and redirects it to STDIN via dup2, and modifies the given shell struct
+ * according to it.
+ * @return 0 on failure, 1 on success.
+ */
+static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 {
-	t_shell	shell;
-	int		fd;
+	int	fd;
+	int	dup_result;
 
-	shell.pid = get_pid();
-	shell.interactive = -1;
-	shell.exit_status = 0;
-	shell.argc = argc;
-	shell.args = argv;
-	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
-	shell.env->envp_list = create_envp_list(envp);
-	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
-	if (argc > 1)
+	shell->interactive = 0;
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
 	{
-		shell.interactive = 0;
-		shell.argc = -1;
-		fd = open(argv[1], O_RDONLY);
-		if (fd < 0)
-		{
-			shell_error_message(shell, argv[1]);
-			return (shell);
-		}
-		else if (fd != STDIN_FILENO)
-		{
-			if (dup2(fd, STDIN_FILENO) < 0)
-			{
-				close(fd);
-				shell_error_message(shell, argv[1]);
-				return (shell);
-			}
-			close(fd);
-		}
-		shell.argc = argc - 1;
-		shell.args = argv + 1;
+		shell_error_message(*shell, argv[1]);
+		return (0);
 	}
-	if (shell.interactive == -1)
-		shell.interactive = is_interactive();
-	if (shell.interactive == 1)
+	else if (fd != STDIN_FILENO)
+	{
+		dup_result = dup2(fd, STDIN_FILENO);
+		close(fd);
+		if (dup_result == -1)
+		{
+			shell_error_message(*shell, argv[1]);
+			return (0);
+		}
+	}
+	shell->argc = argc - 1;
+	shell->args = argv + 1;
+	return (1);
+}
+
+/**
+ * @brief Takes a pointer to a shell struct and initializes it.
+ * Argument processing and script file opening also happens here.
+ * @return 0 on failure, 1 on success.
+ */
+static int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
+{
+	shell->pid = get_pid();
+	shell->interactive = -1;
+	shell->exit_status = 0;
+	shell->argc = argc;
+	shell->args = argv;
+	shell->env = ft_malloc(sizeof(t_god_struct_envp), 0);
+	shell->env->envp_list = create_envp_list(envp);
+	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
+	if (argc > 1)
+		return (open_stdin_script(shell, argc, argv));
+	if (shell->interactive == -1)
+		shell->interactive = is_interactive();
+	if (shell->interactive == 1)
 		rl_outstream = stderr;
-	return (shell);
+	return (1);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -152,7 +172,7 @@ int	main(int argc, char **argv, char **envp)
 
 	input = NULL;
 	signal(SIGINT, on_sigint);
-	shell = init_shell(argc, argv, envp);
+	init_shell(&shell, argc, argv, envp);
 	if (shell.argc == -1)
 		shell_exit(1, shell);
 	while (1)
