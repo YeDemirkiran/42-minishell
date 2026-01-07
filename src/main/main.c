@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 13:58:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 16:55:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -81,11 +81,10 @@ static void	shell_error_message(t_shell shell,
  * @brief Prints an optional exit messsage depending on 'interactive'
  * and exits with status.
  */
-static void	shell_exit(int status, t_shell shell)
+static void	shell_exit(unsigned char status, t_shell shell)
 {
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
-
 	if (shell.interactive == 1)
 	{
 		rl_clear_history();
@@ -122,16 +121,27 @@ static int	errno_to_exit_code(void)
 	code = 0;
 	if (errno == EACCES || errno == EISDIR)
 		code = 126;
-	else if (errno = ENOENT)
+	else if (errno == ENOENT)
 		code = 127;
+	else if (EINTR)
+		code = 128 + 2;
+	else if (errno != 0)
+		code = 1;
 	return (code);
 }
 
 /**
- * @brief Determines whether a file is binary.
- * @return 0 if it's not, 1 if it's binary, -1 on failure.
+ * @brief Determines whether a given script path is valid.
+ * @return 0 if the given script file exists, is valid and can be run.
+ * Otherwise, returns these values:
+ *
+ * - 001 - General error
+ *
+ * - 126 - Access denied, path is a directory, or is a binary file.
+ *
+ * - 127 - The file doesn't exist
  */
-static int	is_file_binary(const char *path)
+static int	check_script_eligibility(const char *path)
 {
 	int		fd;
 	char	buff[512];
@@ -140,7 +150,7 @@ static int	is_file_binary(const char *path)
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
-		return (1);
+		return (errno_to_exit_code());
 	ft_bzero(buff, 512);
 	read_size = read(fd, buff, 512);
 	close(fd);
@@ -167,13 +177,10 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 	int	fd;
 	int	result;
 
-	shell->argc = argc - 1;
-	shell->args = argv + 1;
-	shell->interactive = 0;
-	result = is_file_binary(argv[1]);
+	result = check_script_eligibility(argv[1]);
 	if (result != 0)
 	{
-		if (result == 126)
+		if (result == 126 && errno != EISDIR && errno != EACCES)
 			shell_error_message(*shell, argv[1], "cannot execute binary file\n");
 		else
 			shell_error_message(*shell, argv[1], NULL);
@@ -192,16 +199,19 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 		if (result == -1)
 		{
 			shell_error_message(*shell, argv[1], NULL);
-			return (0);
+			return (errno_to_exit_code());
 		}
 	}
-	return (1);
+	shell->argc = argc - 1;
+	shell->args = argv + 1;
+	shell->interactive = 0;
+	return (0);
 }
 
 /**
  * @brief Takes a pointer to a shell struct and initializes it.
  * Argument processing and script file opening also happens here.
- * @return 0 on failure, 1 on success.
+ * @return 0 on success, and non-zero exit code on any failure.
  */
 static int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 {
@@ -219,7 +229,7 @@ static int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 		shell->interactive = is_interactive();
 	if (shell->interactive == 1)
 		rl_outstream = stderr;
-	return (1);
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -234,7 +244,7 @@ int	main(int argc, char **argv, char **envp)
 	input = NULL;
 	signal(SIGINT, on_sigint);
 	init_result = init_shell(&shell, argc, argv, envp);
-	if (init_result != 1)
+	if (init_result != 0)
 		shell_exit(init_result, shell);
 	while (1)
 	{
@@ -268,5 +278,5 @@ int	main(int argc, char **argv, char **envp)
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}
-	shell_exit(EXIT_SUCCESS, shell);
+	shell_exit(shell.exit_status, shell);
 }
