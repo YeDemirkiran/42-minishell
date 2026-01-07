@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 12:53:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 13:36:35 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -46,11 +46,13 @@
 #define RL_END "\002"
 
 /**
- * @brief Prints out an error message with perror in this format:
+ * @brief Prints out an error message with perror (or custom error message if present)
+ * in this format:
  *
  * shell_name: [optional_field: ] perror() message
  */
-static void	shell_error_message(t_shell shell, char *extra_field)
+static void	shell_error_message(t_shell shell,
+	char *extra_field, char *custom_error)
 {
 	char	*shell_name;
 
@@ -63,8 +65,16 @@ static void	shell_error_message(t_shell shell, char *extra_field)
 		ft_putstr_fd(": ", STDERR_FILENO);
 		ft_putstr_fd(extra_field, STDERR_FILENO);
 	}
-	ft_putstr_fd(": ", STDERR_FILENO);
-	perror(NULL);
+	if (custom_error != NULL)
+	{
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(custom_error, STDERR_FILENO);
+	}
+	else if (errno != 0)
+	{
+		ft_putstr_fd(": ", STDERR_FILENO);
+		perror(NULL);
+	}
 }
 
 /**
@@ -118,6 +128,35 @@ static int	errno_to_exit_code(void)
 }
 
 /**
+ * @brief Determines whether a file is binary.
+ * @return 0 if it's not, 1 if it's binary, -1 on failure.
+ */
+static int	is_file_binary(const char *path)
+{
+	int		fd;
+	char	buff[512];
+	ssize_t	read_size;
+	ssize_t	i;
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		return (1);
+	ft_bzero(buff, 512);
+	read_size = read(fd, buff, 512);
+	close(fd);
+	if (read_size < 0)
+		return (-1);
+	i = 0;
+	while (i < read_size)
+	{
+		if (buff[i] == '\0')
+			return (126);
+		i++;
+	}
+	return (0);
+}
+
+/**
  * @brief Opens the script from argv's second argument (index 1)
  * and redirects it to STDIN via dup2, and modifies the given shell struct
  * according to it.
@@ -126,22 +165,31 @@ static int	errno_to_exit_code(void)
 static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 {
 	int	fd;
-	int	dup_result;
+	int	result;
 
+	result = is_file_binary(argv[1]);
+	if (result != 0)
+	{
+		if (result == 126)
+			shell_error_message(*shell, argv[1], "cannot execute binary file");
+		else
+			shell_error_message(*shell, argv[1], NULL);
+		return (result);
+	}
 	shell->interactive = 0;
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
 	{
-		shell_error_message(*shell, argv[1]);
+		shell_error_message(*shell, argv[1], NULL);
 		return (errno_to_exit_code());
 	}
-	else if (fd != STDIN_FILENO)
+	if (fd != STDIN_FILENO)
 	{
-		dup_result = dup2(fd, STDIN_FILENO);
+		result = dup2(fd, STDIN_FILENO);
 		close(fd);
-		if (dup_result == -1)
+		if (result == -1)
 		{
-			shell_error_message(*shell, argv[1]);
+			shell_error_message(*shell, argv[1], NULL);
 			return (0);
 		}
 	}
@@ -196,7 +244,7 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (errno != 0)
 			{
-				perror("minishell: fatal error");
+				shell_error_message(shell, NULL, NULL);
 				shell_exit(EXIT_FAILURE, shell);
 			}
 			break ;
