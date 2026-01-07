@@ -1,14 +1,14 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/05 15:42:19 by muayna           ###   ########.fr        #
+#    Updated: 2026/01/07 21:41:29 by yademirk         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
+#******************************************************************************#
 
 
 NAME = minishell
@@ -39,11 +39,11 @@ LIBGB_INC_DIR = $(LIBGB_DIR)
 LIBGB_A = $(LIBGB_DIR)libgb.a
 
 # C FILES
-C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXPANSION_FILES) $(EXECUTOR_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES)
+C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXPANSION_FILES) $(EXECUTOR_FILES) $(BUILTIN_FILES) $(SIGNAL_FILES) $(UTILS_FILES)
 
 ## Main
 MAIN_DIR = main/
-MAIN_FILES = $(addprefix $(MAIN_DIR), main.c read_input.c read_input_utils.c history.c get_pid.c)
+MAIN_FILES = $(addprefix $(MAIN_DIR), main.c shell_init.c read_input.c read_input_utils.c history.c get_pid.c)
 
 ## Lexer
 LEXER_DIR = lexer/
@@ -72,6 +72,10 @@ BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c ex
 ## Signals
 SIGNAL_DIR = signal/
 SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
+
+## Utils
+UTILS_DIR = utils/
+UTILS_FILES = $(addprefix $(UTILS_DIR), error_handling.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
