@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/30 22:34:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 16:50:43 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <libft.h>
@@ -30,22 +30,22 @@ int isbuiltin(const char *command)
 {
 	char **b_names;
 	b_names = ft_split("cd pwd echo env export", ' ');
-	if(!ft_strncmp(command, b_names[1], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[1]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
 	}
-	if(!ft_strncmp(command, b_names[0], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[0]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
 	}
-	if(!ft_strncmp(command, b_names[3], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[3]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
 	}
-	if(!ft_strncmp(command, b_names[4], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[4]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;

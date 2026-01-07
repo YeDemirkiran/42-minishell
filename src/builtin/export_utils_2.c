@@ -62,6 +62,7 @@ static int is_variable_name_correct(char *variable_name)
 	if(variable_name[0] == '=' || ft_isdigit(variable_name[0]))
 	{
 		printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+		free(variable_name);
 		return 1;
 	}
 	while(variable_name[i])
@@ -70,10 +71,12 @@ static int is_variable_name_correct(char *variable_name)
 		else if(!ft_isalnum(variable_name[i]))
 		{
 			printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+			free(variable_name);
 			return 1;
 		}
 		i++;
 	}
+	free(variable_name);
 	return 0;
 }
 
@@ -96,10 +99,8 @@ int same_variable_update(t_envp_list **list, char *name, char *value)
 	return_value = 0;
 	if(name == NULL)
 		return -1;
-	printf("DEBUG : %s\n", name);
 	if(find_id_name_on_envp(list, name) != NULL)
 	{
-		printf("DEBUG : \n");
 		if(value != NULL)
 		{
 			update_envp_value(list, name, value);	
