@@ -6,10 +6,9 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 21:40:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 22:13:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
-
 
 #include <unistd.h>
 #include <stdlib.h>
