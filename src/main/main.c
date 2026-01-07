@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 16:55:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:08:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -255,7 +255,7 @@ int	main(int argc, char **argv, char **envp)
 			if (errno != 0)
 			{
 				shell_error_message(shell, NULL, NULL);
-				shell_exit(EXIT_FAILURE, shell);
+				shell_exit(errno_to_exit_code(), shell);
 			}
 			break ;
 		}
@@ -263,10 +263,18 @@ int	main(int argc, char **argv, char **envp)
 			add_line_to_history(input);
 		tokens = lexical_analyze(input);
 		free(input);
+		if (tokens == NULL)
+		{
+			if (errno != 0)
+				shell_error_message(shell, "fatal error", NULL);
+			continue ;
+		}
 		ast = parse(tokens, shell);
+		free_tokens(&tokens);
+		if (ast == NULL)
+			continue ;
 		if (expansion(ast, shell) != 1)
 		{
-			free_tokens(&tokens);
 			ast_free_tree(ast);
 			continue ;
 		}
@@ -274,7 +282,6 @@ int	main(int argc, char **argv, char **envp)
 			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
 		else
 			shell.exit_status = executor(ast, &(shell.env), 0, 1);
-		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}
