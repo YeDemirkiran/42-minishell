@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 13:36:35 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 13:58:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -120,7 +120,7 @@ static int	errno_to_exit_code(void)
 	int	code;
 
 	code = 0;
-	if (errno == EACCES)
+	if (errno == EACCES || errno == EISDIR)
 		code = 126;
 	else if (errno = ENOENT)
 		code = 127;
@@ -145,7 +145,7 @@ static int	is_file_binary(const char *path)
 	read_size = read(fd, buff, 512);
 	close(fd);
 	if (read_size < 0)
-		return (-1);
+		return (errno_to_exit_code());
 	i = 0;
 	while (i < read_size)
 	{
@@ -167,16 +167,18 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 	int	fd;
 	int	result;
 
+	shell->argc = argc - 1;
+	shell->args = argv + 1;
+	shell->interactive = 0;
 	result = is_file_binary(argv[1]);
 	if (result != 0)
 	{
 		if (result == 126)
-			shell_error_message(*shell, argv[1], "cannot execute binary file");
+			shell_error_message(*shell, argv[1], "cannot execute binary file\n");
 		else
 			shell_error_message(*shell, argv[1], NULL);
 		return (result);
 	}
-	shell->interactive = 0;
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
 	{
@@ -193,8 +195,6 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 			return (0);
 		}
 	}
-	shell->argc = argc - 1;
-	shell->args = argv + 1;
 	return (1);
 }
 
