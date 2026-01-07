@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/07 16:50:43 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/07 19:16:12 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 int isbuiltin(const char *command)
 {
 	char **b_names;
-	b_names = ft_split("cd pwd echo env export", ' ');
+	b_names = ft_split("cd pwd echo env export unset", ' ');
 	if(ft_strcmp(command, b_names[1]) == 0)
 	{
 		clear_arr(&b_names);
@@ -46,6 +46,11 @@ int isbuiltin(const char *command)
 		return 1;
 	}
 	if(ft_strcmp(command, b_names[4]) == 0)
+	{
+		clear_arr(&b_names);
+		return 1;
+	}
+	if(ft_strcmp(command, b_names[5]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
@@ -73,6 +78,8 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 			env(envp_list);
 		else if(!ft_strncmp("export", command, len))
 			export(envp_list, ast);
+		else if(!ft_strncmp("unset", command, len))
+			unset(envp_list, ast);
 	}
 	(*envp_char) = envp_list_to_char_arr((*envp_list));
 	clear_arr(&tmp);

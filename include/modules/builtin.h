@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 07:29:02 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/07 19:16:52 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
+void unset(t_envp_list **list, t_ast *ast);
 /*CD ERROR CHECK*/
 int check_cd_args_count(t_list *args);
 int check_envp_home_path(t_envp_list *list);
