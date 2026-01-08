@@ -1,0 +1,9 @@
+## SCRIPT EXECUTION
+- Redirecting stdout to /dev/full: 1: operation not permitted OR no space left on device
+- Trying to execute binary files: 126: cannot execute binary file
+- Non-existing file: 127: No such file or directory
+- Trying to run a directory: 126: Is a directory
+
+
+## EXECUTOR
+- Non-existing command: 127: Command not found
