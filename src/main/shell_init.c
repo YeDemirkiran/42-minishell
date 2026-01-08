@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:24:14 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 21:42:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/08 09:53:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -128,7 +128,6 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 {
 	shell->pid = get_pid();
-	shell->interactive = -1;
 	shell->exit_status = 0;
 	shell->argc = argc;
 	shell->args = argv;
@@ -137,8 +136,7 @@ int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
 	if (argc > 1)
 		return (open_stdin_script(shell, argc, argv));
-	if (shell->interactive == -1)
-		shell->interactive = is_interactive();
+	shell->interactive = is_interactive();
 	if (shell->interactive == 1)
 		rl_outstream = stderr;
 	return (0);
