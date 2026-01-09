@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 17:42:56 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/07 19:23:29 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/08 15:31:02 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,29 +40,24 @@ static t_envp_list *find_node_back_enplist(t_envp_list *source, t_envp_list *tar
 
 void unset(t_envp_list **list, t_ast *ast)
 {
-	t_gb *rootgb;
+	char *arg;
+	t_gb **rootgb;
 	t_gb *rootgb_back;
+	t_gb *tmp;
 	t_envp_list *unsetted_node;
 	t_envp_list *unsetted_node_back;
 
 	rootgb = ft_malloc(0, 5);
-	char *arg;
-	arg = ast->data->ast_command.arguments->next->content;
-	unsetted_node = find_node_address(list, arg);
-	unsetted_node_back = find_node_back_enplist((*list), unsetted_node);
+	tmp = (*rootgb);
 	rootgb_back = rootgb;
-	while(rootgb != NULL)
+	while(tmp != NULL)
 	{
-		if(rootgb->address_pointer == unsetted_node)
+		if(tmp->address_pointer == tmp)
 		{
-			printf("finded, gb: %p - envp : %p",rootgb->address_pointer, unsetted_node);
-			rootgb_back->next = rootgb->next;
-			unsetted_node_back->next = unsetted_node->next;
-			free(unsetted_node->id_name); 
-			free(unsetted_node->value); 
-			free(unsetted_node); 
+			
 		}
 		rootgb_back = rootgb;
-		rootgb = rootgb->next;
+		tmp = tmp->next;
 	}
+	printf("%p %p", tmp, (*rootgb));
 }
