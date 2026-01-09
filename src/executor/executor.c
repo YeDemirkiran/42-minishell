@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/05 15:45:19 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/09 22:29:54 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,45 +71,47 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	return pid;
 }
 
-t_list *exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+void	exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out, t_list **lst_pid)
 {
-	static t_list *lst;
 	int pipefd[2];
 	pid_t	*pid;
 
 	if (ast == NULL)
-		return (lst);
+		return ;
 	if(ast->type == AST_COMMAND)
 	{
 		pid = malloc(sizeof(pid_t));
 		*pid = run_command(ast, list, fd_in, fd_out);
-		ft_lstadd_back(&lst, ft_lstnew(pid));
+		ft_lstadd_back(lst_pid, ft_lstnew(pid));
 	}
 	else if (ast->type == AST_PIPE)
 	{
 		pipe(pipefd);
-		exec_utils(ast->left, list, fd_in, pipefd[1]);
+		exec_utils(ast->left, list, fd_in, pipefd[1], lst_pid);
 		close(pipefd[1]);
-		exec_utils(ast->right, list, pipefd[0], fd_out);
+		exec_utils(ast->right, list, pipefd[0], fd_out, lst_pid);
 		close(pipefd[0]);
 	}
-	return (lst);
+	return ;
 	
 }
 
 int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	t_list	*lst;
+	t_list	*root;
 	int		exit_status;
 	
-	lst = exec_utils(ast, list, fd_in, fd_out);
+	lst = NULL;
+	exec_utils(ast, list, fd_in, fd_out, &lst);
+	root = lst;
 	exit_status = 0;
 	while (lst != NULL)
 	{
 		waitpid(*((pid_t *)(lst->content)), &exit_status, 0);
 		lst = lst->next;
 	}
-	ft_lstclear(&lst, free);
+	ft_lstclear(&root, free);
 	return (WEXITSTATUS(exit_status));
 }
 
