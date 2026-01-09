@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 17:42:56 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/09 17:44:32 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/09 18:03:44 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static t_envp_list *find_node_back_enplist(t_envp_list *source, t_envp_list *tar
 	}
 	return NULL;
 }
-
+/*First if else for gb, second if els for envplist*/
 static void redirection_for_norm(t_unset_god_list *godlist, t_envp_list ***list)
 {
 	if((*(*godlist).root_longterm_gb)->address_pointer == (*godlist).target_node)
