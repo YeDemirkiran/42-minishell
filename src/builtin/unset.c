@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 17:42:56 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/09 17:14:15 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/09 17:44:32 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,54 +38,51 @@ static t_envp_list *find_node_back_enplist(t_envp_list *source, t_envp_list *tar
 	return NULL;
 }
 
+static void redirection_for_norm(t_unset_god_list *godlist, t_envp_list ***list)
+{
+	if((*(*godlist).root_longterm_gb)->address_pointer == (*godlist).target_node)
+		(*(*godlist).root_longterm_gb) = (*(*godlist).root_longterm_gb)->next;
+	else if((*godlist).tmp->next == NULL);
+	else
+		(*godlist).back_tmp->next = (*godlist).tmp->next;
+	(*godlist).target_node_back = find_node_back_enplist((**list), (*godlist).target_node);
+	if((*godlist).target_node == (**list))
+		(**list) = (**list)->next;
+	else if((*godlist).target_node->next == NULL)
+		(*godlist).target_node_back->next = NULL;
+	else
+		(*godlist).target_node_back->next = (*godlist).target_node->next;
+	free((*godlist).target_node->id_name);
+	free((*godlist).target_node->value);
+	free((*godlist).target_node);
+	if((*godlist).tmp->next != NULL)
+		free((*godlist).tmp);
+}
+
 void unset(t_envp_list **list, t_ast *ast)
 {
-	t_gb **root_longterm_gb;
-	t_gb *tmp;
-	t_gb *back_tmp;
-	t_envp_list *target_node;
-	t_envp_list *target_node_back;
-	t_list *args;
-	t_list *args_tmp;
+	t_unset_god_list godlist;
 
-	root_longterm_gb = ft_malloc(0, 5);
-	tmp = (*root_longterm_gb);
-	back_tmp = tmp;
-	args = ast->data->ast_command.arguments->next;
-	if(root_longterm_gb == NULL || args == NULL)
+	godlist.root_longterm_gb = ft_malloc(0, 5);
+	godlist.tmp = (*godlist.root_longterm_gb);
+	godlist.back_tmp = godlist.tmp;
+	godlist.args = ast->data->ast_command.arguments->next;
+	if(godlist.root_longterm_gb == NULL || godlist.args == NULL)
 		return ;
-	while(args != NULL)
+	while(godlist.args != NULL)
 	{
-		target_node = find_node_address(list, args->content);
-		tmp = (*root_longterm_gb);
-		while(tmp != NULL && target_node != NULL)
+		godlist.target_node = find_node_address(list, godlist.args->content);
+		godlist.tmp = (*godlist.root_longterm_gb);
+		while(godlist.tmp != NULL && godlist.target_node != NULL)
 		{
-			if(tmp->address_pointer == target_node)
-			{
-				if((*root_longterm_gb)->address_pointer == target_node)
-					(*root_longterm_gb) = (*root_longterm_gb)->next;
-				else if(tmp->next == NULL);
-				else
-					back_tmp->next = tmp->next;
-				target_node_back = find_node_back_enplist((*list), target_node);
-				if(target_node == (*list))
-					(*list) = (*list)->next;
-				else if(target_node->next == NULL)
+				if(godlist.tmp->address_pointer == godlist.target_node)
 				{
-					target_node_back->next = NULL;
+					redirection_for_norm(&godlist, &list);
+					break ;
 				}
-				else
-					target_node_back->next = target_node->next;
-				free(target_node->id_name);
-				free(target_node->value);
-				free(target_node);
-				if(tmp->next != NULL)
-					free(tmp);
-				break ;
-			}
-			back_tmp = tmp;
-			tmp = tmp->next;
+				godlist.back_tmp = godlist.tmp;
+				godlist.tmp = godlist.tmp->next;
 		}
-		args = args->next;
+		godlist.args = godlist.args->next;
 	}	
 }
