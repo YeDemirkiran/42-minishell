@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/10 14:00:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/10 15:32:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,6 +16,7 @@
 #include "unistd.h"
 #include "string.h"
 #include "fcntl.h"
+#define _GNU_SOURCE
 #include "sys/wait.h"
 #include "signal.h"
 #include "../../lib/garbage_collector/gb.h"
@@ -95,7 +96,49 @@ void	exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out, t_l
 		close(pipefd[0]);
 	}
 	return ;
+}
 
+#ifdef WCOREDUMP
+
+int	has_core_dump(int status)
+{
+	return (WCOREDUMP(status));
+}
+
+#else
+
+int	has_core_dump(int status)
+{
+	return (status & 0x80);
+}
+
+#endif
+
+static void	print_signal_message(int sig, int status)
+{
+	if (sig == SIGQUIT)
+		ft_putstr_fd("Quit", STDERR_FILENO);
+	else if (sig == SIGSEGV)
+		ft_putstr_fd("Segmentation fault", STDERR_FILENO);
+	else if (sig == SIGFPE)
+		ft_putstr_fd("Floating point exception", STDERR_FILENO);
+	else if (sig == SIGILL)
+		ft_putstr_fd("Illegal instruction", STDERR_FILENO);
+	else if (sig == SIGBUS)
+		ft_putstr_fd("Bus error", STDERR_FILENO);
+	else if (sig == SIGTERM)
+		ft_putstr_fd("Terminated", STDERR_FILENO);
+	else if (sig == SIGKILL)
+		ft_putstr_fd("Killed", STDERR_FILENO);
+	else if (sig == SIGUSR1)
+		ft_putstr_fd("User defined signal 1", STDERR_FILENO);
+	else if (sig == SIGUSR2)
+		ft_putstr_fd("User defined signal 2", STDERR_FILENO);
+	else if (sig == SIGPIPE)
+		ft_putstr_fd("Broken pipe", STDERR_FILENO);
+	if (has_core_dump(status) > 0)
+		ft_putstr_fd(" (core dumped)", STDERR_FILENO);
+	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
 int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
@@ -118,8 +161,7 @@ int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	if (WIFSIGNALED(exit_status))
 	{
 		sig = WTERMSIG(exit_status);
-		if (sig == SIGQUIT)
-			ft_putstr_fd("Quit\n", STDERR_FILENO);
+		print_signal_message(sig, exit_status);
 		return (128 + sig);
 	}
 	return (WEXITSTATUS(exit_status));
