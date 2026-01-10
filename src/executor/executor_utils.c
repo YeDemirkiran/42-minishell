@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/30 22:34:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/07 19:16:12 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <libft.h>
@@ -29,23 +29,28 @@
 int isbuiltin(const char *command)
 {
 	char **b_names;
-	b_names = ft_split("cd pwd echo env export", ' ');
-	if(!ft_strncmp(command, b_names[1], ft_strlen(command)))
+	b_names = ft_split("cd pwd echo env export unset", ' ');
+	if(ft_strcmp(command, b_names[1]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
 	}
-	if(!ft_strncmp(command, b_names[0], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[0]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
 	}
-	if(!ft_strncmp(command, b_names[3], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[3]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
 	}
-	if(!ft_strncmp(command, b_names[4], ft_strlen(command)))
+	if(ft_strcmp(command, b_names[4]) == 0)
+	{
+		clear_arr(&b_names);
+		return 1;
+	}
+	if(ft_strcmp(command, b_names[5]) == 0)
 	{
 		clear_arr(&b_names);
 		return 1;
@@ -73,6 +78,8 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 			env(envp_list);
 		else if(!ft_strncmp("export", command, len))
 			export(envp_list, ast);
+		else if(!ft_strncmp("unset", command, len))
+			unset(envp_list, ast);
 	}
 	(*envp_char) = envp_list_to_char_arr((*envp_list));
 	clear_arr(&tmp);

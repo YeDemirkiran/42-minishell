@@ -62,6 +62,7 @@ static int is_variable_name_correct(char *variable_name)
 	if(variable_name[0] == '=' || ft_isdigit(variable_name[0]))
 	{
 		printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+		free(variable_name);
 		return 1;
 	}
 	while(variable_name[i])
@@ -70,10 +71,12 @@ static int is_variable_name_correct(char *variable_name)
 		else if(!ft_isalnum(variable_name[i]))
 		{
 			printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+			free(variable_name);
 			return 1;
 		}
 		i++;
 	}
+	free(variable_name);
 	return 0;
 }
 
@@ -89,20 +92,24 @@ static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 	(*list)->next = NULL;
 }
 
-static int issamevariable(t_envp_list **list, t_list *command)
+int same_variable_update(t_envp_list **list, char *name, char *value)
 {
-	char *value_name;
-	char *value;
+	int return_value;
 
-	value_name = take_variable_name(command);
-	value = take_variable_value(command);
-	if(isvaluein_envplist(list, value_name))
+	return_value = 0;
+	if(name == NULL)
+		return -1;
+	if(find_id_name_on_envp(list, name) != NULL)
 	{
-		update_envp_value(list, value_name, value);
-		return 1;
+		if(value != NULL)
+		{
+			update_envp_value(list, name, value);	
+		}
+		return_value = 1;
 	}
-	else
-		return 0;
+	free(name);
+	free(value);
+	return return_value;
 }
 
 int add_variable_on_envplist(t_envp_list **list, t_list *command)
@@ -116,13 +123,16 @@ int add_variable_on_envplist(t_envp_list **list, t_list *command)
 		envp_tmp = envp_tmp->next;
 	while(tmp != NULL)
 	{
-		if(issamevariable(list, tmp) || is_variable_name_correct(take_variable_name(tmp)))
+		if(is_variable_name_correct(take_variable_name(tmp)))
 		{
 			tmp = tmp->next;
 			continue;
 		}
-		envp_tmp->next = ft_malloc(sizeof(t_envp_list), 0);
-		add_variable_on_envplist_utils(&envp_tmp, tmp);
+		if(same_variable_update(list, take_variable_name(tmp), take_variable_value(tmp)) != 1)
+		{
+			envp_tmp->next = ft_malloc(sizeof(t_envp_list), 0);
+			add_variable_on_envplist_utils(&envp_tmp, tmp);
+		}
 		tmp = tmp->next;
 	}
 	return 0;

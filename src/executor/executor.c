@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/09 22:29:54 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/10 04:39:35 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "stdio.h"
 #include <libft.h>
@@ -93,7 +93,7 @@ void	exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out, t_l
 		close(pipefd[0]);
 	}
 	return ;
-	
+
 }
 
 int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
@@ -101,7 +101,7 @@ int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	t_list	*lst;
 	t_list	*root;
 	int		exit_status;
-	
+
 	lst = NULL;
 	exec_utils(ast, list, fd_in, fd_out, &lst);
 	root = lst;

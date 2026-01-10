@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/07 21:50:44 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/10 04:39:08 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -67,7 +67,7 @@ EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
-BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c export_utils.c export_utils_2.c)
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c export_utils.c export_utils_2.c unset.c)
 
 ## Signals
 SIGNAL_DIR = signal/
@@ -83,7 +83,7 @@ OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
 
 # CONFIGURATION
 CC = cc
-W_FLAGS = -Wall -Wextra -Werror -g
+#W_FLAGS = -Wall -Wextra -Werror -g
 INC_FLAGS = -I$(INC_DIR) -I$(LIBFT_INC_DIR) -I$(LIBGB_INC_DIR) -I$(LIBGNL_INC_DIR) -I$(LIBMNL_INC_DIR)
 LIBS = -L./ -L$(LIBFT_DIR) -L$(LIBGB_DIR) -L$(LIBGNL_DIR) -L$(LIBMNL_DIR)  -lreadline $(LIBMNL_A) $(LIBGNL_A)  -lft -lgb
 FLAGS = $(W_FLAGS) $(INC_FLAGS)
