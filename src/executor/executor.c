@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/10 04:39:35 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/10 14:00:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,6 +17,7 @@
 #include "string.h"
 #include "fcntl.h"
 #include "sys/wait.h"
+#include "signal.h"
 #include "../../lib/garbage_collector/gb.h"
 
 #include "structs/s_ast.h"
@@ -25,6 +26,7 @@
 #include <minishell_lb.h>
 #include "modules/executor.h"
 #include "modules/builtin.h"
+#include "modules/signal.h"
 
 /*This function cut \n and \r in char* of end of the line */
 // void delete_new_line(char ***s1)
@@ -52,6 +54,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	pid = fork();
 	if(pid == 0)
 	{
+		install_default_signals();
 		dup2(fd_in, 0);
 		dup2(fd_out, 1);
 		redirs = ast->data->ast_command.redirs;
@@ -66,7 +69,6 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		perror("-babashell: command not found");
 		exit(EXIT_FAILURE);
 	}
-	//wait(NULL);
 	clear_arr(&args);
 	return pid;
 }
@@ -101,6 +103,7 @@ int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	t_list	*lst;
 	t_list	*root;
 	int		exit_status;
+	int		sig;
 
 	lst = NULL;
 	exec_utils(ast, list, fd_in, fd_out, &lst);
@@ -112,6 +115,13 @@ int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		lst = lst->next;
 	}
 	ft_lstclear(&root, free);
+	if (WIFSIGNALED(exit_status))
+	{
+		sig = WTERMSIG(exit_status);
+		if (sig == SIGQUIT)
+			ft_putstr_fd("Quit\n", STDERR_FILENO);
+		return (128 + sig);
+	}
 	return (WEXITSTATUS(exit_status));
 }
 
