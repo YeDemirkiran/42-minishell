@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/12 00:59:31 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/12 01:00:07 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void close_child_user_fd(void)
 	int fds;
 
 	fds = 3;
-	while (fd_index < 500)
+	while (fds < 500)
 	{
 		close(fds);
 		fds++;
