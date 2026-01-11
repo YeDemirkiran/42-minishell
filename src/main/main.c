@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/07 16:47:03 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/11 18:50:12 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@
 #define RL_START "\001"
 #define RL_END "\002"
 
+//#include <valgrind/memcheck.h>
+
 static void	shell_exit(int status)
 {
 	ft_putstr_fd("exit\n", STDERR_FILENO);
@@ -60,6 +62,8 @@ static t_shell	init_shell(int argc, char **argv, char **envp)
 	shell.args = argv;
 	shell.env = ft_malloc(sizeof(t_god_struct_envp), 0);
 	shell.env->envp_list = create_envp_list(envp);
+	shell.env->pid_list = ft_malloc(sizeof(t_pid_list), 0);
+	shell.env->pid_list->pid = 0;
 	shell.env->envp_char = envp_list_to_char_arr(shell.env->envp_list);
 	shell.last_exit_status = 0;
 	shell.pid = get_pid();
@@ -90,7 +94,6 @@ int	main(int argc, char **argv, char **envp)
 			}
 			break ;
 		}
-		add_line_to_history(input);
 		tokens = lexical_analyze(input);
 		free(input);
 		ast = parse(tokens);
@@ -107,9 +110,9 @@ int	main(int argc, char **argv, char **envp)
 		free_tokens(&tokens);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
+		//VALGRIND_DO_LEAK_CHECK;
 	}
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
-	rl_clear_history();
 	shell_exit(EXIT_SUCCESS);
 }

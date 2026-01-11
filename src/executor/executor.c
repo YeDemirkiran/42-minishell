@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/07 16:39:36 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/11 18:49:48 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,33 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	return pid;
 }
 
-t_list *exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
-	static t_list *lst;
+	t_pid_list *org_list_pid;
 	int pipefd[2];
-	pid_t	*pid;
+	pid_t	pid;
 
+	org_list_pid = (*list)->pid_list;
 	if (ast == NULL)
-		return (lst);
+		return ;
 	if(ast->type == AST_COMMAND)
 	{
-		pid = malloc(sizeof(pid_t));
-		*pid = run_command(ast, list, fd_in, fd_out);
-		ft_lstadd_back(&lst, ft_lstnew(pid));
+		pid = run_command(ast, list, fd_in, fd_out);
+		if((*list)->pid_list->pid == 0)
+		{
+			org_list_pid->pid = pid;
+			org_list_pid->next = NULL;
+		}
+		else
+		{
+			while(org_list_pid->next != NULL)
+				org_list_pid = org_list_pid->next;
+			org_list_pid->next = sort_malloc(sizeof(t_pid_list), 0);
+			org_list_pid->next->pid = pid;
+			org_list_pid = org_list_pid->next;
+			org_list_pid->next = NULL;
+		}
+
 	}
 	else if (ast->type == AST_PIPE)
 	{
@@ -93,23 +107,23 @@ t_list *exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		exec_utils(ast->right, list, pipefd[0], fd_out);
 		close(pipefd[0]);
 	}
-	return (lst);
-	
+	return ;
 }
 
 int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
-	t_list	*lst;
+	t_pid_list	*tmp_pid_list;
 	int		exit_status;
 	
-	lst = exec_utils(ast, list, fd_in, fd_out);
+	exec_utils(ast, list, fd_in, fd_out);
 	exit_status = 0;
-	while (lst != NULL)
+	tmp_pid_list = (*list)->pid_list;
+	while (tmp_pid_list != NULL)
 	{
-		waitpid(*((pid_t *)(lst->content)), &exit_status, 0);
-		lst = lst->next;
+		waitpid(tmp_pid_list->pid, &exit_status, 0);
+		tmp_pid_list = tmp_pid_list->next;
 	}
-	ft_lstclear(&lst, free);
+	(*list)->pid_list->pid = 0;
 	return (WEXITSTATUS(exit_status));
 }
 
