@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/11 15:39:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/11 21:44:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,7 +23,14 @@
 
 #include "read_input_utils.h"
 
-static int	concatenate_old_and_new_input(char **current_input, char *new_input)
+/**
+ * @brief Takes the current and new inputs, adds newline to the new input
+ * joins the old input and the new one, and then replaces the old one
+ * with the joined new line.
+ * @return NULL on error, the new line on success.
+ */
+static int
+	concatenate_old_and_new_input(char **current_input, char *new_input)
 {
 	char	*newline_input;
 
@@ -49,6 +56,11 @@ static int	concatenate_old_and_new_input(char **current_input, char *new_input)
 	return (1);
 }
 
+/**
+ * @brief Decides between primary and secondary prompt
+ * depending on whether the value of INPUT is NULL.
+ * @return Primary prompt if input is NULL, secondary prompt otherwise.
+ */
 static const char	*get_prompt(const char *primary_prompt,
 	const char *secondary_prompt, char *input)
 {
@@ -59,7 +71,12 @@ static const char	*get_prompt(const char *primary_prompt,
 }
 
 /**
- * @brief Checks if 0 is a TTY and decides between GNU Readline and
+ * @brief Reads and retuns a line from STDIN. Trailing newline is stripped
+ * from the line.
+ *
+ * @return Line on success, NULL on failure.
+ *
+ * @note Checks if 0 is a TTY and decides between GNU Readline and
  * 42 GNL.
  */
 char	*get_input_line(const char *prompt, int interactive)
@@ -91,8 +108,9 @@ char	*get_input_line(const char *prompt, int interactive)
 }
 
 /**
- * @brief Uses GNU Readline, prepares a multi-line input by the user
+ * @brief Prepares a multi-line input by the user
  * and returns it.
+ * @return Multi-line (or single) input on success, NULL on failure.
  */
 char	*read_input(const char *primary_prompt, const char *secondary_prompt,
 	int interactive)

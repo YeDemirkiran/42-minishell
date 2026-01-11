@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/11 15:48:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/11 21:33:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -60,7 +60,13 @@ static void	shell_exit(unsigned char status, t_shell shell)
 	exit(status);
 }
 
-int	rl_event(void)
+/**
+ * @brief Empty function that does nothing, just returns 0. This is used
+ * to trick GNU Readline's rl_event_hook so it stops periodically to check
+ * rl_done variable's value and exits.
+ * @return 0
+ */
+static int	rl_event(void)
 {
 	return (0);
 }
