@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/12 01:00:07 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/12 01:06:03 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,12 @@
 // 	}
 // }
 
+/*
+* This func close all parent fds in child (without system fd 0,1,2).
+* Mean when use for example cat | ls, cat need input but does not have input, ls working fine and will be finished. 
+* System waiting cat because cat input door(pipefd[0]) is open, if you use this func. close all parent fds, mean close(pipefd) force way.
+* After that system looking input door and system see input door is closed, and system kill the cat func.
+*/
 static void close_child_user_fd(void)
 {
 	int fds;
