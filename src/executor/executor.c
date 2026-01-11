@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/12 01:10:16 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/12 01:25:49 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,34 @@ static void close_child_user_fd(void)
 		fds++;
 	}
 }
+/**
+* ? This func. create pid_list for executor
+* ! Example : cat | ls
+* *	If you don't use like this structure, cat wait input and ls does not working. 
+* *	But if you use this structure, system run 2 command in same time, ls working and finished, ls output write on terminal. Cat still wait input but ls is finished, you can see ls output in terminal.
+*/
+void static create_pid_list(t_pid_list *root_pid_list, pid_t pid)
+{
+	if(root_pid_list->pid == 0)
+	{
+		root_pid_list->pid = pid;
+		root_pid_list->next = NULL;
+	}
+	else
+	{
+		while(root_pid_list->next != NULL)
+			root_pid_list = root_pid_list->next;
+		root_pid_list->next = sort_malloc(sizeof(t_pid_list), 0);
+		root_pid_list->next->pid = pid;
+		root_pid_list = root_pid_list->next;
+		root_pid_list->next = NULL;
+	}
+}
 
+/** 
+ * * 		For run command for executor
+ * @return	Forks pid 
+*/
 pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	pid_t pid;
@@ -90,31 +117,15 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 
 void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
-	t_pid_list *org_list_pid;
 	int pipefd[2];
 	pid_t	pid;
 
-	org_list_pid = (*list)->pid_list;
 	if (ast == NULL)
 		return ;
 	if(ast->type == AST_COMMAND)
 	{
 		pid = run_command(ast, list, fd_in, fd_out);
-		if((*list)->pid_list->pid == 0)
-		{
-			org_list_pid->pid = pid;
-			org_list_pid->next = NULL;
-		}
-		else
-		{
-			while(org_list_pid->next != NULL)
-				org_list_pid = org_list_pid->next;
-			org_list_pid->next = sort_malloc(sizeof(t_pid_list), 0);
-			org_list_pid->next->pid = pid;
-			org_list_pid = org_list_pid->next;
-			org_list_pid->next = NULL;
-		}
-
+		create_pid_list((*list)->pid_list, pid);
 	}
 	else if (ast->type == AST_PIPE)
 	{
