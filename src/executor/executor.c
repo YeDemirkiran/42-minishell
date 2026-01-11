@@ -6,17 +6,17 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/10 15:32:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/11 22:26:48 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+#define _GNU_SOURCE
 #include "stdio.h"
 #include <libft.h>
 #include "stdlib.h"
 #include "unistd.h"
 #include "string.h"
 #include "fcntl.h"
-#define _GNU_SOURCE
 #include "sys/wait.h"
 #include "signal.h"
 #include "../../lib/garbage_collector/gb.h"
@@ -29,22 +29,6 @@
 #include "modules/builtin.h"
 #include "modules/signal.h"
 
-/*This function cut \n and \r in char* of end of the line */
-// void delete_new_line(char ***s1)
-// {
-// 	char **str;
-// 	int i;
-
-// 	str = (*s1);
-// 	i = 0;
-// 	while(str[i] != NULL)
-// 	{
-// 		str[i] = cut_wrong_chracter(str[i]);
-// 		i++;
-// 	}
-// }
-
-
 pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	pid_t pid;
@@ -53,6 +37,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	pid = fork();
+	install_command_signals();
 	if(pid == 0)
 	{
 		install_default_signals();

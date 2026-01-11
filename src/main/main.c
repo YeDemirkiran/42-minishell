@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/11 21:33:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/11 22:23:57 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -81,7 +81,6 @@ int	main(int argc, char **argv, char **envp)
 	int		init_result;
 
 	input = NULL;
-	install_prompt_signals();
 	init_result = init_shell(&shell, argc, argv, envp);
 	if (init_result != 0)
 		shell_exit(init_result, shell);
@@ -89,6 +88,8 @@ int	main(int argc, char **argv, char **envp)
 	rl_event_hook = rl_event;
 	while (1)
 	{
+		g_sig = 0;
+		install_prompt_signals();
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
 		input = read_input(prompt, "> ", shell.interactive);
 		if (input == NULL && (g_sig != SIGINT && errno != EINTR))
@@ -102,12 +103,12 @@ int	main(int argc, char **argv, char **envp)
 		}
 		else if (g_sig == SIGINT && errno == EINTR)
 		{
+			shell.exit_status = 128 + g_sig;
 			g_sig = 0;
 			errno = 0;
 			free(input);
 			rl_on_new_line();
 			rl_replace_line("", 0);
-			shell.exit_status = 128 + g_sig;
 			continue ;
 		}
 		if (shell.interactive == 1)
