@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 22:13:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/11 15:39:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,8 @@
 #include <libft/string.h>
 #include <libft/write.h>
 #include <get_next_line.h>
+
+#include "g_sig.h"
 
 #include "read_input_utils.h"
 
@@ -66,10 +68,19 @@ char	*get_input_line(const char *prompt, int interactive)
 	char	*newl;
 
 	if (interactive == 1)
+	{
 		str = readline(prompt);
+		if (g_sig == SIGINT)
+		{
+			free(str);
+			return (NULL);
+		}
+	}
 	else
 	{
 		str = get_next_line(STDIN_FILENO);
+		if (g_sig == SIGINT)
+			return (NULL);
 		if (str == NULL)
 			return (NULL);
 		newl = ft_strrchr(str, '\n');
@@ -100,6 +111,8 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt,
 			if (input == NULL)
 				break ;
 			free(input);
+			if (g_sig == SIGINT)
+				return (NULL);
 			input = NULL;
 			print_uncompleted_eof_error(quote);
 			continue ;
