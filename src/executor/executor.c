@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/11 18:49:48 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/12 00:59:31 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,17 @@
 // 	}
 // }
 
+static void close_child_user_fd(void)
+{
+	int fds;
+
+	fds = 3;
+	while (fd_index < 500)
+	{
+		close(fds);
+		fds++;
+	}
+}
 
 pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
@@ -54,6 +65,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	{
 		dup2(fd_in, 0);
 		dup2(fd_out, 1);
+		close_child_user_fd();
 		redirs = ast->data->ast_command.redirs;
 		while (redirs != NULL)
 			run_redirs(&redirs);
@@ -66,7 +78,6 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		perror("-babashell: command not found");
 		exit(EXIT_FAILURE);
 	}
-	//wait(NULL);
 	clear_arr(&args);
 	return pid;
 }
