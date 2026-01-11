@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/10 04:39:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/11 15:48:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -37,6 +37,8 @@
 #include "modules/signal.h"
 #include "modules/utils.h"
 
+#include "g_sig.h"
+
 #include "../lexer/token.h"
 #include "read_input.h"
 #include "history.h"
@@ -58,6 +60,11 @@ static void	shell_exit(unsigned char status, t_shell shell)
 	exit(status);
 }
 
+int	rl_event(void)
+{
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
@@ -68,15 +75,17 @@ int	main(int argc, char **argv, char **envp)
 	int		init_result;
 
 	input = NULL;
-	signal(SIGINT, on_sigint);
+	install_prompt_signals();
 	init_result = init_shell(&shell, argc, argv, envp);
 	if (init_result != 0)
 		shell_exit(init_result, shell);
+	rl_catch_signals = 0;
+	rl_event_hook = rl_event;
 	while (1)
 	{
 		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
 		input = read_input(prompt, "> ", shell.interactive);
-		if (input == NULL)
+		if (input == NULL && (g_sig != SIGINT && errno != EINTR))
 		{
 			if (errno != 0)
 			{
@@ -84,6 +93,16 @@ int	main(int argc, char **argv, char **envp)
 				shell_exit(errno_to_exit_code(), shell);
 			}
 			break ;
+		}
+		else if (g_sig == SIGINT && errno == EINTR)
+		{
+			g_sig = 0;
+			errno = 0;
+			free(input);
+			rl_on_new_line();
+			rl_replace_line("", 0);
+			shell.exit_status = 128 + g_sig;
+			continue ;
 		}
 		if (shell.interactive == 1)
 			add_line_to_history(input);
