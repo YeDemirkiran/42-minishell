@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 18:46:03 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:00:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 
@@ -17,6 +17,7 @@
 #include "enums/e_redir_type.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
+#include "g_sig.h"
 
 #include "parse_result.h"
 #include "parse_heredoc.h"
@@ -89,16 +90,36 @@ static t_redirection	*create_redirection(t_list *token)
 	return (redirection);
 }
 
+static void	clear_heredoc_tmp_files(t_list *redirs)
+{
+	t_redirection	*redir;
+	int				unlink_result;
+
+	while (redirs != NULL)
+	{
+		redir = (t_redirection *)(redirs->content);
+		if (redir != NULL && redir->redir_type == REDIR_HEREDOC)
+		{
+			unlink_result = unlink(redir->path);
+			if (unlink_result == -1)
+				perror("minishell: warning: "
+					"here-document temporary file: unlink");
+		}
+		redirs = redirs->next;
+	}
+}
+
 /**
  * @brief Takes a token and saves it in redirections linked list if it's
  * a redirection token.
  */
-t_parse_result	
+t_parse_result
 	parse_redirection(t_list *token, t_list **redirs, t_shell shell)
 {
 	t_parse_result	result;
 	t_redirection	*redirection;
 	t_list			*redir_node;
+	int				heredoc_result;
 
 	result = is_redir_valid(token);
 	if (result.type != PARSE_RESULT_SUCCESS)
@@ -114,8 +135,15 @@ t_parse_result
 		return (parse_runtime_error(token->next));
 	}
 	ft_lstadd_back(redirs, redir_node);
-	if (redirection->redir_type == REDIR_HEREDOC
-		&& parse_heredoc(redirection, shell) != 1)
-		return (parse_runtime_error(token->next));
+	if (redirection->redir_type == REDIR_HEREDOC)
+	{
+		heredoc_result = parse_heredoc(redirection, shell);
+		if (heredoc_result != 1)
+			clear_heredoc_tmp_files(*redirs);
+		if (g_sig != 0)
+			return (parse_result(PARSE_RESULT_ABORT, NULL, NULL));
+		else if (heredoc_result != 1)
+			return (parse_runtime_error(token->next));
+	}
 	return (parse_success(NULL, token->next->next));
 }

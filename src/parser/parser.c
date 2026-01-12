@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 18:11:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 17:24:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -26,6 +26,7 @@
 #include "structs/s_ast.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
+#include "g_sig.h"
 
 #include "modules/ast.h" // TODO: Remove as it's probably not necessary
 
@@ -186,7 +187,12 @@ t_ast	*parse(t_list *tokens, t_shell *shell)
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
 	result = parse_token(tokens, *shell);
-	if (result.type != PARSE_RESULT_SUCCESS)
+	if (result.type == PARSE_RESULT_ABORT)
+	{
+		shell->exit_status = (128 + g_sig) * (g_sig > 0);
+		return (NULL);
+	}
+	else if (result.type != PARSE_RESULT_SUCCESS)
 	{
 		shell->exit_status = 1;
 		if (result.type == PARSE_RESULT_TOKEN_ERROR

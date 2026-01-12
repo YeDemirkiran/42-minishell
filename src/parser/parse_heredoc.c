@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/06 13:10:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:00:42 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,6 +23,7 @@
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
 #include "modules/expansion.h"
+#include "g_sig.h"
 
 #include "../main/read_input.h"
 
@@ -149,6 +150,8 @@ static int	read_heredoc(char *delimiter, int fd, t_shell shell)
 	{
 		errno = 0;
 		line = get_input_line("> ", shell.interactive);
+		if (g_sig != 0)
+			return (0);
 		if (line == NULL)
 			return (check_errno_and_print_error());
 		if (expand_delimiter(should_expand, &line, shell) != 1)
@@ -173,6 +176,7 @@ int	parse_heredoc(t_redirection *redir, t_shell shell)
 {
 	char	*hd_path;
 	int		fd;
+	int		result;
 
 	if (!redir || redir->redir_type != REDIR_HEREDOC || redir->path == NULL)
 		return (2);
@@ -185,15 +189,11 @@ int	parse_heredoc(t_redirection *redir, t_shell shell)
 		free(hd_path);
 		return (0);
 	}
-	if (read_heredoc(redir->path, fd, shell) == 0)
-	{
-		free(hd_path);
-		close(fd);
-		return (0);
-	}
+	result = read_heredoc(redir->path, fd, shell);
+	close(fd);
 	free(redir->path);
 	redir->path = hd_path;
-	if (close(fd) < 0)
+	if (result == 0)
 		return (0);
 	return (1);
 }
