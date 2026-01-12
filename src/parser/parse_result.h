@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:00:28 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/18 10:15:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 17:17:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -24,7 +24,8 @@ typedef enum e_parse_result_type
 	PARSE_RESULT_SUCCESS,
 	PARSE_RESULT_TOKEN_ERROR,
 	PARSE_RESULT_RUNTIME_ERROR,
-	PARSE_RESULT_TOKEN_UNCOMPLETE
+	PARSE_RESULT_TOKEN_UNCOMPLETE,
+	PARSE_RESULT_ABORT
 }	t_parse_result_type;
 
 /**
