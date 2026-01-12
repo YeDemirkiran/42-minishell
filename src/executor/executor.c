@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/12 10:06:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 10:13:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -119,9 +119,9 @@ void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	else if (ast->type == AST_PIPE)
 	{
 		pipe(pipefd);
-		exec_utils(ast->left, list, fd_in, pipefd[1], lst_pid);
+		exec_utils(ast->left, list, fd_in, pipefd[1]);
 		close(pipefd[1]);
-		exec_utils(ast->right, list, pipefd[0], fd_out, lst_pid);
+		exec_utils(ast->right, list, pipefd[0], fd_out);
 		close(pipefd[0]);
 	}
 	return ;
