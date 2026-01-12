@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/11 22:23:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 10:10:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -136,6 +136,7 @@ int	main(int argc, char **argv, char **envp)
 			shell.exit_status = executor(ast, &(shell.env), 0, 1);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
+		//VALGRIND_DO_LEAK_CHECK;
 	}
 	shell_exit(shell.exit_status, shell);
 }

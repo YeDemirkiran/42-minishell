@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:24:14 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/08 09:53:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 10:10:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -134,6 +134,8 @@ int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 	shell->env = ft_malloc(sizeof(t_god_struct_envp), 0);
 	shell->env->envp_list = create_envp_list(envp);
 	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
+	shell->env->pid_list = ft_malloc(sizeof(t_pid_list), 0);
+	shell->env->pid_list->pid = 0;
 	if (argc > 1)
 		return (open_stdin_script(shell, argc, argv));
 	shell->interactive = is_interactive();

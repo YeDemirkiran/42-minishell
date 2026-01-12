@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/11 22:26:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 10:06:49 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -28,7 +28,51 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
+/**
+* ? This func close all parent fds in child (without system fd 0,1,2).
+* *	Mean when use for example cat | ls, cat need input but does not have input, ls working fine and will be finished.
+* *	System waiting cat because cat input door(pipefd[0]) is open, if you use this func. close all parent fds, mean close(pipefd) force way.
+* *	After that system looking input door and system see input door is closed, and system kill the cat func.
+*/
+static void close_child_user_fd(void)
+{
+	int fds;
 
+	fds = 3;
+	while (fds < 500)
+	{
+		close(fds);
+		fds++;
+	}
+}
+/**
+* ? This func. create pid_list for executor
+* ! Example : cat | ls
+* *	If you don't use like this structure, cat wait input and ls does not working.
+* *	But if you use this structure, system run 2 command in same time, ls working and finished, ls output write on terminal. Cat still wait input but ls is finished, you can see ls output in terminal.
+*/
+void static create_pid_list(t_pid_list *root_pid_list, pid_t pid)
+{
+	if(root_pid_list->pid == 0)
+	{
+		root_pid_list->pid = pid;
+		root_pid_list->next = NULL;
+	}
+	else
+	{
+		while(root_pid_list->next != NULL)
+			root_pid_list = root_pid_list->next;
+		root_pid_list->next = sort_malloc(sizeof(t_pid_list), 0);
+		root_pid_list->next->pid = pid;
+		root_pid_list = root_pid_list->next;
+		root_pid_list->next = NULL;
+	}
+}
+
+/**
+ * * 		For run command for executor
+ * @return	Forks pid
+*/
 pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	pid_t pid;
@@ -43,6 +87,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		install_default_signals();
 		dup2(fd_in, 0);
 		dup2(fd_out, 1);
+		close_child_user_fd();
 		redirs = ast->data->ast_command.redirs;
 		while (redirs != NULL)
 			run_redirs(&redirs);
@@ -59,18 +104,17 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	return pid;
 }
 
-void	exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out, t_list **lst_pid)
+void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
 	int pipefd[2];
-	pid_t	*pid;
+	pid_t	pid;
 
 	if (ast == NULL)
 		return ;
 	if(ast->type == AST_COMMAND)
 	{
-		pid = malloc(sizeof(pid_t));
-		*pid = run_command(ast, list, fd_in, fd_out);
-		ft_lstadd_back(lst_pid, ft_lstnew(pid));
+		pid = run_command(ast, list, fd_in, fd_out);
+		create_pid_list((*list)->pid_list, pid);
 	}
 	else if (ast->type == AST_PIPE)
 	{
@@ -128,21 +172,19 @@ static void	print_signal_message(int sig, int status)
 
 int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 {
-	t_list	*lst;
-	t_list	*root;
-	int		exit_status;
-	int		sig;
+	t_pid_list	*tmp_pid_list;
+	int			exit_status;
+	int			sig;
 
-	lst = NULL;
-	exec_utils(ast, list, fd_in, fd_out, &lst);
-	root = lst;
+	exec_utils(ast, list, fd_in, fd_out);
 	exit_status = 0;
-	while (lst != NULL)
+	tmp_pid_list = (*list)->pid_list;
+	while (tmp_pid_list != NULL)
 	{
-		waitpid(*((pid_t *)(lst->content)), &exit_status, 0);
-		lst = lst->next;
+		waitpid(tmp_pid_list->pid, &exit_status, 0);
+		tmp_pid_list = tmp_pid_list->next;
 	}
-	ft_lstclear(&root, free);
+	(*list)->pid_list->pid = 0;
 	if (WIFSIGNALED(exit_status))
 	{
 		sig = WTERMSIG(exit_status);
