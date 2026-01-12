@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/12 10:13:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:03:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -51,7 +51,7 @@ static void close_child_user_fd(void)
 * *	If you don't use like this structure, cat wait input and ls does not working.
 * *	But if you use this structure, system run 2 command in same time, ls working and finished, ls output write on terminal. Cat still wait input but ls is finished, you can see ls output in terminal.
 */
-void static create_pid_list(t_pid_list *root_pid_list, pid_t pid)
+static void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
 {
 	if(root_pid_list->pid == 0)
 	{
