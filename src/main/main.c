@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/13 20:01:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 21:15:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -45,6 +45,7 @@
 #include "read_input.h"
 #include "history.h"
 #include "shell_init.h"
+#include "args.h"
 
 /* =============================== FUNCTIONS =============================== */
 
@@ -84,6 +85,8 @@ int	main(int argc, char **argv, char **envp)
 	char *prompt;
 	int		init_result;
 
+	if (process_args((const char **)argv, argc) != 1)
+		exit(EXIT_SUCCESS);
 	input = NULL;
 	init_result = init_shell(&shell, argc, argv, envp);
 	if (init_result != 0)
