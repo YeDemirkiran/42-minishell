@@ -6,16 +6,23 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 15:30:24 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 21:55:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 20:07:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stddef.h>
 #include <unistd.h>
 
+// Internal libraries
 #include <libft/write.h>
 
+// Project headers
 #include "modules/utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Checks if an input has unclosed quotes, and returns the type of
@@ -53,3 +60,5 @@ void	print_uncompleted_eof_error(char quote)
 	ft_putstr_fd("\nminishell: syntax error: unexpected end of file\n",
 		STDERR_FILENO);
 }
+
+/* ================================== END ================================== */

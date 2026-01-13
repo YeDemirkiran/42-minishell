@@ -6,14 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 10:03:45 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 10:06:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 19:59:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
-#include <readline/history.h>
+/* ================================ HEADERS ================================ */
 
+// Internal libraries
+#include <readline/history.h>
 #include <libft/predicate.h>
 #include <libft/string.h>
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Checks if is a line only consists of whitespace.
@@ -67,3 +71,5 @@ void	add_line_to_history(char *line)
 	if (line_no_newl != NULL)
 		*line_no_newl = '\n';
 }
+
+/* ================================== END ================================== */

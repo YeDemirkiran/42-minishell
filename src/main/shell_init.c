@@ -6,20 +6,28 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:24:14 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/12 10:10:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 20:11:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <readline/readline.h>
 
+// Internal libraries
+#include <readline/readline.h>
 #include <libft/memory.h>
 
+// Project headers
 #include "modules/utils.h"
 
+// Local headers
 #include "get_pid.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Determines whether the current session is interactive.
@@ -143,3 +151,5 @@ int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 		rl_outstream = stderr;
 	return (0);
 }
+
+/* ================================== END ================================== */

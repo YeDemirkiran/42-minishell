@@ -6,22 +6,30 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/11 21:44:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 20:10:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include <readline/readline.h>
 
+// Internal libraries
+#include <readline/readline.h>
 #include <libft/string.h>
 #include <libft/write.h>
 #include <get_next_line.h>
 
+// Project headers
 #include "g_sig.h"
 
+// Local headers
 #include "read_input_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes the current and new inputs, adds newline to the new input
@@ -143,3 +151,5 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt,
 	}
 	return (input);
 }
+
+/* ================================== END ================================== */

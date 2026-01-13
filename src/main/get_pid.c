@@ -6,19 +6,26 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 11:33:50 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 22:13:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 19:59:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <unistd.h>
 #include <fcntl.h>
 
+// Internal libraries
 #include <libft/converter.h>
 #include <libft/memory.h>
 
+// Macros
 #ifndef GETPID_BUFFER_SIZE
 # define GETPID_BUFFER_SIZE 256
 #endif
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Returns the shell's own PID by reading the /proc/self/stat file.
@@ -45,3 +52,5 @@ int	get_pid(void)
 		return (-1);
 	return (pid);
 }
+
+/* ================================== END ================================== */

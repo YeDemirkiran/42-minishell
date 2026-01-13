@@ -6,28 +6,30 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/13 16:04:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 20:01:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
 #include <errno.h>
-#include <readline/readline.h>
 
-#include <libft/linked_list.h>
-#include <libft/string.h>
-#include <libft/predicate.h>
+// Internal libraries
+#include <readline/readline.h>
+#include <libft.h>
 #include <get_next_line.h>
 #include <minishell_lb.h>
 #include <gb.h>
 
+// Project headers
 #include "macros/m_colors.h"
 #include "structs/s_ast.h"
 #include "structs/s_shell.h"
-
 #include "modules/lexer.h"
 #include "modules/ast.h"
 #include "modules/parser.h"
@@ -36,13 +38,15 @@
 #include "modules/builtin.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
-
 #include "g_sig.h"
 
+// Local headers
 #include "../lexer/token.h"
 #include "read_input.h"
 #include "history.h"
 #include "shell_init.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Prints an optional exit messsage depending on 'interactive'
@@ -140,3 +144,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	shell_exit(shell.exit_status, shell);
 }
+
+/* ================================== END ================================== */
