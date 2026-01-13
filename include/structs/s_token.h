@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:11:25 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/03 19:08:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 09:49:51 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -44,6 +44,5 @@ typedef struct s_token
 	t_token_type	type;
 	t_token_data	data;
 }	t_token;
-
 
 #endif

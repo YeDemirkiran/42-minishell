@@ -6,13 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:43:16 by yademirk          #+#    #+#             */
-/*   Updated: 2025/09/20 23:43:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 09:50:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #ifndef T_BOOL_H
 # define T_BOOL_H
 
-typedef unsigned char t_bool;
+typedef unsigned char	t_bool;
 
 #endif
