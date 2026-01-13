@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/12 10:10:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 16:04:19 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -130,7 +130,7 @@ int	main(int argc, char **argv, char **envp)
 			ast_free_tree(ast);
 			continue ;
 		}
-		if(ast->type == AST_COMMAND && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
+		if(ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
 		else
 			shell.exit_status = executor(ast, &(shell.env), 0, 1);

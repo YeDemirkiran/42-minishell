@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/13 11:21:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 16:02:10 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -98,6 +98,8 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 			if (redir_result != 1)
 				exit(EXIT_FAILURE);
 		}
+		if (ast->data->ast_command.arguments == NULL)
+			exit(EXIT_SUCCESS);
 		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 		{
 			run_builtin(ast, &(*list)->envp_char, &(*list)->envp_list);
