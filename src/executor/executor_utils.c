@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/07 19:16:12 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/13 11:06:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "stdio.h"
 #include <libft.h>
@@ -25,6 +25,7 @@
 #include <minishell_lb.h>
 #include "modules/executor.h"
 #include "modules/builtin.h"
+#include "modules/utils.h"
 
 int isbuiltin(const char *command)
 {
@@ -85,7 +86,7 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 	clear_arr(&tmp);
 }
 
-void run_redirs(t_list **redirs)
+int run_redirs(t_list **redirs)
 {
 	int fd;
 	t_redirection *redir;
@@ -100,10 +101,16 @@ void run_redirs(t_list **redirs)
 		fd = open(redir->path, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	if (redir->redir_type == REDIR_HEREDOC)
 		unlink(redir->path);
+	if (fd < 0)
+	{
+		error_message("minishell", redir->path, NULL);
+		return (0);
+	}
 	if (fd >= 0)
 		dup2(fd, redir->target_fd);
 	(*redirs) = (*redirs)->next;
 	close(fd);
+	return (1);
 }
 
 char *command_path(t_ast *ast)

@@ -6,13 +6,14 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/12 18:03:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 11:21:34 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #define _GNU_SOURCE
 #include "stdio.h"
 #include <libft.h>
+#include <errno.h>
 #include "stdlib.h"
 #include "unistd.h"
 #include "string.h"
@@ -28,6 +29,7 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/signal.h"
+#include "modules/utils.h"
 /**
 * ? This func close all parent fds in child (without system fd 0,1,2).
 * *	Mean when use for example cat | ls, cat need input but does not have input, ls working fine and will be finished.
@@ -78,6 +80,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	pid_t pid;
 	t_list *redirs;
 	char **args;
+	int		redir_result;
 
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	pid = fork();
@@ -90,15 +93,22 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		close_child_user_fd();
 		redirs = ast->data->ast_command.redirs;
 		while (redirs != NULL)
-			run_redirs(&redirs);
+		{
+			redir_result = run_redirs(&redirs);
+			if (redir_result != 1)
+				exit(EXIT_FAILURE);
+		}
 		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 		{
 			run_builtin(ast, &(*list)->envp_char, &(*list)->envp_list);
 			exit(EXIT_SUCCESS);
 		}
 		execve(command_path(ast), args, (*list)->envp_char);
-		perror("-babashell: command not found");
-		exit(EXIT_FAILURE);
+		if (errno == ENOENT)
+			error_message(args[0], NULL, "command not found\n");
+		else
+			error_message("minishell", args[0], NULL);
+		exit(errno_to_exit_code());
 	}
 	clear_arr(&args);
 	return pid;
