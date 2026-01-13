@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:29:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 21:34:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 11:05:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,6 +17,27 @@
 #include <libft/write.h>
 
 #include "structs/s_shell.h"
+
+/**
+ * @brief Writes an error message to STDERR with maximum 3 columns.
+ */
+void	error_message(char *shell_name, char *extra_field, char *custom_error)
+{
+	if (shell_name != NULL)
+	{
+		ft_putstr_fd(shell_name, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
+	if (extra_field != NULL)
+	{
+		ft_putstr_fd(extra_field, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
+	if (custom_error != NULL)
+		ft_putstr_fd(custom_error, STDERR_FILENO);
+	else if (errno != 0)
+		perror(NULL);
+}
 
 /**
  * @brief Prints out an error message with perror (or custom error message if present)
@@ -32,22 +53,7 @@ void	shell_error_message(t_shell shell,
 	shell_name = "minishell";
 	if (shell.args != NULL && shell.args[0] != NULL)
 		shell_name = shell.args[0];
-	ft_putstr_fd(shell_name, STDERR_FILENO);
-	if (extra_field != NULL)
-	{
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putstr_fd(extra_field, STDERR_FILENO);
-	}
-	if (custom_error != NULL)
-	{
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putstr_fd(custom_error, STDERR_FILENO);
-	}
-	else if (errno != 0)
-	{
-		ft_putstr_fd(": ", STDERR_FILENO);
-		perror(NULL);
-	}
+	error_message(shell_name, extra_field, custom_error);
 }
 
 /**

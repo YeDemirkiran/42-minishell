@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:32:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 09:47:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 11:06:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -29,6 +29,11 @@
 void	set_quote(char c, char *quote_addr);
 
 // error_handling.c
+/**
+ * @brief Writes an error message to STDERR with maximum 3 columns.
+ */
+void	error_message(char *shell_name, char *extra_field, char *custom_error);
+
 /**
  * @brief Prints out an error message with perror (or custom error
  * message if present) in this format:
