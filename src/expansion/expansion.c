@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 19:00:14 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 15:59:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -168,10 +168,9 @@ static int	expand_command_arguments(t_ast *ast, t_shell shell)
 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
 		return (2);
 	args = ast->data->ast_command.arguments;
-	if (args == NULL)
-		return (2);
-	if (expand_word_list(args, shell) != 1)
-		return (0);
+	if (args != NULL)
+		if (expand_word_list(args, shell) != 1)
+			return (0);
 	redirs = ast->data->ast_command.redirs;
 	if (redirs != NULL)
 		if (expand_redir_list(redirs, shell) != 1)

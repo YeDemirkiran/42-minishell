@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 22:09:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 15:56:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -182,7 +182,7 @@ int	perform_word_split(t_ast *ast)
 		return (2);
 	if (ast->type == AST_COMMAND)
 	{
-		if (split_word_args(&(ast->data->ast_command.arguments)) != 1)
+		if (split_word_args(&(ast->data->ast_command.arguments)) == 0)
 			return (0);
 	}
 	if (ast->left != NULL)

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 21:50:43 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 22:17:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/13 15:58:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -107,10 +107,9 @@ static int	tilde_expand_command(t_ast *ast, t_envp_list **list)
 	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
 		return (2);
 	args = ast->data->ast_command.arguments;
-	if (args == NULL)
-		return (2);
-	if (expand_tilde_word_list(args, list) != 1)
-		return (0);
+	if (args != NULL)
+		if (expand_tilde_word_list(args, list) != 1)
+			return (0);
 	redirs = ast->data->ast_command.redirs;
 	if (redirs != NULL)
 		if (expand_tilde_redir_list(redirs, list) != 1)
