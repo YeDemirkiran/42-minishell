@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/14 20:32:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/14 20:42:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -161,7 +161,7 @@ static int	expand_redir_list(t_list *node, t_shell shell)
  * and then performs expansion on it.
  * @return 0 on failure, 1 on success, 2 on NULL ast parameter.
  */
-static int	expand_command_arguments(t_ast *ast, t_shell shell)
+static int	expand_vars_in_command(t_ast *ast, t_shell shell)
 {
 	t_list	*args;
 	t_list	*redirs;
@@ -204,23 +204,23 @@ static void	print_command_args(t_ast *ast)
  * @brief Takes a syntax tree and recursively expands arguments in it.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-static int	perform_expansion(t_ast *root, t_shell shell)
+static int	perform_variable_expansion(t_ast *root, t_shell shell)
 {
 	if (root == NULL)
 		return (2);
 	if (root->type == AST_COMMAND)
 	{
-		if (expand_command_arguments(root, shell) != 1)
+		if (expand_vars_in_command(root, shell) != 1)
 			return (0);
 	}
 	if (root->left != NULL)
 	{
-		if (perform_expansion(root->left, shell) != 1)
+		if (perform_variable_expansion(root->left, shell) != 1)
 			return (0);
 	}
 	if (root->right != NULL)
 	{
-		if (perform_expansion(root->right, shell) != 1)
+		if (perform_variable_expansion(root->right, shell) != 1)
 			return (0);
 	}
 	return (1);
@@ -268,7 +268,7 @@ int	expansion(t_ast *root, t_shell shell)
 	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
 	if (perform_tilde_expansion(root, &(shell.env->envp_list)) != 1)
 		return (0);
-	if (perform_expansion(root, shell) != 1)
+	if (perform_variable_expansion(root, shell) != 1)
 		return (0);
 	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
 	if (perform_word_split(root) != 1)
