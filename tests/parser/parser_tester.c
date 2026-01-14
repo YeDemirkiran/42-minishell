@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/01 14:16:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/14 16:12:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -197,13 +197,14 @@ t_test_result	conduct_parser_test(t_parser_test test)
 	t_bool	result;
 	static t_test_result test_result;
 	t_list	*list;
+	static t_shell	shell;
 
 	printf("Test %i.%i: %s\n", test.major_number, test.minor_number, test.name);
 
 	printf("Calling parse()...\n");
 	printf("=============================================================\n");
 	list = token_list_to_linked_list(test.tokens, test.token_length);
-	retrieved_ast = parse(list);
+	retrieved_ast = parse(list, &shell);
 	printf("=============================================================\n\n");
 
 	result = compare_asts(test.expected_ast, retrieved_ast);
