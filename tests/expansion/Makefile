@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/19 20:56:36 by yademirk          #+#    #+#              #
-#    Updated: 2026/01/03 23:43:09 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/14 16:18:39 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -23,9 +23,9 @@ GNL_PATH = $(LIB_PATH)/get_next_line
 GB_PATH = $(LIB_PATH)/garbage_collector
 EXP_PATH = ../../src/expansion
 
-SRC = ./expansion_tester.c $(EXP_PATH)/*.c ../../src/ast/*.c
+SRC := $(filter-out ../../src/main/main.c, $(wildcard ../../src/**/*.c)) ./expansion_tester.c
 INC_FLAGS = -I./ -I../../include/ -I$(LIBFT_PATH)/include -I$(MINILB_PATH)/includes -I$(GNL_PATH)/includes -I$(GB_PATH)
-LIB_FLAGS = -L$(LIBFT_PATH) -L$(MINILB_PATH) -L$(GB_PATH) -l:minishell_lb.a -lgb -lft
+LIB_FLAGS = -L$(LIBFT_PATH) -L$(MINILB_PATH) -L$(GB_PATH) -L$(GNL_PATH) -l:minishell_lb.a -lgb -l:gnl.a -lft -lreadline
 
 all: $(NAME)
 
