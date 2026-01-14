@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/28 16:00:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 22:09:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/14 15:38:52 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -17,6 +17,8 @@
 #include <libft/memory.h>
 
 #include "structs/s_ast.h"
+#include "enums/e_redir_type.h"
+#include "structs/s_redirection.h"
 #include "modules/utils.h"
 
 /**
@@ -58,12 +60,30 @@ static void	remove_quotes_args(t_list *args)
 	}
 }
 
+static void	remove_quotes_redirs(t_list *redirs)
+{
+	t_redirection	*redir;
+
+	if (redirs == NULL)
+		return ;
+	while (redirs != NULL)
+	{
+		redir = (t_redirection *)(redirs->content);
+		if (redir != NULL && redir->redir_type != REDIR_HEREDOC)
+			remove_quotes(redir->path);
+		redirs = redirs->next;
+	}
+}
+
 void	perform_quote_removal(t_ast *ast)
 {
 	if (ast == NULL)
 		return ;
 	if (ast->type == AST_COMMAND)
+	{
 		remove_quotes_args(ast->data->ast_command.arguments);
+		remove_quotes_redirs(ast->data->ast_command.redirs);
+	}
 	if (ast->left != NULL)
 		perform_quote_removal(ast->left);
 	if (ast->right != NULL)
