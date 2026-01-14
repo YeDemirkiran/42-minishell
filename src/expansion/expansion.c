@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 15:59:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/14 15:59:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,6 +18,7 @@
 #include <libft/predicate.h>
 
 #include "structs/s_ast.h"
+#include "enums/e_redir_type.h"
 #include "structs/s_redirection.h"
 #include "modules/ast.h"
 

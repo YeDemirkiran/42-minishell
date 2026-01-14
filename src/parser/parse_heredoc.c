@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/12 18:00:42 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/14 16:00:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -154,10 +154,10 @@ static int	read_heredoc(char *delimiter, int fd, t_shell shell)
 			return (0);
 		if (line == NULL)
 			return (check_errno_and_print_error());
-		if (expand_delimiter(should_expand, &line, shell) != 1)
-			return (0);
 		if (is_delimiter(line, delimiter) == 1)
 			break ;
+		if (expand_delimiter(should_expand, &line, shell) != 1)
+			return (0);
 		ft_putendl_fd(line,  fd);
 		free(line);
 	}
