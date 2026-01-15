@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 13:22:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 13:29:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 13:43:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,87 +96,6 @@ static char	*get_expanded_word(char *str, t_list *expansion_data)
 }
 
 /**
- * @brief Takes a list node, checks if the content needs
- * to be expanded and does so.
- * @return 0 on failure, 1 on success, 2 on NULL node.
- */
-static int	expand_word_list(t_list *node, t_shell shell)
-{
-	char	*word;
-	t_list	*data;
-
-	if (node == NULL || node->content == NULL)
-		return (2);
-	while (node != NULL)
-	{
-		word = (char *)(node->content);
-		data = get_expansion_data(word, shell);
-		if (data != NULL)
-		{
-			word = get_expanded_word(word, data);
-			ft_lstclear(&data, free_expansion_data);
-			free(node->content);
-			node->content = (void *)word;
-		}
-		else if (errno != 0)
-			return (0);
-		node = node->next;
-	}
-	return (1);
-}
-
-static int	expand_redir_list(t_list *node, t_shell shell)
-{
-	t_list			*data;
-	t_redirection	*redir;
-	char			*word;
-
-	if (node == NULL || node->content == NULL)
-		return (2);
-	redir = (t_redirection *)(node->content);
-	if (redir->path == NULL)
-		return (2);
-	while (node != NULL)
-	{
-		data = get_expansion_data(redir->path, shell);
-		if (data != NULL)
-		{
-			word = get_expanded_word(redir->path, data);
-			ft_lstclear(&data, free_expansion_data);
-			free(redir->path);
-			redir->path = word;
-		}
-		else if (errno != 0)
-			return (0);
-		node = node->next;
-	}
-	return (1);
-}
-
-/**
- * @brief Takes an AST node, checks if it's of type AST_COMMAND
- * and then performs expansion on it.
- * @return 0 on failure, 1 on success, 2 on NULL ast parameter.
- */
-static int	expand_vars_in_command(t_ast *ast, t_shell shell)
-{
-	t_list	*args;
-	t_list	*redirs;
-
-	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
-		return (2);
-	args = ast->data->ast_command.arguments;
-	if (args != NULL)
-		if (expand_word_list(args, shell) != 1)
-			return (0);
-	redirs = ast->data->ast_command.redirs;
-	if (redirs != NULL)
-		if (expand_redir_list(redirs, shell) != 1)
-			return (0);
-	return (1);
-}
-
-/**
  * @brief Takes a string, performs expansion on it if it's needed and
  * replaces the old one with the new one.
  */
@@ -202,6 +121,72 @@ int	expand_and_replace_string(char **str_ptr, t_shell shell)
 		return (0);
 	free(*str_ptr);
 	*str_ptr = new;
+	return (1);
+}
+
+/**
+ * @brief Takes a list node, checks if the content needs
+ * to be expanded and does so.
+ * @return 0 on failure, 1 on success, 2 on NULL node.
+ */
+static int	expand_word_list(t_list *node, t_shell shell)
+{
+	char	*word;
+
+	if (node == NULL || node->content == NULL)
+		return (2);
+	while (node != NULL)
+	{
+		word = (char *)(node->content);
+		if (expand_and_replace_string(&word, shell) == 0)
+			return (0);
+		node->content = word;
+		node = node->next;
+	}
+	return (1);
+}
+
+static int	expand_redir_list(t_list *node, t_shell shell)
+{
+	t_redirection	*redir;
+	char			*word;
+
+	if (node == NULL || node->content == NULL)
+		return (2);
+	while (node != NULL)
+	{
+		redir = (t_redirection *)(node->content);
+		node = node->next;
+		if (redir->path == NULL)
+			continue ;
+		word = redir->path;
+		if (expand_and_replace_string(&word, shell) == 0)
+			return (0);
+		redir->path = word;
+	}
+	return (1);
+}
+
+/**
+ * @brief Takes an AST node, checks if it's of type AST_COMMAND
+ * and then performs expansion on it.
+ * @return 0 on failure, 1 on success, 2 on NULL ast parameter.
+ */
+static int	expand_vars_in_command(t_ast *ast, t_shell shell)
+{
+	t_list	*args;
+	t_list	*redirs;
+
+	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
+		return (2);
+	args = ast->data->ast_command.arguments;
+	if (args != NULL)
+		if (expand_word_list(args, shell) != 1)
+			return (0);
+	redirs = ast->data->ast_command.redirs;
+	if (redirs != NULL)
+		if (expand_redir_list(redirs, shell) != 1)
+			return (0);
 	return (1);
 }
 
