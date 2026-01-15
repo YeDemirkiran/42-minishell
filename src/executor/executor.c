@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/13 16:02:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 15:51:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #define _GNU_SOURCE
 #include "stdio.h"
@@ -106,7 +106,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 			exit(EXIT_SUCCESS);
 		}
 		execve(command_path(ast), args, (*list)->envp_char);
-		if (errno == ENOENT)
+		if (errno == ENOENT || args[0][0] == '\0')
 			error_message(args[0], NULL, "command not found\n");
 		else
 			error_message("minishell", args[0], NULL);
