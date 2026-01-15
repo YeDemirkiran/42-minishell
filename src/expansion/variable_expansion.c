@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 13:22:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 13:43:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 13:48:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,12 +109,7 @@ int	expand_and_replace_string(char **str_ptr, t_shell shell)
 	errno = 0;
 	data = get_expansion_data(*str_ptr, shell);
 	if (data == NULL)
-	{
-		if (errno != 0)
-			return (0);
-		else
-			return (1);
-	}
+		return (errno == 0);
 	new = get_expanded_word(*str_ptr, data);
 	ft_lstclear(&data, free_expansion_data);
 	if (new == NULL && errno != 0)

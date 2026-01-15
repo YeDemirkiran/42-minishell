@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_data_utils.h                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:24:31 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 23:55:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 14:06:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef EXPANSION_DATA_UTILS_H
 # define EXPANSION_DATA_UTILS_H
@@ -18,14 +18,6 @@
 # include <libft/linked_list.h>
 
 # include "structs/s_shell.h"
-
-/**
- * @brief Checks whether a word starting from index 0 abides by the
- * minishell variable rules.
- * @return 0 if the word is not a valid variable, 1 otherwise.
- * @note Variables can only consist of alphanumeric values and the '_' symbol.
- */
-int		is_variable_valid(char *word);
 
 /**
  * @brief Saves an expansion data block of type WORD
