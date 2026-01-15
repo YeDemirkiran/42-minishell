@@ -1,20 +1,22 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 09:49:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:45:50 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef EXPANSION_H
 # define EXPANSION_H
 
 # include "structs/s_ast.h"
 # include "structs/s_shell.h"
+
+# include "../../src/expansion/variable_utils.h"
 
 /**
  * @brief Takes a string and removes outer-level quotes from it.
