@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 09:46:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:25:01 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
@@ -39,6 +39,7 @@ int			add_variable_on_envplist(t_envp_list **list, t_list *command);
 int			cd(t_envp_list **list, t_ast *ast);
 void		pwd(void);
 void		env(t_envp_list **list);
+int			echo(t_ast *ast);
 
 typedef struct s_unset_god_list
 {

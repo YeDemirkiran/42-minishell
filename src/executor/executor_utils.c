@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/13 11:06:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:29:43 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <libft.h>
@@ -29,34 +29,20 @@
 
 int isbuiltin(const char *command)
 {
-	char **b_names;
-	b_names = ft_split("cd pwd echo env export unset", ' ');
-	if(ft_strcmp(command, b_names[1]) == 0)
-	{
-		clear_arr(&b_names);
+	if(!ft_strcmp(command, "cd"))
 		return 1;
-	}
-	if(ft_strcmp(command, b_names[0]) == 0)
-	{
-		clear_arr(&b_names);
+	else if(!ft_strcmp(command, "export"))
 		return 1;
-	}
-	if(ft_strcmp(command, b_names[3]) == 0)
-	{
-		clear_arr(&b_names);
+	else if(!ft_strcmp(command, "env"))
 		return 1;
-	}
-	if(ft_strcmp(command, b_names[4]) == 0)
-	{
-		clear_arr(&b_names);
+	else if(!ft_strcmp(command, "echo"))
 		return 1;
-	}
-	if(ft_strcmp(command, b_names[5]) == 0)
-	{
-		clear_arr(&b_names);
+	else if(!ft_strcmp(command, "exit"))
 		return 1;
-	}
-	clear_arr(&b_names);
+	else if(!ft_strcmp(command, "pwd"))
+		return 1;
+	else if(!ft_strcmp(command, "unset"))
+		return 1;
 	return 0;
 }
 
@@ -81,6 +67,8 @@ void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
 			export(envp_list, ast);
 		else if(!ft_strncmp("unset", command, len))
 			unset(envp_list, ast);
+		else if(!ft_strncmp("echo", command, len))
+			echo(ast);
 	}
 	(*envp_char) = envp_list_to_char_arr((*envp_list));
 	clear_arr(&tmp);

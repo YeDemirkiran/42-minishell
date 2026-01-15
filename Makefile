@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
+#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: Invalid Date        by                   #+#    #+#              #
-#    Updated: 2026/01/15 14:08:04 by yademirk         ###   ########.fr        #
+#    Created: Invalid date        by                   #+#    #+#              #
+#    Updated: 2026/01/15 16:25:27 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,7 @@ EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
-BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c export_utils.c export_utils_2.c unset.c)
+BUILTIN_FILES = $(addprefix $(BUILTIN_DIR), cd.c cd_error_check.c pwd.c env.c export.c export_utils.c export_utils_2.c unset.c echo.c)
 
 ## Signals
 SIGNAL_DIR = signal/
