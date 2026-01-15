@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 17:54:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 13:15:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,6 +316,19 @@ static void	test_expansion(void)
 		TEST_EXPANSION_C("\"$VAR_NEWL_4\"", "\n", '.'),
 		TEST_EXPANSION_C("\"$VAR_NEWL_5\"", "\n\n\n\n\n", '.'),
 
+		// TEST 14: Quotes in variables
+		TEST_EXPANSION("$VAR_SQ_1", "'"),
+		TEST_EXPANSION("$VAR_SQ_2", "''''''''''"),
+		TEST_EXPANSION("$VAR_SQ_3", "'word'"),
+		TEST_EXPANSION("$VAR_SQ_4", "'word1''word2'"),
+		TEST_EXPANSION("$VAR_SQ_5", "'''''word1''''''''''word2'''''"),
+
+		TEST_EXPANSION("$VAR_DQ_1", "\""),
+		TEST_EXPANSION("$VAR_DQ_2", "\"\"\"\"\"\"\"\"\"\""),
+		TEST_EXPANSION("$VAR_DQ_3", "\"word\""),
+		TEST_EXPANSION("$VAR_DQ_4", "\"word1\"\"word2\""),
+		TEST_EXPANSION("$VAR_DQ_5", "\"\"\"\"\"word1\"\"\"\"\"\"\"\"\"\"word2\"\"\"\"\""),
+
 		// TEST 15: $? var
 		TEST_EXPANSION("$?", TEST_EXIT_STATUS_STR),
 		TEST_EXPANSION("       $?      ", TEST_EXIT_STATUS_STR),
@@ -353,6 +366,18 @@ static void	test_expansion(void)
 	setenv("VAR_NEWL_3", "\nword1\nword2\nword3\nword4\nword5\n", 1);
 	setenv("VAR_NEWL_4", "\n", 1);
 	setenv("VAR_NEWL_5", "\n\n\n\n\n", 1);
+
+	// SQ: Single quote, DQ: Double quote
+	setenv("VAR_SQ_1", "'", 1);
+	setenv("VAR_SQ_2", "''''''''''", 1);
+	setenv("VAR_SQ_3", "'word'", 1);
+	setenv("VAR_SQ_4", "'word1''word2'", 1);
+	setenv("VAR_SQ_5", "'''''word1''''''''''word2'''''", 1);
+	setenv("VAR_DQ_1", "\"", 1);
+	setenv("VAR_DQ_2", "\"\"\"\"\"\"\"\"\"\"", 1);
+	setenv("VAR_DQ_3", "\"word\"", 1);
+	setenv("VAR_DQ_4", "\"word1\"\"word2\"", 1);
+	setenv("VAR_DQ_5", "\"\"\"\"\"word1\"\"\"\"\"\"\"\"\"\"word2\"\"\"\"\"", 1);
 
 	printf("\nTesting expansion() function\n\n");
 
