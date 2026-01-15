@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   shell_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:24:14 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 20:11:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 12:31:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -128,6 +128,21 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 	return (0);
 }
 
+static void	shift_args_to_left(char **argv, int argc, int start)
+{
+	int	i;
+
+	if (argv == NULL || start < 0 || start >= argc)
+		return ;
+	i = start;
+	while (i < argc - 1)
+	{
+		argv[i] = argv[i + 1];
+		i++;
+	}
+	argv[i] = NULL;
+}
+
 /**
  * @brief Takes a pointer to a shell struct and initializes it.
  * Argument processing and script file opening also happens here.
@@ -145,7 +160,15 @@ int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 	shell->env->pid_list = ft_malloc(sizeof(t_pid_list), 0);
 	shell->env->pid_list->pid = 0;
 	if (argc > 1)
-		return (open_stdin_script(shell, argc, argv));
+	{
+		if (ft_strncmp(argv[1], "-s", 2) == 0)
+		{
+			shift_args_to_left(argv, argc, 1);
+			shell->argc -= 1;
+		}
+		else
+			return (open_stdin_script(shell, argc, argv));
+	}
 	shell->interactive = is_interactive();
 	if (shell->interactive == 1)
 		rl_outstream = stderr;
