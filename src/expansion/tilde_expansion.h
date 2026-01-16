@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 21:50:50 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/04 22:06:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:15:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -20,6 +20,6 @@
  * @brief Takes a syntax tree and expands tilde symbols in it.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-int	perform_tilde_expansion(t_ast *root, t_envp_list **list);
+int	perform_tilde_expansion(t_ast *root, t_shell shell);
 
 #endif

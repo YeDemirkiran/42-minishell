@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 11:08:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:16:55 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -52,7 +52,7 @@ int	expansion(t_ast *root, t_shell shell)
 		return (2);
 	// printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
 	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
-	if (perform_tilde_expansion(root, &(shell.env->envp_list)) != 1)
+	if (perform_tilde_expansion(root, shell) != 1)
 		return (0);
 	if (perform_variable_expansion(root, shell) != 1)
 		return (0);
