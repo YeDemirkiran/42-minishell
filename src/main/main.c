@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/13 21:15:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 15:54:24 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -138,9 +138,9 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		}
 		if(ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-			run_builtin(ast, &(shell.env->envp_char), &(shell.env->envp_list));
+			run_builtin(ast, &shell);
 		else
-			shell.exit_status = executor(ast, &(shell.env), 0, 1);
+			shell.exit_status = executor(ast, &shell, 0, 1);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 		//VALGRIND_DO_LEAK_CHECK;

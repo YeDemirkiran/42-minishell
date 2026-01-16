@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 11:16:55 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 22:34:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,7 +21,7 @@
 #include "remove_quotes.h"
 
 //TODO: Remove
-static void	print_command_args(t_ast *ast)
+/*static void	print_command_args(t_ast *ast)
 {
 	t_list	*lst;
 
@@ -39,7 +39,7 @@ static void	print_command_args(t_ast *ast)
 		lst = lst->next;
 	}
 	printf("\n");
-}
+}*/
 
 /**
  * @brief Starts the process of full expansion, word splitting
@@ -61,7 +61,7 @@ int	expansion(t_ast *root, t_shell shell)
 		return (0);
 	//printf("(DEBUG: Step 3.3: Quote Removal)\n");
 	perform_quote_removal(root);
-	printf("(DEBUG: Step 3.4: Printing New Variables)\n");
-	ast_traverse_preorder(root, print_command_args);
+	//printf("(DEBUG: Step 3.4: Printing New Variables)\n");
+	//ast_traverse_preorder(root, print_command_args);
 	return (1);
 }

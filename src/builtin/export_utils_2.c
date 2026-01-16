@@ -53,6 +53,12 @@ static char* take_variable_name(t_list *arguments)
 	clear_arr(&splitted_command);
 	return variable_name;
 }
+static void print_error(char *variable)
+{
+	write(2, "-babashell: export: '", 22);
+	write(2, variable, ft_strlen(variable));
+	write(2, "': not a valid identifier\n", 27);
+}
 
 static int is_variable_name_correct(char *variable_name)
 {
@@ -61,7 +67,8 @@ static int is_variable_name_correct(char *variable_name)
 	i = 0;
 	if(variable_name[0] == '=' || ft_isdigit(variable_name[0]))
 	{
-		printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+
+		print_error(variable_name);
 		free(variable_name);
 		return 1;
 	}
@@ -70,7 +77,7 @@ static int is_variable_name_correct(char *variable_name)
 		if(variable_name[i] == '_');
 		else if(!ft_isalnum(variable_name[i]))
 		{
-			printf("-babashell: export: '%s': not a valid identifier\n", variable_name);
+			print_error(variable_name);
 			free(variable_name);
 			return 1;
 		}
@@ -116,9 +123,11 @@ int add_variable_on_envplist(t_envp_list **list, t_list *command)
 {
 	t_list *tmp;
 	t_envp_list *envp_tmp;
+	int return_value;
 
 	envp_tmp = (*list);
 	tmp = command;
+	return_value = 0;
 	while(envp_tmp->next != NULL)
 		envp_tmp = envp_tmp->next;
 	while(tmp != NULL)
@@ -126,6 +135,7 @@ int add_variable_on_envplist(t_envp_list **list, t_list *command)
 		if(is_variable_name_correct(take_variable_name(tmp)))
 		{
 			tmp = tmp->next;
+			return_value = 1;
 			continue;
 		}
 		if(same_variable_update(list, take_variable_name(tmp), take_variable_value(tmp)) != 1)
@@ -135,5 +145,5 @@ int add_variable_on_envplist(t_envp_list **list, t_list *command)
 		}
 		tmp = tmp->next;
 	}
-	return 0;
+	return return_value;
 }

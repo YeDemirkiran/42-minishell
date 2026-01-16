@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/15 15:51:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 22:05:56 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #define _GNU_SOURCE
 #include "stdio.h"
@@ -47,6 +47,43 @@ static void close_child_user_fd(void)
 		fds++;
 	}
 }
+
+static void check_builtin_status(t_ast *ast, t_shell *shell)
+{
+	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
+	{
+		run_builtin(ast, shell);
+		exit(shell->exit_status);
+	}
+}
+
+static void print_exec_error_message(char **args, char **envp)
+{
+	char	*not_found_args[3];
+
+	if (errno == ENOENT || args[0][0] == '\0')
+	{
+		not_found_args[0] = "/usr/lib/command-not-found";
+		not_found_args[1] = args[0];
+		not_found_args[2] = NULL;
+		execve(not_found_args[0], not_found_args, envp);
+		error_message("minishell", args[0], "command not found\n");
+	}
+	else
+		error_message("minishell", args[0], NULL);
+}
+
+static void check_redirs_status_in_fork(t_list *redirs)
+{
+	int		redir_result;
+
+	while (redirs != NULL)
+	{
+		redir_result = run_redirs(&redirs);
+		if (redir_result != 1)
+			exit(EXIT_FAILURE);
+	}
+}
 /**
 * ? This func. create pid_list for executor
 * ! Example : cat | ls
@@ -75,12 +112,11 @@ static void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
  * * 		For run command for executor
  * @return	Forks pid
 */
-pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
 	char **args;
-	int		redir_result;
 
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	pid = fork();
@@ -92,31 +128,19 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		dup2(fd_out, 1);
 		close_child_user_fd();
 		redirs = ast->data->ast_command.redirs;
-		while (redirs != NULL)
-		{
-			redir_result = run_redirs(&redirs);
-			if (redir_result != 1)
-				exit(EXIT_FAILURE);
-		}
+		check_redirs_status_in_fork(redirs);
 		if (ast->data->ast_command.arguments == NULL)
 			exit(EXIT_SUCCESS);
-		if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-		{
-			run_builtin(ast, &(*list)->envp_char, &(*list)->envp_list);
-			exit(EXIT_SUCCESS);
-		}
-		execve(command_path(ast), args, (*list)->envp_char);
-		if (errno == ENOENT || args[0][0] == '\0')
-			error_message(args[0], NULL, "command not found\n");
-		else
-			error_message("minishell", args[0], NULL);
+		check_builtin_status(ast, shell);
+		execve(command_path(ast), args, shell->env->envp_char);
+		print_exec_error_message(args, shell->env->envp_char);
 		exit(errno_to_exit_code());
 	}
 	clear_arr(&args);
 	return pid;
 }
 
-void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	int pipefd[2];
 	pid_t	pid;
@@ -125,15 +149,15 @@ void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		return ;
 	if(ast->type == AST_COMMAND)
 	{
-		pid = run_command(ast, list, fd_in, fd_out);
-		create_pid_list((*list)->pid_list, pid);
+		pid = run_command(ast, shell, fd_in, fd_out);
+		create_pid_list(shell->env->pid_list, pid);
 	}
 	else if (ast->type == AST_PIPE)
 	{
 		pipe(pipefd);
-		exec_utils(ast->left, list, fd_in, pipefd[1]);
+		exec_utils(ast->left, shell, fd_in, pipefd[1]);
 		close(pipefd[1]);
-		exec_utils(ast->right, list, pipefd[0], fd_out);
+		exec_utils(ast->right, shell, pipefd[0], fd_out);
 		close(pipefd[0]);
 	}
 	return ;
@@ -182,27 +206,27 @@ static void	print_signal_message(int sig, int status)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
-int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	t_pid_list	*tmp_pid_list;
 	int			exit_status;
 	int			sig;
 
-	exec_utils(ast, list, fd_in, fd_out);
+	exec_utils(ast, shell, fd_in, fd_out);
 	exit_status = 0;
-	tmp_pid_list = (*list)->pid_list;
+	tmp_pid_list = shell->env->pid_list;
 	while (tmp_pid_list != NULL)
 	{
 		waitpid(tmp_pid_list->pid, &exit_status, 0);
 		tmp_pid_list = tmp_pid_list->next;
 	}
-	(*list)->pid_list->pid = 0;
 	if (WIFSIGNALED(exit_status))
 	{
 		sig = WTERMSIG(exit_status);
 		print_signal_message(sig, exit_status);
 		return (128 + sig);
 	}
+	shell->env->pid_list->pid = 0;
 	return (WEXITSTATUS(exit_status));
 }
 

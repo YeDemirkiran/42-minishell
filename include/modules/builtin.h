@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 09:46:28 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 16:37:30 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
@@ -32,13 +32,14 @@ int			is_oldpwd_set(t_envp_list *list, char *input);
 /*CD ERROR CHECK*/
 /*EXPORT*/
 void		print_list(t_envp_list **list);
-void		export(t_envp_list **list, t_ast *ast);
+int			export(t_envp_list **list, t_ast *ast);
 t_envp_list	*copy_envplist(t_envp_list *source);
 int			add_variable_on_envplist(t_envp_list **list, t_list *command);
 /*EXPORT*/
 int			cd(t_envp_list **list, t_ast *ast);
 void		pwd(void);
 void		env(t_envp_list **list);
+int			echo(t_ast *ast);
 
 typedef struct s_unset_god_list
 {
