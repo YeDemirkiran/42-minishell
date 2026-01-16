@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 16:23:35 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/16 22:05:56 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #define _GNU_SOURCE
 #include "stdio.h"
@@ -57,10 +57,18 @@ static void check_builtin_status(t_ast *ast, t_shell *shell)
 	}
 }
 
-static void print_exec_error_message(char **args)
+static void print_exec_error_message(char **args, char **envp)
 {
+	char	*not_found_args[3];
+
 	if (errno == ENOENT || args[0][0] == '\0')
-		error_message(args[0], NULL, "command not found\n");
+	{
+		not_found_args[0] = "/usr/lib/command-not-found";
+		not_found_args[1] = args[0];
+		not_found_args[2] = NULL;
+		execve(not_found_args[0], not_found_args, envp);
+		error_message("minishell", args[0], "command not found\n");
+	}
 	else
 		error_message("minishell", args[0], NULL);
 }
@@ -125,7 +133,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 			exit(EXIT_SUCCESS);
 		check_builtin_status(ast, shell);
 		execve(command_path(ast), args, shell->env->envp_char);
-		print_exec_error_message(args);
+		print_exec_error_message(args, shell->env->envp_char);
 		exit(errno_to_exit_code());
 	}
 	clear_arr(&args);
