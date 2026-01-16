@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 11:39:31 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/16 16:01:09 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,31 +46,31 @@ int isbuiltin(const char *command)
 	return 0;
 }
 
-void run_builtin(t_ast *ast, char ***envp_char, t_envp_list **envp_list)
+void run_builtin(t_ast *ast, t_shell *shell)
 {
 	char	**tmp;
 	char	*command;
 	size_t	len;
 
-	tmp = (*envp_char);
+	tmp = shell->env->envp_char;
 	command = (char *)(ast->data->ast_command.arguments->content);
 	len = ft_strlen(command);
 	if(isbuiltin(command))
 	{
 		if(!ft_strncmp("cd", command, len))
-			cd(envp_list, ast);
+		shell->exit_status = cd(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("pwd", command, len))
 			pwd();
 		else if(!ft_strncmp("env", command, len))
-			env(envp_list);
+			env(&shell->env->envp_list);
 		else if(!ft_strncmp("export", command, len))
-			export(envp_list, ast);
+			export(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("unset", command, len))
-			unset(envp_list, ast);
+			unset(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("echo", command, len))
 			echo(ast);
 	}
-	(*envp_char) = envp_list_to_char_arr((*envp_list));
+	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
 	clear_arr(&tmp);
 }
 

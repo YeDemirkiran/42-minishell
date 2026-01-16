@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 11:37:14 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/16 16:23:35 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ static void close_child_user_fd(void)
 	}
 }
 
-static void check_builtin_status(t_ast *ast, char ***envp_char, t_envp_list **list)
+static void check_builtin_status(t_ast *ast, t_shell *shell)
 {
 	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
-		run_builtin(ast, envp_char, list);
-		exit(EXIT_SUCCESS);
+		run_builtin(ast, shell);
+		exit(shell->exit_status);
 	}
 }
 
@@ -104,7 +104,7 @@ static void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
  * * 		For run command for executor
  * @return	Forks pid
 */
-pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	pid_t pid;
 	t_list *redirs;
@@ -123,8 +123,8 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		check_redirs_status_in_fork(redirs);
 		if (ast->data->ast_command.arguments == NULL)
 			exit(EXIT_SUCCESS);
-		check_builtin_status(ast, &(*list)->envp_char, &(*list)->envp_list);
-		execve(command_path(ast), args, (*list)->envp_char);
+		check_builtin_status(ast, shell);
+		execve(command_path(ast), args, shell->env->envp_char);
 		print_exec_error_message(args);
 		exit(errno_to_exit_code());
 	}
@@ -132,7 +132,7 @@ pid_t run_command(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 	return pid;
 }
 
-void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	int pipefd[2];
 	pid_t	pid;
@@ -141,15 +141,15 @@ void exec_utils(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
 		return ;
 	if(ast->type == AST_COMMAND)
 	{
-		pid = run_command(ast, list, fd_in, fd_out);
-		create_pid_list((*list)->pid_list, pid);
+		pid = run_command(ast, shell, fd_in, fd_out);
+		create_pid_list(shell->env->pid_list, pid);
 	}
 	else if (ast->type == AST_PIPE)
 	{
 		pipe(pipefd);
-		exec_utils(ast->left, list, fd_in, pipefd[1]);
+		exec_utils(ast->left, shell, fd_in, pipefd[1]);
 		close(pipefd[1]);
-		exec_utils(ast->right, list, pipefd[0], fd_out);
+		exec_utils(ast->right, shell, pipefd[0], fd_out);
 		close(pipefd[0]);
 	}
 	return ;
@@ -198,27 +198,27 @@ static void	print_signal_message(int sig, int status)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
-int	executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out)
+int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	t_pid_list	*tmp_pid_list;
 	int			exit_status;
 	int			sig;
 
-	exec_utils(ast, list, fd_in, fd_out);
+	exec_utils(ast, shell, fd_in, fd_out);
 	exit_status = 0;
-	tmp_pid_list = (*list)->pid_list;
+	tmp_pid_list = shell->env->pid_list;
 	while (tmp_pid_list != NULL)
 	{
 		waitpid(tmp_pid_list->pid, &exit_status, 0);
 		tmp_pid_list = tmp_pid_list->next;
 	}
-	(*list)->pid_list->pid = 0;
 	if (WIFSIGNALED(exit_status))
 	{
 		sig = WTERMSIG(exit_status);
 		print_signal_message(sig, exit_status);
 		return (128 + sig);
 	}
+	shell->env->pid_list->pid = 0;
 	return (WEXITSTATUS(exit_status));
 }
 
