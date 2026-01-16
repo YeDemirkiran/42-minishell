@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   split_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 16:59:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:11:55 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -92,7 +92,7 @@ static t_list	*split_words(char *str, const char *ifs)
 	return (root);
 }
 
-static int	does_need_split(char *str, char *ifs)
+static int	does_need_split(char *str, const char *ifs)
 {
 	size_t	i;
 	char	quote;
@@ -197,17 +197,14 @@ static int	word_split_recursive(t_ast *ast, const char *ifs)
  */
 int	perform_word_split(t_ast *ast, t_shell shell)
 {
-	static char	*ifs;
-	int			result;
+	char	*ifs;
+	int		result;
 
 	if (ast == NULL)
 		return (2);
+	ifs = get_ifs(shell);
 	if (ifs == NULL)
-	{
-		ifs = get_ifs(shell);
-		if (ifs == NULL)
-			return (0);
-	}
+		return (0);
 	result = word_split_recursive(ast, ifs);
 	free(ifs);
 	return (result);

@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 13:28:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:08:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdio.h>
 
@@ -57,7 +57,7 @@ int	expansion(t_ast *root, t_shell shell)
 	if (perform_variable_expansion(root, shell) != 1)
 		return (0);
 	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
-	if (perform_word_split(root) != 1)
+	if (perform_word_split(root, shell) != 1)
 		return (0);
 	//printf("(DEBUG: Step 3.3: Quote Removal)\n");
 	perform_quote_removal(root);
