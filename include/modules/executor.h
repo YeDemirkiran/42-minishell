@@ -1,20 +1,19 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:23:43 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 10:18:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:39:06 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
 # include <minishell_lb.h>
-
 # include "structs/s_ast.h"
 /*BUILTIN NAMES*/
 
@@ -30,6 +29,7 @@ typedef struct s_god_struct_envp
 	char		**envp_char;
 	t_pid_list	*pid_list;
 }	t_god_struct_envp;
+
 
 int		executor(t_ast *ast, t_god_struct_envp **list, int fd_in, int fd_out);
 int		isbuiltin(const char *command);
