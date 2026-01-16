@@ -19,11 +19,13 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
-void export(t_envp_list **list, t_ast *ast)
+int export(t_envp_list **list, t_ast *ast)
 {
 	t_list *command;
 	t_envp_list *copy_list;
+	int return_value;
 
+	return_value = 0;
 	command = ast->data->ast_command.arguments;
 	if(command->next == NULL)
 	{
@@ -33,7 +35,7 @@ void export(t_envp_list **list, t_ast *ast)
 	else
 	{
 		command = command->next;
-		add_variable_on_envplist(list, command);
+		return_value = add_variable_on_envplist(list, command);
 	}
-	return ;
+	return return_value;
 }

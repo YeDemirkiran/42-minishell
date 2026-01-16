@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 16:01:09 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/16 16:38:09 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void run_builtin(t_ast *ast, t_shell *shell)
 		else if(!ft_strncmp("env", command, len))
 			env(&shell->env->envp_list);
 		else if(!ft_strncmp("export", command, len))
-			export(&shell->env->envp_list, ast);
+			shell->exit_status = export(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("unset", command, len))
 			unset(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("echo", command, len))
