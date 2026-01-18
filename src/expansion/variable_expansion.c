@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   variable_expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 13:22:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 13:48:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:34:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,7 +99,7 @@ static char	*get_expanded_word(char *str, t_list *expansion_data)
  * @brief Takes a string, performs expansion on it if it's needed and
  * replaces the old one with the new one.
  */
-int	expand_and_replace_string(char **str_ptr, t_shell shell)
+int	expand_and_replace_string(char **str_ptr, t_shell shell, int ignore_quotes)
 {
 	char	*new;
 	t_list	*data;
@@ -107,7 +107,7 @@ int	expand_and_replace_string(char **str_ptr, t_shell shell)
 	if (str_ptr == NULL || *str_ptr == NULL)
 		return (2);
 	errno = 0;
-	data = get_expansion_data(*str_ptr, shell);
+	data = get_expansion_data(*str_ptr, shell, ignore_quotes);
 	if (data == NULL)
 		return (errno == 0);
 	new = get_expanded_word(*str_ptr, data);
@@ -133,7 +133,7 @@ static int	expand_word_list(t_list *node, t_shell shell)
 	while (node != NULL)
 	{
 		word = (char *)(node->content);
-		if (expand_and_replace_string(&word, shell) == 0)
+		if (expand_and_replace_string(&word, shell, 1) == 0)
 			return (0);
 		node->content = word;
 		node = node->next;
@@ -155,7 +155,7 @@ static int	expand_redir_list(t_list *node, t_shell shell)
 		if (redir->path == NULL)
 			continue ;
 		word = redir->path;
-		if (expand_and_replace_string(&word, shell) == 0)
+		if (expand_and_replace_string(&word, shell, 1) == 0)
 			return (0);
 		redir->path = word;
 	}
