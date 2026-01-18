@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:57:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/19 00:02:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:13:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,10 +15,16 @@
 // Standard libraries
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 // Internal libraries
 #include <libft/memory.h>
 #include <libft/string.h>
+#include <libft/linked_list.h>
+
+// Project headers
+#include "enums/e_redir_type.h"
+#include "structs/s_redirection.h"
 
 // Definitions
 #ifndef TMP_HEREDOC_NAME
@@ -30,6 +36,29 @@
 #endif
 
 /* =============================== FUNCTIONS =============================== */
+
+/**
+ * @brief Takes a linked list of redirections and unlinks the path
+ * of HEREDOC redirections.
+ */
+void	clear_heredoc_tmp_files(t_list *redirs)
+{
+	t_redirection	*redir;
+	int				unlink_result;
+
+	while (redirs != NULL)
+	{
+		redir = (t_redirection *)(redirs->content);
+		if (redir != NULL && redir->redir_type == REDIR_HEREDOC)
+		{
+			unlink_result = unlink(redir->path);
+			if (unlink_result == -1)
+				perror("minishell: warning: "
+					"here-document temporary file: unlink");
+		}
+		redirs = redirs->next;
+	}
+}
 
 /**
  * @brief Generates a random here-document temporary file name at /tmp.

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/12 18:00:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:14:30 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,6 +21,7 @@
 
 #include "parse_result.h"
 #include "parse_heredoc.h"
+#include "parse_heredoc_utils.h"
 
 // Returns the default FD value for a redirection.
 static int	get_redir_default_fd(t_redir_type type)
@@ -88,25 +89,6 @@ static t_redirection	*create_redirection(t_list *token)
 		return (NULL);
 	}
 	return (redirection);
-}
-
-static void	clear_heredoc_tmp_files(t_list *redirs)
-{
-	t_redirection	*redir;
-	int				unlink_result;
-
-	while (redirs != NULL)
-	{
-		redir = (t_redirection *)(redirs->content);
-		if (redir != NULL && redir->redir_type == REDIR_HEREDOC)
-		{
-			unlink_result = unlink(redir->path);
-			if (unlink_result == -1)
-				perror("minishell: warning: "
-					"here-document temporary file: unlink");
-		}
-		redirs = redirs->next;
-	}
 }
 
 /**

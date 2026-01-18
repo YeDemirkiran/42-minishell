@@ -6,22 +6,25 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/19 00:03:46 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:06:34 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
+// Standard libraries
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
 
+// Project headers
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
 #include "modules/expansion.h"
 #include "g_sig.h"
 
+// Local headers
 #include "../main/read_input.h"
 #include "parse_heredoc_utils.h"
 

@@ -6,12 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 00:02:00 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/19 00:05:24 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:14:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #ifndef PARSE_HEREDOC_UTILS_H
 # define PARSE_HEREDOC_UTILS_H
+
+/**
+ * @brief Takes a linked list of redirections and unlinks the path
+ * of HEREDOC redirections.
+ */
+void	clear_heredoc_tmp_files(t_list *redirs);
 
 /**
  * @brief Generates a random here-document temporary file name at /tmp.
