@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 18:47:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/18 23:40:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -165,20 +165,6 @@ static t_parse_result	parse_simple_command(t_list *tokens, t_shell shell)
 }
 
 /**
- * @brief Parses a subshell.
- */
-static t_parse_result	parse_subshell(t_list *tokens)
-{
-	t_parse_result	result;
-
-	(void)tokens;
-	result.type = PARSE_RESULT_RUNTIME_ERROR;
-	result.ast = NULL;
-	result.current_token = NULL;
-	return (result);
-}
-
-/**
  * @brief Takes a token and parses it into either a simple command or
  * a subshell.
  *
@@ -198,8 +184,6 @@ t_parse_result	parse_command(t_list *tokens, t_shell shell)
 	else if (token->type == TOKEN_WORD
 		|| get_redir_type(token->type) != REDIR_NONE)
 		result = parse_simple_command(tokens, shell);
-	else if (token->type == TOKEN_PAREN_LEFT)
-		result = parse_subshell(tokens);
 	else
 		result = parse_syntax_error(tokens);
 	return (result);
