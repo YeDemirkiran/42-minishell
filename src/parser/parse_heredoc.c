@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/19 00:06:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:35:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -71,7 +71,7 @@ static int
 {
 	if (should_expand)
 	{
-		expand_and_replace_string(line_ptr, shell);
+		expand_and_replace_string(line_ptr, shell, 0);
 		if (*line_ptr == NULL && errno != 0)
 		{
 			perror("minishell: here-document");
