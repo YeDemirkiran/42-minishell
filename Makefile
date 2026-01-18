@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/18 23:47:55 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/19 00:04:16 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -51,7 +51,7 @@ LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_misc.c token
 
 ## Parser
 PARSER_DIR = parser/
-PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_simple_command.c parse_redirection.c parse_heredoc.c parse_pipeline.c parse_result.c)
+PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_simple_command.c parse_redirection.c parse_heredoc.c parse_heredoc_utils.c parse_pipeline.c parse_result.c)
 
 ## AST
 AST_DIR = ast/

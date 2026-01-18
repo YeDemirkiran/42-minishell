@@ -6,19 +6,16 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/14 16:00:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:03:46 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
+
+/* ================================ HEADERS ================================ */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <errno.h>
-
-#include <readline/readline.h>
-#include <libft/string.h>
-#include <libft/memory.h>
 
 #include "structs/s_redirection.h"
 #include "enums/e_redir_type.h"
@@ -26,67 +23,9 @@
 #include "g_sig.h"
 
 #include "../main/read_input.h"
+#include "parse_heredoc_utils.h"
 
-#ifndef TMP_HEREDOC_NAME
-# define TMP_HEREDOC_NAME "minishell-thd"
-#endif
-
-#ifndef TMP_HEREDOC_SUFFIX_LEN
-# define TMP_HEREDOC_SUFFIX_LEN 10
-#endif
-
-static char	*get_random_heredoc_path(void)
-{
-	static const char	hex[] = "0123456789abcdef";
-	char				suffix[TMP_HEREDOC_SUFFIX_LEN + 1];
-	char				*path;
-	int					fd;
-	ssize_t				read_len;
-
-	fd = open("/dev/urandom", O_RDONLY);
-	if (fd == -1)
-		return (NULL);
-	ft_bzero((void *)suffix, sizeof(suffix));
-	read_len = read(fd, suffix, (TMP_HEREDOC_SUFFIX_LEN & ~1) / 2);
-	if (read_len <= 0)
-	{
-		close(fd);
-		return (NULL);
-	}
-	while (--read_len >= 0)
-	{
-		suffix[read_len * 2] = hex[(unsigned char)suffix[read_len] >> 4];
-		suffix[read_len * 2 + 1] = hex[(unsigned char)suffix[read_len] & 0x0f];
-	}
-	if (close(fd) < 0)
-		return (NULL);
-	path = ft_strjoin("/tmp/" TMP_HEREDOC_NAME "-", suffix);
-	return (path);
-}
-
-static int	create_temp_heredoc_file(const char *path)
-{
-	int		fd;
-
-	if (path == NULL)
-		return (-1);
-	fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
-	return (fd);
-}
-
-static int	is_delimiter(const char *line, const char *delimiter)
-{
-	size_t	len;
-
-	if (line == NULL || delimiter == NULL)
-		return (0);
-	len = ft_strlen(line);
-	if (len > 0 && line[len - 1] == '\n')
-		len--;
-	if (len != ft_strlen(delimiter))
-		return (0);
-	return (ft_strncmp(line, delimiter, len) == 0);
-}
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes a delimiter and removes outer-level quotes from it. Does
@@ -108,16 +47,24 @@ static int	delimiter_remove_quotes(char *delimiter)
 	return (1);
 }
 
-static int	check_errno_and_print_error(void)
+/**
+ * @brief Checks errno and prints here-document EOF warning message.
+ * @return 0 if errno isn't 0, 1 if it's 0 and an additional EOF message.
+ */
+static int	print_heredoc_eof_warning(void)
 {
 	if (errno != 0)
 		return (0);
 	ft_putstr_fd("minishell: warning: here-document "
-			"delimited by end-of-file\n", STDERR_FILENO);
+		"delimited by end-of-file\n", STDERR_FILENO);
 	return (1);
 }
 
-static int	expand_delimiter(int should_expand, char **line_ptr, t_shell shell)
+/**
+ * @brief Expand here-document lines according to should_expand.
+ */
+static int
+	expand_heredoc_line(int should_expand, char **line_ptr, t_shell shell)
 {
 	if (should_expand)
 	{
@@ -153,12 +100,12 @@ static int	read_heredoc(char *delimiter, int fd, t_shell shell)
 		if (g_sig != 0)
 			return (0);
 		if (line == NULL)
-			return (check_errno_and_print_error());
+			return (print_heredoc_eof_warning());
 		if (is_delimiter(line, delimiter) == 1)
 			break ;
-		if (expand_delimiter(should_expand, &line, shell) != 1)
+		if (expand_heredoc_line(should_expand, &line, shell) != 1)
 			return (0);
-		ft_putendl_fd(line,  fd);
+		ft_putendl_fd(line, fd);
 		free(line);
 	}
 	if (line != NULL)
@@ -197,3 +144,5 @@ int	parse_heredoc(t_redirection *redir, t_shell shell)
 		return (0);
 	return (1);
 }
+
+/* ================================== END ================================== */
