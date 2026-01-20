@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/12 18:00:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 19:57:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -109,6 +109,24 @@ static void	clear_heredoc_tmp_files(t_list *redirs)
 	}
 }
 
+static t_parse_result	handle_heredoc(t_redirection *redir, t_shell shell,
+	t_list *redirs, t_list *token)
+{
+	int	heredoc_result;
+
+	if (redir->redir_type == REDIR_HEREDOC)
+	{
+		heredoc_result = parse_heredoc(redir, shell);
+		if (heredoc_result != 1)
+			clear_heredoc_tmp_files(redirs);
+		if (g_sig != 0)
+			return (parse_result(PARSE_RESULT_ABORT, NULL, NULL));
+		else if (heredoc_result != 1)
+			return (parse_runtime_error(token->next));
+	}
+	return (parse_success(NULL, NULL));
+}
+
 /**
  * @brief Takes a token and saves it in redirections linked list if it's
  * a redirection token.
@@ -119,7 +137,6 @@ t_parse_result
 	t_parse_result	result;
 	t_redirection	*redirection;
 	t_list			*redir_node;
-	int				heredoc_result;
 
 	result = is_redir_valid(token);
 	if (result.type != PARSE_RESULT_SUCCESS)
@@ -135,15 +152,8 @@ t_parse_result
 		return (parse_runtime_error(token->next));
 	}
 	ft_lstadd_back(redirs, redir_node);
-	if (redirection->redir_type == REDIR_HEREDOC)
-	{
-		heredoc_result = parse_heredoc(redirection, shell);
-		if (heredoc_result != 1)
-			clear_heredoc_tmp_files(*redirs);
-		if (g_sig != 0)
-			return (parse_result(PARSE_RESULT_ABORT, NULL, NULL));
-		else if (heredoc_result != 1)
-			return (parse_runtime_error(token->next));
-	}
+	result = handle_heredoc(redirection, shell, *redirs, token);
+	if (result.type != PARSE_RESULT_SUCCESS)
+		return (result);
 	return (parse_success(NULL, token->next->next));
 }
