@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 20:57:21 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 21:25:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 13:59:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -41,6 +41,25 @@ static void	print_help_message(void)
 		"	-h, --help: Displays this message\n"
 		"	-v, --version, --info: "
 		"Displays version and author info\n", STDERR_FILENO);
+}
+
+/**
+ * @brief Starts from a given index and shifts arguments to left
+ * one time.
+ */
+void	shift_args_to_left(char **argv, int argc, int start)
+{
+	int	i;
+
+	if (argv == NULL || start < 0 || start >= argc)
+		return ;
+	i = start;
+	while (i < argc - 1)
+	{
+		argv[i] = argv[i + 1];
+		i++;
+	}
+	argv[i] = NULL;
 }
 
 /**

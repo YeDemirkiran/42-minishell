@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   shell_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:24:14 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 12:31:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 13:57:33 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -26,6 +26,7 @@
 
 // Local headers
 #include "get_pid.h"
+#include "args.h"
 
 /* =============================== FUNCTIONS =============================== */
 
@@ -86,6 +87,16 @@ static int	check_script_eligibility(const char *path)
 	return (0);
 }
 
+static int	on_script_not_eligible(int result, t_shell shell,
+	char *file_name)
+{
+	if (result == 126 && errno != EISDIR && errno != EACCES)
+		shell_error_message(shell, file_name, "cannot execute binary file\n");
+	else
+		shell_error_message(shell, file_name, NULL);
+	return (result);
+}
+
 /**
  * @brief Opens the script from argv's second argument (index 1)
  * and redirects it to STDIN via dup2, and modifies the given shell struct
@@ -99,48 +110,25 @@ static int	open_stdin_script(t_shell *shell, int argc, char **argv)
 
 	result = check_script_eligibility(argv[1]);
 	if (result != 0)
-	{
-		if (result == 126 && errno != EISDIR && errno != EACCES)
-			shell_error_message(*shell, argv[1], "cannot execute binary file\n");
-		else
-			shell_error_message(*shell, argv[1], NULL);
-		return (result);
-	}
+		return (on_script_not_eligible(result, *shell, argv[1]));
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
 	{
 		shell_error_message(*shell, argv[1], NULL);
 		return (errno_to_exit_code());
 	}
+	result = dup2(fd, STDIN_FILENO);
 	if (fd != STDIN_FILENO)
-	{
-		result = dup2(fd, STDIN_FILENO);
 		close(fd);
-		if (result == -1)
-		{
-			shell_error_message(*shell, argv[1], NULL);
-			return (errno_to_exit_code());
-		}
+	if (result == -1)
+	{
+		shell_error_message(*shell, argv[1], NULL);
+		return (errno_to_exit_code());
 	}
 	shell->argc = argc - 1;
 	shell->args = argv + 1;
 	shell->interactive = 0;
 	return (0);
-}
-
-static void	shift_args_to_left(char **argv, int argc, int start)
-{
-	int	i;
-
-	if (argv == NULL || start < 0 || start >= argc)
-		return ;
-	i = start;
-	while (i < argc - 1)
-	{
-		argv[i] = argv[i + 1];
-		i++;
-	}
-	argv[i] = NULL;
 }
 
 /**
