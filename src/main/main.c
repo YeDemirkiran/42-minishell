@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/20 15:27:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 18:14:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -92,41 +92,55 @@ static void	init_main(t_shell *shell, int argc, char **argv, char **envp)
 	rl_event_hook = rl_event;
 }
 
+static int	main_prepare_input(t_shell *shell, char **input)
+{
+	char	*prompt;
+
+	install_prompt_signals();
+	prompt = rl_header(&(shell->env->envp_list), shell->env->envp_char);
+	*input = read_input(prompt, "> ", shell->interactive);
+	if (*input == NULL && (g_sig != SIGINT && errno != EINTR))
+	{
+		if (errno != 0)
+		{
+			shell_error_message(*shell, NULL, NULL);
+			shell_exit(errno_to_exit_code(), *shell);
+		}
+		return (1);
+	}
+	else if (g_sig == SIGINT && errno == EINTR)
+	{
+		shell->exit_status = 128 + g_sig;
+		errno = 0;
+		free(*input);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		return (2);
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 	char	*input;
 	t_list	*tokens;
 	t_ast	*ast;
-	char	*prompt;
+	int		result;
 
 	init_main(&shell, argc, argv, envp);
 	input = NULL;
 	while (1)
 	{
 		g_sig = 0;
-		install_prompt_signals();
-		prompt = rl_header(&(shell.env->envp_list), shell.env->envp_char);
-		input = read_input(prompt, "> ", shell.interactive);
-		if (input == NULL && (g_sig != SIGINT && errno != EINTR))
-		{
-			if (errno != 0)
-			{
-				shell_error_message(shell, NULL, NULL);
-				shell_exit(errno_to_exit_code(), shell);
-			}
+
+		result = main_prepare_input(&shell, &input);
+		if (result == 1)
 			break ;
-		}
-		else if (g_sig == SIGINT && errno == EINTR)
-		{
-			shell.exit_status = 128 + g_sig;
-			g_sig = 0;
-			errno = 0;
-			free(input);
-			rl_on_new_line();
-			rl_replace_line("", 0);
+		else if (result == 2)
 			continue ;
-		}
+
+		// F2 START
 		if (shell.interactive == 1)
 			add_line_to_history(input);
 		tokens = lexical_analyze(input);
@@ -146,6 +160,7 @@ int	main(int argc, char **argv, char **envp)
 			ast_free_tree(ast);
 			continue ;
 		}
+		// F2 END
 		if(ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 			run_builtin(ast, &shell);
 		else
