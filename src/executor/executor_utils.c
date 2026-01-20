@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/20 13:56:50 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 14:33:51 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void run_builtin(t_ast *ast, t_shell *shell)
 		else if(!ft_strncmp("unset", command, len))
 			unset(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("echo", command, len))
-			echo(ast);
+			shell->exit_status = echo(ast);
 		else if(!ft_strncmp("exit", command, len))
 			exit_builtin(ast, shell);
 	}
