@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/20 13:33:27 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 13:56:50 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ void run_builtin(t_ast *ast, t_shell *shell)
 			unset(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("echo", command, len))
 			echo(ast);
+		else if(!ft_strncmp("exit", command, len))
+			exit_builtin(ast, shell);
 	}
 	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
 	clear_arr(&tmp);

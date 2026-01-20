@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/20 13:34:15 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 13:56:32 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	if(args == NULL)
-		return ;
+		return -1;
 	pid = fork();
 	install_command_signals();
 	if(pid == 0)
