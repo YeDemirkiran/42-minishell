@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/20 18:14:37 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 18:34:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -120,11 +120,39 @@ static int	main_prepare_input(t_shell *shell, char **input)
 	return (0);
 }
 
+static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
+{
+	t_list	*tokens;
+
+	if (shell->interactive == 1)
+		add_line_to_history(input);
+	tokens = lexical_analyze(input);
+	free(input);
+	if (tokens == NULL)
+	{
+		if (errno != 0)
+		{
+			shell_error_message(*shell, "fatal error", NULL);
+			shell->exit_status = 1;
+		}
+		return (1);
+	}
+	*ast_addr = parse(tokens, shell);
+	free_tokens(&tokens);
+	if (*ast_addr == NULL)
+		return (1);
+	if (expansion(*ast_addr, *shell) != 1)
+	{
+		ast_free_tree(*ast_addr);
+		return (1);
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 	char	*input;
-	t_list	*tokens;
 	t_ast	*ast;
 	int		result;
 
@@ -139,28 +167,9 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		else if (result == 2)
 			continue ;
-
-		// F2 START
-		if (shell.interactive == 1)
-			add_line_to_history(input);
-		tokens = lexical_analyze(input);
-		free(input);
-		if (tokens == NULL)
-		{
-			if (errno != 0)
-				shell_error_message(shell, "fatal error", NULL);
+		result = prepare_ast(input, &shell, &ast);
+		if (result == 1)
 			continue ;
-		}
-		ast = parse(tokens, &shell);
-		free_tokens(&tokens);
-		if (ast == NULL)
-			continue ;
-		if (expansion(ast, shell) != 1)
-		{
-			ast_free_tree(ast);
-			continue ;
-		}
-		// F2 END
 		if(ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 			run_builtin(ast, &shell);
 		else
