@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/12 17:24:15 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 19:48:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -172,6 +172,21 @@ static t_parse_result	parse_token(t_list *tokens, t_shell shell)
 	return (result);
 }
 
+static void	on_parser_error(t_parse_result result, t_shell *shell)
+{
+	shell->exit_status = 1;
+	if (result.type == PARSE_RESULT_TOKEN_ERROR
+		|| result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
+	{
+		shell->exit_status = 2;
+		print_token_error(result);
+	}
+	else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
+		perror("minishell");
+	else
+		ft_putendl_fd("minishell: unkown error", 2);
+}
+
 /**
  * @brief Takes a list of tokens and parses it as a syntax tree.
  * @returns Full AST on success, NULL on failure.
@@ -194,17 +209,7 @@ t_ast	*parse(t_list *tokens, t_shell *shell)
 	}
 	else if (result.type != PARSE_RESULT_SUCCESS)
 	{
-		shell->exit_status = 1;
-		if (result.type == PARSE_RESULT_TOKEN_ERROR
-			|| result.type == PARSE_RESULT_TOKEN_UNCOMPLETE)
-		{
-			shell->exit_status = 2;
-			print_token_error(result);
-		}
-		else if (result.type == PARSE_RESULT_RUNTIME_ERROR && errno != 0)
-			perror("minishell");
-		else
-			ft_putendl_fd("minishell: unkown error", 2);
+		on_parser_error(result, shell);
 		return (NULL);
 	}
 	root = result.ast;
