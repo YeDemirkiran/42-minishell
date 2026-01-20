@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 20:10:40 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 14:11:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -115,6 +115,22 @@ char	*get_input_line(const char *prompt, int interactive)
 	return (str);
 }
 
+static int	check_new_input(const char *new, char **old, char quote)
+{
+	if (new == NULL)
+	{
+		if (*old == NULL)
+			return (0);
+		free(*old);
+		*old = NULL;
+		if (g_sig == SIGINT)
+			return (0);
+		print_uncompleted_eof_error(quote);
+		return (2);
+	}
+	return (1);
+}
+
 /**
  * @brief Prepares a multi-line input by the user
  * and returns it.
@@ -126,23 +142,18 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt,
 	char	*input;
 	char	*new;
 	char	quote;
+	int		res;
 
 	input = NULL;
 	while (1)
 	{
 		new = get_input_line(get_prompt(primary_prompt,
 					secondary_prompt, input), interactive);
-		if (new == NULL)
-		{
-			if (input == NULL)
-				break ;
-			free(input);
-			if (g_sig == SIGINT)
-				return (NULL);
-			input = NULL;
-			print_uncompleted_eof_error(quote);
+		res = check_new_input(new, &input, quote);
+		if (res == 0)
+			return (input);
+		else if (res == 2)
 			continue ;
-		}
 		if (concatenate_old_and_new_input(&input, new) != 1)
 			return (NULL);
 		quote = is_input_incomplete(input);
