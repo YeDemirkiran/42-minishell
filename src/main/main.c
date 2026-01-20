@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/20 18:34:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 18:53:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -149,6 +149,15 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	return (0);
 }
 
+static void	run_exec(t_ast *ast, t_shell *shell)
+{
+	if (ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
+		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
+		run_builtin(ast, shell);
+	else
+		shell->exit_status = executor(ast, shell, 0, 1);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
@@ -161,7 +170,6 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		g_sig = 0;
-
 		result = main_prepare_input(&shell, &input);
 		if (result == 1)
 			break ;
@@ -170,13 +178,9 @@ int	main(int argc, char **argv, char **envp)
 		result = prepare_ast(input, &shell, &ast);
 		if (result == 1)
 			continue ;
-		if(ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL && isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-			run_builtin(ast, &shell);
-		else
-			shell.exit_status = executor(ast, &shell, 0, 1);
+		run_exec(ast, &shell);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
-		//VALGRIND_DO_LEAK_CHECK;
 	}
 	shell_exit(shell.exit_status, shell);
 }
