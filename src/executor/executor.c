@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 22:05:56 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 13:34:15 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #define _GNU_SOURCE
 #include "stdio.h"
@@ -102,6 +102,8 @@ static void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
 		while(root_pid_list->next != NULL)
 			root_pid_list = root_pid_list->next;
 		root_pid_list->next = sort_malloc(sizeof(t_pid_list), 0);
+		if(root_pid_list->next == NULL)
+			return ;
 		root_pid_list->next->pid = pid;
 		root_pid_list = root_pid_list->next;
 		root_pid_list->next = NULL;
@@ -119,6 +121,8 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	char **args;
 
 	args = list_to_char_arr(ast->data->ast_command.arguments);
+	if(args == NULL)
+		return ;
 	pid = fork();
 	install_command_signals();
 	if(pid == 0)
@@ -154,7 +158,8 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	}
 	else if (ast->type == AST_PIPE)
 	{
-		pipe(pipefd);
+		if(pipe(pipefd) == -1)
+			return ;
 		exec_utils(ast->left, shell, fd_in, pipefd[1]);
 		close(pipefd[1]);
 		exec_utils(ast->right, shell, pipefd[0], fd_out);
@@ -212,6 +217,8 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	int			exit_status;
 	int			sig;
 
+	if(ast == NULL || shell == NULL)
+		return -1;
 	exec_utils(ast, shell, fd_in, fd_out);
 	exit_status = 0;
 	tmp_pid_list = shell->env->pid_list;

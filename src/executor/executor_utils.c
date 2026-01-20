@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 16:38:09 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 13:33:27 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,11 @@ char **list_to_char_arr(t_list *list)
 	while(tmp != NULL)
 	{
 		args[i] = ft_strdup((char *)tmp->content);
+		if(args[i] == NULL)
+		{
+			clear_arr(&args);
+			return NULL;
+		}
 		i++;
 		tmp = tmp->next;
 	}
