@@ -20,33 +20,6 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
-t_envp_list *copy_envplist(t_envp_list *source)
-{
-	t_envp_list *tmp;
-	t_envp_list *new_list;
-	t_envp_list *new_list_root;
-
-	tmp = source;
-	if(source == NULL)
-		return NULL;
-	new_list = sort_malloc(sizeof(t_envp_list), 0);
-	new_list_root = new_list;
-	while(tmp != NULL)
-	{
-		new_list->id_name = sort_term_strdup(tmp->id_name);
-		new_list->value = sort_term_strdup(tmp->value);
-		new_list->isvaluempty = tmp->isvaluempty;
-		if(tmp->next != NULL)
-		{
-			new_list->next = sort_malloc(sizeof(t_envp_list), 0);
-			new_list = new_list->next;
-		}
-		tmp = tmp->next;
-	}
-	new_list->next = NULL;
-	return new_list_root;
-}
-
 static t_envp_list *find_node_back_enplist(t_envp_list *source, t_envp_list *target)
 {
 	t_envp_list *tmp;
