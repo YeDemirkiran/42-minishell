@@ -33,6 +33,8 @@ static char* take_variable_value(t_list *arguments)
 	{
 		value++;
 		variable_value = ft_strdup((value));
+		if(variable_value == NULL)
+			return NULL;
 	}
 	return variable_value;
 }
@@ -49,8 +51,12 @@ static char* take_variable_name(t_list *arguments)
 		return ft_strdup(arguments->content);
 	}
 	splitted_command = ft_split(arguments->content, '=');
+	if(splitted_command == NULL)
+		return NULL;
 	variable_name = ft_strdup(splitted_command[0]);
 	clear_arr(&splitted_command);
+	if(variable_name == NULL)
+		return NULL;
 	return variable_name;
 }
 static void print_error(char *variable)
@@ -92,6 +98,8 @@ static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 	(*list) = (*list)->next;
 	(*list)->id_name = take_variable_name(command);
 	(*list)->value = take_variable_value(command);
+	if((*list)->id_name == NULL || (*list)->value == NULL)
+		return ;
 	if(ft_strchr(command->content, '='))
 		(*list)->isvaluempty = 0;
 	else

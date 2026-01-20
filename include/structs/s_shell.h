@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:20:17 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 15:53:06 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 14:00:08 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define S_SHELL_H
 
 # include "modules/executor.h"
+
+void	shell_exit(unsigned char status, t_shell shell);
 
 typedef struct s_shell
 {

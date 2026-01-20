@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 16:37:30 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 13:56:15 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <dirent.h>
-
+#include <structs/s_shell.h>
 # include <libft.h>
 # include <s_gb.h>
 # include <minishell_lb.h>
@@ -40,6 +40,7 @@ int			cd(t_envp_list **list, t_ast *ast);
 void		pwd(void);
 void		env(t_envp_list **list);
 int			echo(t_ast *ast);
+void		exit_builtin(t_ast *ast, t_shell *shell);
 
 typedef struct s_unset_god_list
 {

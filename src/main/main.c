@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/20 15:18:24 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/20 15:27:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -53,7 +53,7 @@
  * @brief Prints an optional exit messsage depending on 'interactive'
  * and exits with status.
  */
-static void	shell_exit(unsigned char status, t_shell shell)
+void	shell_exit(unsigned char status, t_shell shell)
 {
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
