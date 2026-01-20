@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/16 15:54:24 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/20 15:18:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -76,23 +76,32 @@ static int	rl_event(void)
 	return (0);
 }
 
+/**
+ * @brief Initializes the main function before the first loop.
+ *
+ * Exits the program early when necessary.
+ */
+static void	init_main(t_shell *shell, int argc, char **argv, char **envp)
+{
+	int	init_result;
+
+	init_result = init_shell(shell, argc, argv, envp);
+	if (init_result != 0)
+		shell_exit(init_result, *shell);
+	rl_catch_signals = 0;
+	rl_event_hook = rl_event;
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 	char	*input;
 	t_list	*tokens;
 	t_ast	*ast;
-	char *prompt;
-	int		init_result;
+	char	*prompt;
 
-	if (process_args((const char **)argv, argc) != 1)
-		exit(EXIT_SUCCESS);
+	init_main(&shell, argc, argv, envp);
 	input = NULL;
-	init_result = init_shell(&shell, argc, argv, envp);
-	if (init_result != 0)
-		shell_exit(init_result, shell);
-	rl_catch_signals = 0;
-	rl_event_hook = rl_event;
 	while (1)
 	{
 		g_sig = 0;
