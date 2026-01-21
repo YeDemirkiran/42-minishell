@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/14 16:12:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 19:43:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -60,6 +60,10 @@ t_list	*char_arr_to_list(char **arr)
 #define TEST_COMMAND_REDIR(str, redir_type, redir_fd, redir_path) ast_new_node(AST_COMMAND, ast_command_data(char_arr_to_list(ft_split(str, ' ')), ft_lstnew(alloc_redir(redir_type, redir_fd, ft_strdup(redir_path)))), NULL, NULL)
 #define TEST_REDIR(redir_type, redir_fd, redir_path) ast_new_node(AST_COMMAND, ast_command_data(NULL, ft_lstnew(alloc_redir(redir_type, redir_fd, ft_strdup(redir_path)))), NULL, NULL)
 #define TEST_PIPE(left, right) ast_new_node(AST_PIPE, NULL, left, right)
+
+#ifdef MINISHELL_BONUS
+# define TEST_IF(left, right) ast_new_node(AST_IF, NULL, left, right)
+#endif
 
 typedef struct s_parser_test
 {
@@ -912,6 +916,73 @@ void	test_parser(int	test_number)
 			.token_length = 2,
 			.expected_ast = NULL
 		},
+
+		#ifdef MINISHELL_BONUS
+		// CASE 15: Simple ANDs
+		{
+			.name = "true && true",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "true" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "true" },
+			},
+			.token_length = 3,
+			.expected_ast = TEST_IF(TEST_COMMAND("true"), TEST_COMMAND("true"))
+		},
+		{
+			.name = "ls && echo test",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "ls" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "echo" },
+				{ .type = TOKEN_WORD, .data.word = "test" },
+			},
+			.token_length = 4,
+			.expected_ast = TEST_IF(TEST_COMMAND("ls"), TEST_COMMAND("echo test"))
+		},
+		{
+			.name = "cmd1 && cmd2 && cmd3",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_IF(TEST_IF(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3"))
+		},
+		{
+			.name = "cmd1 && cmd2 && cmd3 && cmd4 && cmd5 && cmd6 && cmd7 && cmd8",
+			.major_number = test_number,
+			.minor_number = 40,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd4" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd5" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd6" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd7" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd8" },
+			},
+			.token_length = 15,
+			.expected_ast = TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8"))
+		}
+		#endif
 	};
 
 	t_test_result results;
