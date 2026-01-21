@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 19:47:59 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/14 16:00:11 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 07:01:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -113,7 +113,7 @@ static int	check_errno_and_print_error(void)
 	if (errno != 0)
 		return (0);
 	ft_putstr_fd("minishell: warning: here-document "
-			"delimited by end-of-file\n", STDERR_FILENO);
+		"delimited by end-of-file\n", STDERR_FILENO);
 	return (1);
 }
 
@@ -158,7 +158,7 @@ static int	read_heredoc(char *delimiter, int fd, t_shell shell)
 			break ;
 		if (expand_delimiter(should_expand, &line, shell) != 1)
 			return (0);
-		ft_putendl_fd(line,  fd);
+		ft_putendl_fd(line, fd);
 		free(line);
 	}
 	if (line != NULL)

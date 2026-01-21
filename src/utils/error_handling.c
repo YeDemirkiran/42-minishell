@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   error_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:29:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 16:25:02 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/21 07:00:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <unistd.h>
 #include <stdio.h>
@@ -40,8 +40,8 @@ void	error_message(char *shell_name, char *extra_field, char *custom_error)
 }
 
 /**
- * @brief Prints out an error message with perror (or custom error message if present)
- * in this format:
+ * @brief Prints out an error message with perror (or custom error message
+ * if present) in this format:
  *
  * shell_name: [optional_field: ] perror() message
  */
