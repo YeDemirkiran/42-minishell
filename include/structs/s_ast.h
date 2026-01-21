@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 10:18:12 by yademirk          #+#    #+#             */
-/*   Updated: 2025/12/20 14:30:03 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 17:47:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -18,7 +18,10 @@
 typedef enum e_ast_type
 {
 	AST_COMMAND,
-	AST_PIPE
+	AST_PIPE,
+	AST_IF,
+	AST_OR,
+	AST_SUBSHELL
 }	t_ast_type;
 
 typedef union u_ast_data
