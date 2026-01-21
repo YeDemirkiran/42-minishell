@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 14:04:40 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:44:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,30 +25,6 @@
 
 #include "variable_utils.h"
 #include "expansion_data.h"
-
-/**
- * @brief Searches for a variable key in an environment
- * list and returns its value.
- * @note - Calls getenv() if envp is NULL.
- * @note - The returned pointer is not malloc'd, don't try to free it.
- */
-static char	*get_env_var(char *key, t_shell shell)
-{
-	char	*value;
-
-	if (key == NULL)
-		return (NULL);
-	value = NULL;
-	if (is_special_variable(key))
-		return (get_special_variable(key, shell));
-	else if (shell.env == NULL)
-		value = getenv((const char *)key);
-	else
-		value = find_value_on_envp(&(shell.env->envp_list), key);
-	if (value != NULL)
-		value = ft_strdup(value);
-	return (value);
-}
 
 /**
  * @brief Saves an expansion data block of type WORD

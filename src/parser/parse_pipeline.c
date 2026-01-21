@@ -1,20 +1,30 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_pipeline.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 17:36:50 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/05 18:48:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:09:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stddef.h>
-#include "stdio.h"
+
+// Project headers
 #include "modules/ast.h"
 #include "parse_command.h"
 
+/* =============================== FUNCTIONS =============================== */
+
+/**
+ * @brief Calls ast_free_tree on both left and right, if they are not NULL.
+ * @return The result parameter.
+ */
 static t_parse_result	free_and_return(t_ast *left, t_ast *right,
 	t_parse_result result)
 {
@@ -25,6 +35,9 @@ static t_parse_result	free_and_return(t_ast *left, t_ast *right,
 	return (result);
 }
 
+/**
+ * @brief Parses a single pipe of two commands.
+ */
 static t_parse_result	parse_pipe(t_list *token, t_ast *left, t_shell shell)
 {
 	t_ast			*node;
@@ -44,6 +57,9 @@ static t_parse_result	parse_pipe(t_list *token, t_ast *left, t_shell shell)
 	return (parse_success(node, token));
 }
 
+/**
+ * @brief Parses a pipeline.
+ */
 t_parse_result	parse_pipeline(t_list *token, t_shell shell)
 {
 	t_parse_result	result;
@@ -69,3 +85,5 @@ t_parse_result	parse_pipeline(t_list *token, t_shell shell)
 	}
 	return (parse_success(left, token));
 }
+
+/* ================================== END ================================== */

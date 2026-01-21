@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 09:49:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:35:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,6 +15,8 @@
 
 # include "structs/s_ast.h"
 # include "structs/s_shell.h"
+
+# include "../../src/expansion/variable_utils.h"
 
 /**
  * @brief Takes a string and removes outer-level quotes from it.
@@ -26,7 +28,8 @@ void	remove_quotes(char *str);
  * @brief Takes a string, performs expansion on it if it's needed and
  * replaces the old one with the new one.
  */
-int		expand_and_replace_string(char **str_ptr, t_shell shell);
+int		expand_and_replace_string(char **str_ptr,
+	t_shell shell, int ignore_quotes);
 
 /**
  * @brief Starts the process of full expansion, word splitting

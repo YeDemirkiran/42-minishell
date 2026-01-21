@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_data.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 14:04:48 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:39:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdlib.h>
 
@@ -61,7 +61,7 @@ static int	init_and_save_variable(t_list **root, t_shell shell,
  *
  * These blocks are required for the second step of expansion: Concatenation.
  */
-t_list	*get_expansion_data(char *word, t_shell shell)
+t_list	*get_expansion_data(char *word, t_shell shell, int ignore_quotes)
 {
 	t_list	*root;
 	size_t	i;
@@ -78,7 +78,7 @@ t_list	*get_expansion_data(char *word, t_shell shell)
 		word_start = i;
 		if (word[i] == '\0')
 			break ;
-		if (quote == '\'' || is_variable_valid(word + (i + 1)) == 0)
+		if ((ignore_quotes == 1 && quote == '\'') || is_variable_valid(word + (i + 1)) == 0)
 		{
 			i++;
 			continue ;

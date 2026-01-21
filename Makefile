@@ -1,14 +1,14 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/20 13:57:11 by muayna           ###   ########.fr        #
+#    Updated: 2026/01/21 07:28:13 by yademirk         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
+#******************************************************************************#
 
 
 NAME = minishell
@@ -51,7 +51,7 @@ LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_misc.c token
 
 ## Parser
 PARSER_DIR = parser/
-PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_redirection.c parse_heredoc.c parse_pipeline.c parse_result.c)
+PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_simple_command.c parse_redirection.c parse_heredoc.c parse_heredoc_utils.c parse_pipeline.c parse_result.c)
 
 ## AST
 AST_DIR = ast/

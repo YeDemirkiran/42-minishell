@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 23:55:20 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/16 22:34:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include <stdio.h>
 
@@ -52,12 +52,12 @@ int	expansion(t_ast *root, t_shell shell)
 		return (2);
 	// printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
 	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
-	if (perform_tilde_expansion(root, &(shell.env->envp_list)) != 1)
+	if (perform_tilde_expansion(root, shell) != 1)
 		return (0);
 	if (perform_variable_expansion(root, shell) != 1)
 		return (0);
 	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
-	if (perform_word_split(root) != 1)
+	if (perform_word_split(root, shell) != 1)
 		return (0);
 	//printf("(DEBUG: Step 3.3: Quote Removal)\n");
 	perform_quote_removal(root);

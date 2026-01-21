@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:47:41 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/03 22:57:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/19 00:33:14 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -46,6 +46,6 @@ typedef struct s_expansion
  *
  * These blocks are required for the second step of expansion: Concatenation.
  */
-t_list	*get_expansion_data(char *word, t_shell shell);
+t_list	*get_expansion_data(char *word, t_shell shell, int ignore_quotes);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 15:56:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/16 11:11:55 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -20,14 +20,16 @@
 #include "structs/s_ast.h"
 #include "modules/utils.h"
 
-static char	*get_ifs(void)
+#include "variable_utils.h"
+
+static char	*get_ifs(t_shell shell)
 {
 	static const char	*default_ifs = " \t\n";
 	char				*ifs;
 
-	ifs = getenv("IFS");
+	ifs = get_env_var("IFS", shell);
 	if (ifs == NULL)
-		ifs = (char *)default_ifs;
+		ifs = ft_strdup(default_ifs);
 	return (ifs);
 }
 
@@ -63,14 +65,12 @@ static int	save_split_word(char *str, int i, t_list **root)
  * @note The defualt IFS is (space)(tab)(newline).
  * @note If IFS is set but has no characters, word splitting is disabled.
  */
-static t_list	*split_words(char *str)
+static t_list	*split_words(char *str, const char *ifs)
 {
-	char	*ifs;
 	t_list	*root;
 	size_t	i;
 	char	q;
 
-	ifs = get_ifs();
 	if (ft_strlen(ifs) == 0)
 		return (NULL);
 	i = 0;
@@ -92,13 +92,11 @@ static t_list	*split_words(char *str)
 	return (root);
 }
 
-static int	does_need_split(char *str)
+static int	does_need_split(char *str, const char *ifs)
 {
 	size_t	i;
 	char	quote;
-	char	*ifs;
 
-	ifs = get_ifs();
 	if (ft_strlen(ifs) == 0)
 		return (0);
 	i = 0;
@@ -113,16 +111,17 @@ static int	does_need_split(char *str)
 	return (0);
 }
 
-static int	split_word_advance_loop(t_list **args, t_list **node)
+static int	split_word_advance_loop(t_list **args,
+	t_list **node, const char *ifs)
 {
 	t_list	*tmp;
 
-	if (does_need_split((char *)((*node)->content)) != 1)
+	if (does_need_split((char *)((*node)->content), ifs) != 1)
 	{
 		*node = (*node)->next;
 		return (1);
 	}
-	tmp = split_words((char *)((*node)->content));
+	tmp = split_words((char *)((*node)->content), ifs);
 	if (errno != 0)
 	{
 		perror("minishell");
@@ -147,7 +146,7 @@ static int	split_word_advance_loop(t_list **args, t_list **node)
  * on all of them.
  * @return 0 on failure, 1 on success, 2 on NULL parameters.
  */
-static int	split_word_args(t_list **args)
+static int	split_word_args(t_list **args, const char *ifs)
 {
 	t_list	*node;
 	t_list	*tmp;
@@ -165,9 +164,29 @@ static int	split_word_args(t_list **args)
 		}
 		else
 		{
-			if (split_word_advance_loop(args, &node) != 1)
+			if (split_word_advance_loop(args, &node, ifs) != 1)
 				return (0);
 		}
+	}
+	return (1);
+}
+
+static int	word_split_recursive(t_ast *ast, const char *ifs)
+{
+	if (ast->type == AST_COMMAND)
+	{
+		if (split_word_args(&(ast->data->ast_command.arguments), ifs) == 0)
+			return (0);
+	}
+	if (ast->left != NULL)
+	{
+		if (word_split_recursive(ast->left, ifs) != 1)
+			return (0);
+	}
+	if (ast->right != NULL)
+	{
+		if (word_split_recursive(ast->right, ifs) != 1)
+			return (0);
 	}
 	return (1);
 }
@@ -176,24 +195,17 @@ static int	split_word_args(t_list **args)
  * @brief Takes a syntax tree and recursively splits words in their arguments.
  * @return 0 on failure, 1 on success, 2 on NULL root parameter.
  */
-int	perform_word_split(t_ast *ast)
+int	perform_word_split(t_ast *ast, t_shell shell)
 {
+	char	*ifs;
+	int		result;
+
 	if (ast == NULL)
 		return (2);
-	if (ast->type == AST_COMMAND)
-	{
-		if (split_word_args(&(ast->data->ast_command.arguments)) == 0)
-			return (0);
-	}
-	if (ast->left != NULL)
-	{
-		if (perform_word_split(ast->left) != 1)
-			return (0);
-	}
-	if (ast->right != NULL)
-	{
-		if (perform_word_split(ast->right) != 1)
-			return (0);
-	}
-	return (1);
+	ifs = get_ifs(shell);
+	if (ifs == NULL)
+		return (0);
+	result = word_split_recursive(ast, ifs);
+	free(ifs);
+	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:01:45 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 14:07:41 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/15 16:44:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,13 @@ int		is_special_variable(char *word);
  * @return Malloc'd value on success, NULL on failure.
  */
 char	*get_special_variable(const char *key, t_shell shell);
+
+/**
+ * @brief Searches for a variable key in an environment
+ * list and returns its value.
+ * @note - Calls getenv() if envp is NULL.
+ * @note - The returned pointer is not malloc'd, don't try to free it.
+ */
+char	*get_env_var(char *key, t_shell shell);
 
 #endif
