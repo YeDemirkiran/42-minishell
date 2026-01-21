@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/19 00:35:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 10:28:55 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -29,7 +29,7 @@ void	remove_quotes(char *str);
  * replaces the old one with the new one.
  */
 int		expand_and_replace_string(char **str_ptr,
-	t_shell shell, int ignore_quotes);
+			t_shell shell, int ignore_quotes);
 
 /**
  * @brief Starts the process of full expansion, word splitting

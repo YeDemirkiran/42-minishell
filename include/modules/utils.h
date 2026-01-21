@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:32:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 07:54:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 10:29:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -75,6 +75,6 @@ void	shell_exit(unsigned char status, t_shell shell);
  * rl_done variable's value and exits.
  * @return 0
  */
-int	rl_event(void);
+int		rl_event(void);
 
 #endif
