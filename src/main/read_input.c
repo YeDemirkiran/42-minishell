@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/20 14:11:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 17:13:11 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -145,6 +145,7 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt,
 	int		res;
 
 	input = NULL;
+	quote = 0;
 	while (1)
 	{
 		new = get_input_line(get_prompt(primary_prompt,
