@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 07:31:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 08:16:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,39 +19,10 @@
 #include "structs/s_redirection.h"
 #include "g_sig.h"
 
+#include "parse_redirection.h"
 #include "parse_result.h"
 #include "parse_heredoc.h"
 #include "parse_heredoc_utils.h"
-
-// Returns the default FD value for a redirection.
-static int	get_redir_default_fd(t_redir_type type)
-{
-	int	fd;
-
-	fd = 0;
-	if (type == REDIR_INPUT || type == REDIR_HEREDOC)
-		fd = 0;
-	else if (type == REDIR_OUTPUT || type == REDIR_APPEND)
-		fd = 1;
-	return (fd);
-}
-
-t_redir_type	get_redir_type(t_token_type type)
-{
-	t_redir_type	redir;
-
-	if (type == TOKEN_REDIR_INPUT)
-		redir = REDIR_INPUT;
-	else if (type == TOKEN_REDIR_OUTPUT)
-		redir = REDIR_OUTPUT;
-	else if (type == TOKEN_REDIR_HEREDOC)
-		redir = REDIR_HEREDOC;
-	else if (type == TOKEN_REDIR_APPEND)
-		redir = REDIR_APPEND;
-	else
-		redir = REDIR_NONE;
-	return (redir);
-}
 
 static t_parse_result	is_redir_valid(t_list *token)
 {
