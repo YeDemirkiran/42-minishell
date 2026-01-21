@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/19 00:39:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 07:41:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -56,6 +56,16 @@ static int	init_and_save_variable(t_list **root, t_shell shell,
 	return (1);
 }
 
+static int	loop_should_continue(char *word,
+	char quote, int ignore_quotes)
+{
+	if (ignore_quotes && quote == '\'')
+		return (1);
+	else if (is_variable_valid(word) == 0)
+		return (1);
+	return (0);
+}
+
 /**
  * @brief Takes a word and outputs a linked list of expansion data blocks.
  *
@@ -78,7 +88,7 @@ t_list	*get_expansion_data(char *word, t_shell shell, int ignore_quotes)
 		word_start = i;
 		if (word[i] == '\0')
 			break ;
-		if ((ignore_quotes == 1 && quote == '\'') || is_variable_valid(word + (i + 1)) == 0)
+		if (loop_should_continue(word + (i + 1), quote, ignore_quotes) == 1)
 		{
 			i++;
 			continue ;
