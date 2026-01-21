@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 14:34:58 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 22:07:27 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 08:30:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -150,17 +150,11 @@ t_list	*lexical_analyze(char *string)
 {
 	t_list	*tokens;
 
-	//printf("(DEBUG: Starting shell step 1: Lexical Analysis & Tokenization)\n");
-	//printf("(DEBUG: Step 1: Given string: %s)\n", string);
 	if (string == NULL)
 		return (NULL);
-	//printf("(DEBUG: Step 1.1: Retrieved tokens: ");
 	tokens = get_tokens(string);
 	if (tokens == NULL)
 		return (NULL);
-	//debug_print_tokens(tokens);
-	//printf(")\n");
-	//printf("(DEBUG: Step 1 'Lexical Analysis & Tokenization' completed.)\n");
 	return (tokens);
 }
 
