@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/21 07:33:39 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/21 07:56:12 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -75,7 +75,7 @@ SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
 
 ## Utils
 UTILS_DIR = utils/
-UTILS_FILES = $(addprefix $(UTILS_DIR), error_handling.c quotes.c)
+UTILS_FILES = $(addprefix $(UTILS_DIR), error_handling.c quotes.c shell_utils.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))

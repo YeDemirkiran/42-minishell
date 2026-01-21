@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/20 18:53:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 07:55:25 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,7 +21,6 @@
 
 // Internal libraries
 #include <readline/readline.h>
-#include <libft.h>
 #include <get_next_line.h>
 #include <minishell_lb.h>
 #include <gb.h>
@@ -48,33 +47,6 @@
 #include "args.h"
 
 /* =============================== FUNCTIONS =============================== */
-
-/**
- * @brief Prints an optional exit messsage depending on 'interactive'
- * and exits with status.
- */
-void	shell_exit(unsigned char status, t_shell shell)
-{
-	sort_malloc(1, 1);
-	clear_arr(&(shell.env->envp_char));
-	if (shell.interactive == 1)
-	{
-		rl_clear_history();
-		ft_putstr_fd("exit\n", STDERR_FILENO);
-	}
-	exit(status);
-}
-
-/**
- * @brief Empty function that does nothing, just returns 0. This is used
- * to trick GNU Readline's rl_event_hook so it stops periodically to check
- * rl_done variable's value and exits.
- * @return 0
- */
-static int	rl_event(void)
-{
-	return (0);
-}
 
 /**
  * @brief Initializes the main function before the first loop.

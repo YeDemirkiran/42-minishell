@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:32:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 11:06:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/21 07:54:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,7 +15,7 @@
 
 # include "structs/s_shell.h"
 
-// quotes.c
+// QUOTES.H
 /**
  * @brief Takes a character and a pointer to a quote character,
  * and sets it according to the value of the C character.
@@ -28,7 +28,7 @@
  */
 void	set_quote(char c, char *quote_addr);
 
-// error_handling.c
+// ERROR_HANDLING.H
 /**
  * @brief Writes an error message to STDERR with maximum 3 columns.
  */
@@ -60,5 +60,21 @@ void	shell_error_message(t_shell shell,
  * - 130 - SIGINT
  */
 int		errno_to_exit_code(void);
+
+// SHELL_UTILS.H
+
+/**
+ * @brief Prints an optional exit messsage depending on 'interactive'
+ * and exits with status.
+ */
+void	shell_exit(unsigned char status, t_shell shell);
+
+/**
+ * @brief Empty function that does nothing, just returns 0. This is used
+ * to trick GNU Readline's rl_event_hook so it stops periodically to check
+ * rl_done variable's value and exits.
+ * @return 0
+ */
+int	rl_event(void);
 
 #endif
