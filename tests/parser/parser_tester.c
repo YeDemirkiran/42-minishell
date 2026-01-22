@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/22 20:14:26 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/23 00:11:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -1288,6 +1288,142 @@ void	test_parser(int	test_number)
 			},
 			.token_length = 3,
 			.expected_ast = NULL
+		},
+
+		// CASE 18: Single Level 1 Subshell
+		{
+			.name = "(cmd)",
+			.major_number = test_number,
+			.minor_number = 75,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_SUBSHELL(TEST_COMMAND("cmd"))
+		},
+		{
+			.name = "(cmd1 | cmd2)",
+			.major_number = test_number,
+			.minor_number = 76,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_SUBSHELL(TEST_PIPE(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")))
+		},
+		{
+			.name = "(cmd1 | cmd2 | cmd3 | cmd4 | cmd5 | cmd6)",
+			.major_number = test_number,
+			.minor_number = 77,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cmd4" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cmd5" },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_WORD, .data.word = "cmd6" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 13,
+			.expected_ast = TEST_SUBSHELL(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_PIPE(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")))
+		},
+		{
+			.name = "(cmd1 && cmd2)",
+			.major_number = test_number,
+			.minor_number = 78,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_SUBSHELL(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")))
+		},
+		{
+			.name = "(cmd1 || cmd2)",
+			.major_number = test_number,
+			.minor_number = 79,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_SUBSHELL(TEST_OR(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")))
+		},
+		{
+			.name = "(cmd1 && cmd2 || cmd3)",
+			.major_number = test_number,
+			.minor_number = 80,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 7,
+			.expected_ast = TEST_SUBSHELL(TEST_OR(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")))
+		},
+		{
+			.name = "(cmd1 || cmd2 && cmd3)",
+			.major_number = test_number,
+			.minor_number = 81,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 7,
+			.expected_ast = TEST_SUBSHELL(TEST_AND(TEST_OR(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")))
+		},
+		{
+			.name = "(cmd1 || cmd2 && cmd3 && cmd4 || cmd5 && cmd6 && cmd7 || cmd8)",
+			.major_number = test_number,
+			.minor_number = 82,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd4" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd5" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd6" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd7" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd8" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 17,
+			.expected_ast = TEST_SUBSHELL(TEST_OR(TEST_AND(TEST_AND(TEST_OR(TEST_AND(TEST_AND(TEST_OR(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8")))
 		},
 		#endif
 	};
