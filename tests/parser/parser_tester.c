@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/22 14:28:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/22 20:14:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -64,6 +64,7 @@ t_list	*char_arr_to_list(char **arr)
 #ifdef MINISHELL_BONUS
 # define TEST_AND(left, right) ast_new_node(AST_IF, NULL, left, right)
 # define TEST_OR(left, right) ast_new_node(AST_OR, NULL, left, right)
+# define TEST_SUBSHELL(left) ast_new_node(AST_SUBSHELL, NULL, left, NULL)
 #endif
 
 typedef struct s_parser_test
@@ -1125,7 +1126,169 @@ void	test_parser(int	test_number)
 			},
 			.token_length = 21,
 			.expected_ast = TEST_OR(TEST_AND(TEST_AND(TEST_OR(TEST_AND(TEST_OR(TEST_AND(TEST_AND(TEST_OR(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8")), TEST_COMMAND("cmd9")), TEST_COMMAND("cmd10")), TEST_COMMAND("cmd11"))
-		}
+		},
+
+		// CASE 17: && and || errors
+		{
+			.name = "&&",
+			.major_number = test_number,
+			.minor_number = 61,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "&&\\n",
+			.major_number = test_number,
+			.minor_number = 62,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "||",
+			.major_number = test_number,
+			.minor_number = 63,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "||\\n",
+			.major_number = test_number,
+			.minor_number = 64,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd &&",
+			.major_number = test_number,
+			.minor_number = 65,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd &&\\n",
+			.major_number = test_number,
+			.minor_number = 66,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd ||",
+			.major_number = test_number,
+			.minor_number = 67,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd ||\\n",
+			.major_number = test_number,
+			.minor_number = 68,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_NEWLINE },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd && &&",
+			.major_number = test_number,
+			.minor_number = 69,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd && ||",
+			.major_number = test_number,
+			.minor_number = 70,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd || ||",
+			.major_number = test_number,
+			.minor_number = 71,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd || &&",
+			.major_number = test_number,
+			.minor_number = 72,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd || |",
+			.major_number = test_number,
+			.minor_number = 73,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "cmd && |",
+			.major_number = test_number,
+			.minor_number = 74,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
 		#endif
 	};
 
