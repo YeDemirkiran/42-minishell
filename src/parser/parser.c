@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/20 19:48:59 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/22 23:28:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -31,8 +31,7 @@
 #include "modules/ast.h" // TODO: Remove as it's probably not necessary
 
 // Local headers
-#include "parse_command.h"
-#include "parse_pipeline.h"
+#include "parse_command_list.h"
 
 /* =============================== FUNCTIONS =============================== */
 
@@ -159,19 +158,6 @@ static void	print_token_error(t_parse_result result)
 	ft_putstr_fd("'\n", 2);
 }
 
-/**
- * @brief Main entry point for the parser. Calls the required grammar rules.
- */
-static t_parse_result	parse_token(t_list *tokens, t_shell shell)
-{
-	t_parse_result	result;
-
-	if (tokens == NULL || tokens->content == NULL)
-		return (parse_runtime_error(NULL));
-	result = parse_pipeline(tokens, shell);
-	return (result);
-}
-
 static void	on_parser_error(t_parse_result result, t_shell *shell)
 {
 	shell->exit_status = 1;
@@ -201,7 +187,7 @@ t_ast	*parse(t_list *tokens, t_shell *shell)
 	//printf("(DEBUG: Step 2: Parse AST)\n");
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
-	result = parse_token(tokens, *shell);
+	result = parse_command_list(tokens, *shell);
 	if (result.type == PARSE_RESULT_ABORT)
 	{
 		shell->exit_status = (128 + g_sig) * (g_sig > 0);
