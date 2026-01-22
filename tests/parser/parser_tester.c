@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/22 00:24:49 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/22 14:28:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -62,7 +62,7 @@ t_list	*char_arr_to_list(char **arr)
 #define TEST_PIPE(left, right) ast_new_node(AST_PIPE, NULL, left, right)
 
 #ifdef MINISHELL_BONUS
-# define TEST_IF(left, right) ast_new_node(AST_IF, NULL, left, right)
+# define TEST_AND(left, right) ast_new_node(AST_IF, NULL, left, right)
 # define TEST_OR(left, right) ast_new_node(AST_OR, NULL, left, right)
 #endif
 
@@ -821,7 +821,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "|",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 42,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_PIPE },
 			},
@@ -831,7 +831,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls |",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 43,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_PIPE },
@@ -842,7 +842,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls | |",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 44,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_PIPE },
@@ -854,7 +854,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls | | | | | | | | | | | | | | | | | | | | |",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 45,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_PIPE },
@@ -885,7 +885,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls | &&",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 46,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_PIPE },
@@ -897,7 +897,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls | ||",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 47,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_PIPE },
@@ -909,7 +909,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls |&",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 48,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_PIPE },
@@ -923,19 +923,19 @@ void	test_parser(int	test_number)
 		{
 			.name = "true && true",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 49,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "true" },
 				{ .type = TOKEN_IF_AND },
 				{ .type = TOKEN_WORD, .data.word = "true" },
 			},
 			.token_length = 3,
-			.expected_ast = TEST_IF(TEST_COMMAND("true"), TEST_COMMAND("true"))
+			.expected_ast = TEST_AND(TEST_COMMAND("true"), TEST_COMMAND("true"))
 		},
 		{
 			.name = "ls && echo test",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 50,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_IF_AND },
@@ -943,12 +943,12 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "test" },
 			},
 			.token_length = 4,
-			.expected_ast = TEST_IF(TEST_COMMAND("ls"), TEST_COMMAND("echo test"))
+			.expected_ast = TEST_AND(TEST_COMMAND("ls"), TEST_COMMAND("echo test"))
 		},
 		{
 			.name = "cmd1 && cmd2 && cmd3",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 51,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cmd1" },
 				{ .type = TOKEN_IF_AND },
@@ -957,12 +957,12 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "cmd3" },
 			},
 			.token_length = 5,
-			.expected_ast = TEST_IF(TEST_IF(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3"))
+			.expected_ast = TEST_AND(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3"))
 		},
 		{
 			.name = "cmd1 && cmd2 && cmd3 && cmd4 && cmd5 && cmd6 && cmd7 && cmd8",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 52,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cmd1" },
 				{ .type = TOKEN_IF_AND },
@@ -981,14 +981,14 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "cmd8" },
 			},
 			.token_length = 15,
-			.expected_ast = TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_IF(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8"))
+			.expected_ast = TEST_AND(TEST_AND(TEST_AND(TEST_AND(TEST_AND(TEST_AND(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8"))
 		},
 
 		// CASE 16: Simple ORs
 		{
 			.name = "true || true",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 53,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "true" },
 				{ .type = TOKEN_IF_OR },
@@ -1000,7 +1000,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "ls || echo test",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 54,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "ls" },
 				{ .type = TOKEN_IF_OR },
@@ -1013,7 +1013,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "cmd1 || cmd2 || cmd3",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 55,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cmd1" },
 				{ .type = TOKEN_IF_OR },
@@ -1027,7 +1027,7 @@ void	test_parser(int	test_number)
 		{
 			.name = "cmd1 || cmd2 || cmd3 || cmd4 || cmd5 || cmd6 || cmd7 || cmd8",
 			.major_number = test_number,
-			.minor_number = 40,
+			.minor_number = 56,
 			.tokens = (t_token[]) {
 				{ .type = TOKEN_WORD, .data.word = "cmd1" },
 				{ .type = TOKEN_IF_OR },
@@ -1047,6 +1047,84 @@ void	test_parser(int	test_number)
 			},
 			.token_length = 15,
 			.expected_ast = TEST_OR(TEST_OR(TEST_OR(TEST_OR(TEST_OR(TEST_OR(TEST_OR(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8"))
+		},
+
+		// CASE 17: ANDs and ORs
+		{
+			.name = "cmd1 && cmd2 || cmd3",
+			.major_number = test_number,
+			.minor_number = 57,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_OR(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3"))
+		},
+		{
+			.name = "cmd1 || cmd2 && cmd3",
+			.major_number = test_number,
+			.minor_number = 58,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+			},
+			.token_length = 5,
+			.expected_ast = TEST_AND(TEST_OR(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3"))
+		},
+		{
+			.name = "cmd1 && cmd2 && cmd3 || cmd4 && cmd5",
+			.major_number = test_number,
+			.minor_number = 59,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd4" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd5" },
+			},
+			.token_length = 9,
+			.expected_ast = TEST_AND(TEST_OR(TEST_AND(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5"))
+		},
+		{
+			.name = "cmd1 && cmd2 || cmd3 && cmd4 && cmd5 || cmd6 && cmd7 || cmd8 && cmd9 && cmd10 || cmd11",
+			.major_number = test_number,
+			.minor_number = 60,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd4" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd5" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd6" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd7" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd8" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd9" },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_WORD, .data.word = "cmd10" },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_WORD, .data.word = "cmd11" },
+			},
+			.token_length = 21,
+			.expected_ast = TEST_OR(TEST_AND(TEST_AND(TEST_OR(TEST_AND(TEST_OR(TEST_AND(TEST_AND(TEST_OR(TEST_AND(TEST_COMMAND("cmd1"), TEST_COMMAND("cmd2")), TEST_COMMAND("cmd3")), TEST_COMMAND("cmd4")), TEST_COMMAND("cmd5")), TEST_COMMAND("cmd6")), TEST_COMMAND("cmd7")), TEST_COMMAND("cmd8")), TEST_COMMAND("cmd9")), TEST_COMMAND("cmd10")), TEST_COMMAND("cmd11"))
 		}
 		#endif
 	};
