@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/22 23:41:19 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/23 21:13:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -47,8 +47,7 @@ t_parse_result	parse_command(t_list *tokens, t_shell shell)
 	else if (token->type == TOKEN_WORD
 		|| get_redir_type(token->type) != REDIR_NONE)
 		result = parse_simple_command(tokens, shell);
-	else if (token->type == TOKEN_PAREN_LEFT
-		|| token->type == TOKEN_PAREN_RIGHT)
+	else if (token->type == TOKEN_PAREN_LEFT)
 		result = parse_subshell(tokens, shell);
 	else
 		result = parse_syntax_error(tokens);
