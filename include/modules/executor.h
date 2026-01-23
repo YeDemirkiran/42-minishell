@@ -6,13 +6,14 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:23:43 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 15:56:34 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/23 22:05:45 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
+# define DEFAULT_PATH " "
 typedef struct s_shell t_shell; 
 typedef struct s_god_struct_envp t_god_struct_envp;
 
@@ -39,7 +40,7 @@ int		executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out);
 int		isbuiltin(const char *command);
 void	run_builtin(t_ast *ast, t_shell *shell);
 int		run_redirs(t_list **redirs);
-char	*command_path(t_ast *ast);
+char	*command_path(t_ast *ast, t_shell shell);
 char	**list_to_char_arr(t_list *list);
 int		isbuiltin(const char *command);
 

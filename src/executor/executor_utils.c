@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/20 14:33:51 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/23 22:08:23 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,32 @@ int run_redirs(t_list **redirs)
 	return (1);
 }
 
-char *command_path(t_ast *ast)
+char *command_path(t_ast *ast, t_shell shell)
 {
 	char *cmd;
+	char *path;
+	char **splitted_path;
+	int i;
 
+	i = 0;
 	cmd = (char *)ast->data->ast_command.arguments->content;
-	if(!ft_strncmp("/bin/", cmd, 5))
-		return ft_strdup(cmd);
-	cmd = sort_term_strjoin("/bin/", cmd);
-	return cmd;
+	if(ft_strchr(cmd, '/'))
+		return cmd;
+	else
+	{
+		path = find_value_on_envp(&shell.env->envp_list, "PATH");
+		if(path == NULL)
+			path = sort_term_strdup(DEFAULT_PATH);
+		splitted_path = ft_split(path, ':');
+		while(splitted_path[i])
+		{
+			path = sort_term_strjoin(splitted_path[i], sort_term_strjoin("/", ast->data->ast_command.arguments->content));
+			if(access(path, F_OK) == 0)
+				break ;
+			i++;
+		}
+	}
+	return path;
 }
 
 char **list_to_char_arr(t_list *list)

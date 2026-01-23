@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/20 19:36:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/23 20:44:10 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #define _GNU_SOURCE
 #include "stdio.h"
@@ -139,7 +139,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		if (ast->data->ast_command.arguments == NULL)
 			exit(EXIT_SUCCESS);
 		check_builtin_status(ast, shell);
-		execve(command_path(ast), args, shell->env->envp_char);
+		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
 		print_exec_error_message(args, shell->env->envp_char,
 			shell->interactive);
 		exit(errno_to_exit_code());
