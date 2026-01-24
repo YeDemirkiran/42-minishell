@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 15:06:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/24 16:00:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -2105,6 +2105,205 @@ void	test_parser(int	test_number)
 			.token_length = 3,
 			.expected_ast = NULL
 		},
+		{
+			.name = "(cmd1",
+			.major_number = test_number,
+			.minor_number = 117,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(cmd1))",
+			.major_number = test_number,
+			.minor_number = 118,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 4,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(((((cmd1",
+			.major_number = test_number,
+			.minor_number = 119,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+			},
+			.token_length = 6,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(((((cmd1))))",
+			.major_number = test_number,
+			.minor_number = 120,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+
+			},
+			.token_length = 10,
+			.expected_ast = NULL
+		},
+		{
+			.name = "((cmd1) cmd2",
+			.major_number = test_number,
+			.minor_number = 121,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+			},
+			.token_length = 5,
+			.expected_ast = NULL
+		},
+		{
+			.name = "((cmd1) cmd2)",
+			.major_number = test_number,
+			.minor_number = 122,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 6,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(cmd1 (cmd2) cmd3",
+			.major_number = test_number,
+			.minor_number = 123,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+			},
+			.token_length = 6,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(cmd1 (cmd2) cmd3)",
+			.major_number = test_number,
+			.minor_number = 124,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd1" },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_WORD, .data.word = "cmd2" },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_WORD, .data.word = "cmd3" },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 7,
+			.expected_ast = NULL
+		},
+		// this one is the exact same copy of the one above, except one random part
+		// is removed to test parser errors
+		// {
+		// 	.name = "(1 && (2 || 3) && ((4 | 5) || (6 && 7)) || (8 && (9 | (10 || 11))) && ((12 || 13) && (14 | 15)) || ((16 && 17) || (18 | (19 && 20))))",
+		// 	.major_number = test_number,
+		// 	.minor_number = 100,
+		// 	.tokens = (t_token[]) {
+		// 		//{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "1" },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "2" },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_WORD, .data.word = "3" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "4" },
+		// 		{ .type = TOKEN_PIPE },
+		// 		{ .type = TOKEN_WORD, .data.word = "5" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "6" },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_WORD, .data.word = "7" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "8" },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "9" },
+		// 		{ .type = TOKEN_PIPE },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "10" },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_WORD, .data.word = "11" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "12" },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_WORD, .data.word = "13" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "14" },
+		// 		{ .type = TOKEN_PIPE },
+		// 		{ .type = TOKEN_WORD, .data.word = "15" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "16" },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_WORD, .data.word = "17" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_IF_OR },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "18" },
+		// 		{ .type = TOKEN_PIPE },
+		// 		{ .type = TOKEN_PAREN_LEFT },
+		// 		{ .type = TOKEN_WORD, .data.word = "19" },
+		// 		{ .type = TOKEN_IF_AND },
+		// 		{ .type = TOKEN_WORD, .data.word = "20" },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 		{ .type = TOKEN_PAREN_RIGHT },
+		// 	},
+		// 	.token_length = 68,
+		// 	.expected_ast = NULL
+		// },
 		#endif
 	};
 
