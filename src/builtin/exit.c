@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 13:48:53 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/24 03:55:10 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/24 04:04:15 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ void exit_builtin(t_ast *ast, t_shell *shell, int shell_interactive)
 	args = ast->data->ast_command.arguments;
 	if(args->next != NULL)
 		exit_value = (unsigned char)(ft_atoi((char *)args->next->content));
-	if(all_character_is_digit((char *)args->next->content))
+	if(args->next == NULL)
+		exit_value = 0;
+	else if(all_character_is_digit((char *)args->next->content))
 	{
 		write(2, "babashell: exit: ", 18);
 		write(2, args->next->content, ft_strlen((char *)args->next->content));
@@ -58,8 +60,6 @@ void exit_builtin(t_ast *ast, t_shell *shell, int shell_interactive)
 		shell->exit_status = 127;
 		return ;
 	}
-	else
-		exit_value = 0;
 	shell->interactive = shell_interactive;
 	shell_exit(exit_value, (*shell));
 }
