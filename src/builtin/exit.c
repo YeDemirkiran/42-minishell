@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 13:48:53 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/24 03:54:14 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/24 03:55:10 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
-int all_character_is_digit(char *str)
+static int all_character_is_digit(char *str)
 {
 	int i;
 
