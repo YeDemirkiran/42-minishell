@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/10 04:47:04 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/24 03:22:17 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "stdio.h"
 #include <modules/builtin.h>
@@ -56,8 +56,5 @@ int cd(t_envp_list **list, t_ast *ast)
 	update_envp_value(list, "OLDPWD", buf);
     getcwd(buf, 1024);
     update_envp_value(list, "PWD", buf);
-	ft_putstr_fd("\033]2;", 2);
-	ft_putstr_fd(buf, 2);
-	ft_putstr_fd("\007", 2);
 	return 0;
 }
