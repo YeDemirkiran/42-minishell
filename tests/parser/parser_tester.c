@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 16:00:17 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/24 16:42:32 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -1777,7 +1777,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "1" },
 				{ .type = TOKEN_IF_OR },
 				{ .type = TOKEN_WORD, .data.word = "2" },
-				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_RIGHT },
 				{ .type = TOKEN_IF_AND },
 				{ .type = TOKEN_PAREN_LEFT },
 				{ .type = TOKEN_WORD, .data.word = "3" },
