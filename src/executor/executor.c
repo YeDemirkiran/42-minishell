@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/23 20:44:10 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/24 03:36:07 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ static void close_child_user_fd(void)
 	}
 }
 
-static void check_builtin_status(t_ast *ast, t_shell *shell)
+static void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit)
 {
 	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
-		run_builtin(ast, shell);
+		run_builtin(ast, shell, shell_print_exit);
 		exit(shell->exit_status);
 	}
 }
@@ -138,7 +138,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		check_redirs_status_in_fork(redirs);
 		if (ast->data->ast_command.arguments == NULL)
 			exit(EXIT_SUCCESS);
-		check_builtin_status(ast, shell);
+		check_builtin_status(ast, shell, 0);
 		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
 		print_exec_error_message(args, shell->env->envp_char,
 			shell->interactive);

@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/24 00:58:56 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/24 03:34:09 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int isbuiltin(const char *command)
 	return 0;
 }
 
-void run_builtin(t_ast *ast, t_shell *shell)
+void run_builtin(t_ast *ast, t_shell *shell, int print_exit_value)
 {
 	char	**tmp;
 	char	*command;
@@ -70,7 +70,7 @@ void run_builtin(t_ast *ast, t_shell *shell)
 		else if(!ft_strncmp("echo", command, len))
 			shell->exit_status = echo(ast);
 		else if(!ft_strncmp("exit", command, len))
-			exit_builtin(ast, shell);
+			exit_builtin(ast, shell, print_exit_value);
 	}
 	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
 	clear_arr(&tmp);

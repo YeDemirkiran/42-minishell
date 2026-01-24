@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/20 17:55:13 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/24 03:32:32 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int			cd(t_envp_list **list, t_ast *ast);
 void		pwd(void);
 void		env(t_envp_list **list);
 int			echo(t_ast *ast);
-void		exit_builtin(t_ast *ast, t_shell *shell);
+void		exit_builtin(t_ast *ast, t_shell *shell, int shell_interactive);
 
 typedef struct s_unset_god_list
 {
