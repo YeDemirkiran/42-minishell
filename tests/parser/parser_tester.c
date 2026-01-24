@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 03:30:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/24 15:06:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -1889,7 +1889,222 @@ void	test_parser(int	test_number)
 			.token_length = 69,
 			.expected_ast = TEST_SUBSHELL(TEST_OR(TEST_AND(TEST_OR(TEST_AND(TEST_AND(TEST_COMMAND("1"), TEST_SUBSHELL(TEST_OR(TEST_COMMAND("2"), TEST_COMMAND("3")))), TEST_SUBSHELL(TEST_OR(TEST_SUBSHELL(TEST_PIPE(TEST_COMMAND("4"), TEST_COMMAND("5"))), TEST_SUBSHELL(TEST_AND(TEST_COMMAND("6"), TEST_COMMAND("7")))))), TEST_SUBSHELL(TEST_AND(TEST_COMMAND("8"), TEST_SUBSHELL(TEST_PIPE(TEST_COMMAND("9"), TEST_SUBSHELL(TEST_OR(TEST_COMMAND("10"), TEST_COMMAND("11")))))))), TEST_SUBSHELL(TEST_AND(TEST_SUBSHELL(TEST_OR(TEST_COMMAND("12"), TEST_COMMAND("13"))), TEST_SUBSHELL(TEST_PIPE(TEST_COMMAND("14"), TEST_COMMAND("15")))))), TEST_SUBSHELL(TEST_OR(TEST_SUBSHELL(TEST_AND(TEST_COMMAND("16"), TEST_COMMAND("17"))), TEST_SUBSHELL(TEST_PIPE(TEST_COMMAND("18"), TEST_SUBSHELL(TEST_AND(TEST_COMMAND("19"), TEST_COMMAND("20")))))))))
 		},
-
+		// CASE 22: Subshell errors
+		{
+			.name = "(",
+			.major_number = test_number,
+			.minor_number = 101,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = ")",
+			.major_number = test_number,
+			.minor_number = 102,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 1,
+			.expected_ast = NULL
+		},
+		{
+			.name = "()",
+			.major_number = test_number,
+			.minor_number = 103,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "((((((((((",
+			.major_number = test_number,
+			.minor_number = 104,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+			},
+			.token_length = 10,
+			.expected_ast = NULL
+		},
+		{
+			.name = "))))))))))",
+			.major_number = test_number,
+			.minor_number = 105,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 10,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(((((((((()))))))))",
+			.major_number = test_number,
+			.minor_number = 106,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 20,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(&&",
+			.major_number = test_number,
+			.minor_number = 107,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_IF_AND },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(||",
+			.major_number = test_number,
+			.minor_number = 108,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_IF_OR },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(|",
+			.major_number = test_number,
+			.minor_number = 109,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PIPE },
+			},
+			.token_length = 2,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(&&)",
+			.major_number = test_number,
+			.minor_number = 110,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_IF_AND },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(||)",
+			.major_number = test_number,
+			.minor_number = 111,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_IF_OR },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(|)",
+			.major_number = test_number,
+			.minor_number = 112,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_PIPE },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(<)",
+			.major_number = test_number,
+			.minor_number = 113,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_REDIR_INPUT },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(>)",
+			.major_number = test_number,
+			.minor_number = 114,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_REDIR_OUTPUT },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(<<)",
+			.major_number = test_number,
+			.minor_number = 115,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_REDIR_HEREDOC },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
+		{
+			.name = "(>>)",
+			.major_number = test_number,
+			.minor_number = 116,
+			.tokens = (t_token[]) {
+				{ .type = TOKEN_PAREN_LEFT },
+				{ .type = TOKEN_REDIR_APPEND },
+				{ .type = TOKEN_PAREN_RIGHT },
+			},
+			.token_length = 3,
+			.expected_ast = NULL
+		},
 		#endif
 	};
 
