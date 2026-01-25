@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 22:34:20 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 23:39:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,6 +19,10 @@
 #include "tilde_expansion.h"
 #include "split_word.h"
 #include "remove_quotes.h"
+
+#ifdef MINISHELL_BONUS
+# include "filename_expansion_bonus.h"
+#endif
 
 //TODO: Remove
 /*static void	print_command_args(t_ast *ast)
@@ -41,6 +45,8 @@
 	printf("\n");
 }*/
 
+#ifdef MINISHELL_BONUS
+
 /**
  * @brief Starts the process of full expansion, word splitting
  * and quote removal.
@@ -50,18 +56,41 @@ int	expansion(t_ast *root, t_shell shell)
 {
 	if (root == NULL)
 		return (2);
-	// printf("\n(DEBUG: Starting shell step 3: Expansion)\n");
-	// printf("(DEBUG: Step 3.1: Variable Substiton)\n");
 	if (perform_tilde_expansion(root, shell) != 1)
 		return (0);
 	if (perform_variable_expansion(root, shell) != 1)
 		return (0);
-	//printf("(DEBUG: Step 3.2: Word Splitting)\n");
 	if (perform_word_split(root, shell) != 1)
 		return (0);
-	//printf("(DEBUG: Step 3.3: Quote Removal)\n");
+	if (perform_filename_expansion(root) != 1)
+		return (0);
 	perform_quote_removal(root);
-	//printf("(DEBUG: Step 3.4: Printing New Variables)\n");
 	//ast_traverse_preorder(root, print_command_args);
 	return (1);
 }
+
+#else
+
+/**
+ * @brief Starts the process of full expansion, word splitting
+ * and quote removal.
+ * @return 0 on failure, 1 on success, 2 on NULL root parameter.
+ */
+int	expansion(t_ast *root, t_shell shell)
+{
+	if (root == NULL)
+		return (2);
+	if (perform_tilde_expansion(root, shell) != 1)
+		return (0);
+	if (perform_variable_expansion(root, shell) != 1)
+		return (0);
+	if (perform_word_split(root, shell) != 1)
+		return (0);
+	perform_quote_removal(root);
+	//ast_traverse_preorder(root, print_command_args);
+	return (1);
+}
+
+#endif
+
+

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 19:39:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 23:40:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -177,7 +177,7 @@ t_test_result	conduct_expansion_test(t_expansion_test test)
 	static t_test_result test_result;
 
 	printf("Test %i\n", number++);
-	printf("Calling expansion(%s)...\n");
+	printf("Calling expansion()...\n");
 	printf("=============================================================\n");
 	expansion(test.testee, (t_shell){.env = NULL, .exit_status = TEST_EXIT_STATUS, .pid = getpid()});
 	printf("=============================================================\n");
