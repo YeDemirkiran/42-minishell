@@ -6,12 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:23:57 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 02:45:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 03:08:34 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include "structs/s_ast.h"
 #include "structs/s_shell.h"
+#include "modules/ast.h"
 
 #include "parse_result.h"
 
@@ -29,11 +30,25 @@
 t_parse_result	parse_command_list(t_list *tokens, t_shell shell)
 {
 	t_parse_result	result;
+	t_token			*token;
+	static int		level;
 
 	if (tokens == NULL || tokens->content == NULL)
 		return (parse_runtime_error(NULL));
+	level += 1;
 	//printf("\ncalling cond\n");
 	result = parse_conditional(tokens, shell);
+	if (level <= 1 && result.current_token != NULL)
+	{
+		token = (t_token *)(result.current_token->content);
+		if (token->type != TOKEN_NEWLINE)
+		{
+			level -= 1;
+			ast_free_tree(result.ast);
+			return (parse_syntax_error(result.current_token));
+		}
+	}
+	level -= 1;
 	return (result);
 }
 

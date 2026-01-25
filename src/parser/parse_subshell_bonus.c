@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:22:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 16:45:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 03:05:12 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -41,14 +41,23 @@ t_parse_result	parse_subshell(t_list *token, t_shell shell)
 	if (result.type != PARSE_RESULT_SUCCESS)
 		return (result);
 	else if (result.current_token == NULL || result.current_token->content == NULL)
+	{
+		ast_free_tree(result.ast);
 		return (parse_uncomplete_error(token));
+	}
 	token_obj = (t_token *)(result.current_token->content);
 	if (token_obj->type != TOKEN_PAREN_RIGHT)
-		return (parse_syntax_error(token));
-	//printf("COMMAND LIST CURRENT TOKEN: %i\n", ((t_token *)(result.current_token->content))->type);
+	{
+		//printf("COMMAND LIST CURRENT TOKEN: %i\n", ((t_token *)(result.current_token->content))->type);
+		ast_free_tree(result.ast);
+		return (parse_syntax_error(result.current_token));
+	}
 	root = ast_new_node(AST_SUBSHELL, NULL, result.ast, NULL);
 	if (root == NULL)
+	{
+		ast_free_tree(result.ast);
 		return (parse_runtime_error(result.current_token));
+	}
 	result.ast = root;
 	result.current_token = result.current_token->next;
 	return (result);
