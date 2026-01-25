@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   shell_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 07:52:25 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 07:53:56 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/24 03:29:29 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include <stdlib.h>
 
@@ -27,9 +27,9 @@ void	shell_exit(unsigned char status, t_shell shell)
 {
 	sort_malloc(1, 1);
 	clear_arr(&(shell.env->envp_char));
+	rl_clear_history();
 	if (shell.interactive == 1)
 	{
-		rl_clear_history();
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 	}
 	exit(status);

@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/21 07:55:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/24 03:36:41 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -125,7 +125,7 @@ static void	run_exec(t_ast *ast, t_shell *shell)
 {
 	if (ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
 		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-		run_builtin(ast, shell);
+		run_builtin(ast, shell, 1);
 	else
 		shell->exit_status = executor(ast, shell, 0, 1);
 }
