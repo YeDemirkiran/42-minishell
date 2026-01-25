@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/16 12:21:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 19:39:57 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -177,8 +177,7 @@ t_test_result	conduct_expansion_test(t_expansion_test test)
 	static t_test_result test_result;
 
 	printf("Test %i\n", number++);
-
-	printf("Calling expansion()...\n");
+	printf("Calling expansion(%s)...\n");
 	printf("=============================================================\n");
 	expansion(test.testee, (t_shell){.env = NULL, .exit_status = TEST_EXIT_STATUS, .pid = getpid()});
 	printf("=============================================================\n");
@@ -350,9 +349,14 @@ static void	test_expansion(void)
 		TEST_EXPANSION("             ~~~~~~~~~~~~~~            ", "~~~~~~~~~~~~~~"),
 		TEST_EXPANSION("WORD~WORD~WORD~WORD~WORD", "WORD~WORD~WORD~WORD~WORD"),
 
+		#ifdef MINISHELL_BONUS
+
 		// // TEST 18: * wildcard (globbing)
-		// TEST_EXPANSION("*", "expansion_tester expansion_tester.c glob_test Makefile"),
-		// TEST_EXPANSION("            *           ", "expansion_tester expansion_tester.c glob_test Makefile"),
+		TEST_EXPANSION("*", "expansion_tester expansion_tester.c glob_test Makefile"),
+		TEST_EXPANSION("            *           ", "expansion_tester expansion_tester.c glob_test Makefile"),
+		TEST_EXPANSION(".*", ". .. .gitignore"),
+		TEST_EXPANSION(".*", "./expansion_tester ./expansion_tester.c ./glob_test ./Makefile"),
+		#endif
 	};
 	t_test_result results;
 
