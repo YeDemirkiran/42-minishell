@@ -6,9 +6,11 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 23:40:03 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/26 01:30:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
+
+#include <dirent.h>
 
 #include "modules/utils.h"
 
@@ -38,12 +40,56 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 }
 
 /**
+ * @brief Takes a list with char * content, and adds the new node
+ * to its correct place.
+ */
+static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
+{
+	t_list	*i;
+	t_list	*pre;
+	char	*str_1;
+	char	*str_new;
+
+	if (lst == NULL || new == NULL || new->content == NULL)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	str_new = (char *)(new->content);
+	i = *lst;
+	pre = NULL;
+	while (i != NULL)
+	{
+		str_1 = (char *)(i->content);
+		if (ft_strcmp(str_1, str_new) >= 0)
+		{
+			if (pre == NULL)
+				ft_lstadd_front(lst, new);
+			else
+			{
+				pre->next = new;
+				new->next = i;
+			}
+			return ;
+		}
+		pre = i;
+		i = i->next;
+	}
+	pre->next = new;
+}
+
+/**
  * @brief Takes a pattern, matches the files in the current directory
  * and returns a struct.
  */
 t_glob	ft_glob(const char *pattern)
 {
-	t_glob	glob;
+	t_glob			glob;
+	DIR				*dir;
+	struct dirent	*dir_entry;
+	t_list			*new;
 
 	glob.result = GLOB_NO_NEED;
 	glob.flags = GLOB_FLAG_NONE;
@@ -53,26 +99,46 @@ t_glob	ft_glob(const char *pattern)
 	set_glob_struct(pattern, &glob);
 	if (glob.result == GLOB_NO_NEED)
 		return (glob);
-	printf("yo this word needs globbing: %s\n", pattern);
+	dir = opendir(".");
+	while (1)
+	{
+		dir_entry = readdir(dir);
+		if (dir_entry == NULL)
+			break ;
+		new = ft_lstnew((void *)(ft_strdup(dir_entry->d_name)));
+		lst_add_to_sorted_place(&(glob.word_list), new);
+	}
+	closedir(dir);
 	return (glob);
 }
 
-static int	filename_expand_args(t_list *args)
+static int	filename_expand_args(t_list **args)
 {
 	char	*str;
+	t_glob	glob;
+	t_list	*current;
+	t_list	*tmp;
 
-	if (args == NULL)
+	if (args == NULL || *args == NULL)
 		return (2);
-	while (args != NULL)
+	current = *args;
+	while (current != NULL)
 	{
-		if (args->content == NULL)
+		if (current->content == NULL)
 		{
-			args = args->next;
+			current = current->next;
 			continue ;
 		}
-		str = (char *)(args->content);
-		ft_glob(str);
-		args = args->next;
+		str = (char *)(current->content);
+		glob = ft_glob(str);
+		if (glob.result == GLOB_SUCCESS)
+		{
+			tmp = current->next;
+			ft_lst_replace(args, current, glob.word_list, free);
+			current = tmp;
+		}
+		else
+			current = current->next;
 	}
 	return (1);
 }
@@ -87,7 +153,7 @@ int	perform_filename_expansion(t_ast *ast)
 		return (2);
 	if (ast->type == AST_COMMAND)
 	{
-		filename_expand_args(ast->data->ast_command.arguments);
+		filename_expand_args(&(ast->data->ast_command.arguments));
 	}
 	if (ast->left != NULL)
 		perform_filename_expansion(ast->left);
