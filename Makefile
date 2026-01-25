@@ -6,10 +6,9 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/21 10:26:50 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/23 15:47:57 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
-
 
 NAME = minishell
 
@@ -51,7 +50,7 @@ LEXER_FILES = $(addprefix $(LEXER_DIR), lexer.c lexer_utils.c lexer_misc.c token
 
 ## Parser
 PARSER_DIR = parser/
-PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command.c parse_simple_command.c parse_redirection.c parse_redirection_utils.c parse_heredoc.c parse_heredoc_utils.c parse_pipeline.c parse_result.c)
+PARSER_FILES = $(addprefix $(PARSER_DIR), parser.c parse_command_list.c parse_command.c parse_simple_command.c parse_redirection.c parse_redirection_utils.c parse_heredoc.c parse_heredoc_utils.c parse_pipeline.c parse_result.c)
 
 ## AST
 AST_DIR = ast/
@@ -77,9 +76,15 @@ SIGNAL_FILES = $(addprefix $(SIGNAL_DIR), signal.c)
 UTILS_DIR = utils/
 UTILS_FILES = $(addprefix $(UTILS_DIR), error_handling.c quotes.c shell_utils.c)
 
+## Bonus files
+BONUS_FILES = $(addprefix $(PARSER_DIR), parse_conditional_bonus.c parse_subshell_bonus.c)
+
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
 OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
+
+BONUS_SRCS = $(addprefix $(SRC_DIR), $(C_FILES) $(BONUS_FILES))
+BONUS_OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o) $(BONUS_FILES:.c=.o))
 
 # CONFIGURATION
 CC = cc
@@ -94,6 +99,10 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
 	$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $(NAME)
+
+bonus: FLAGS += -D MINISHELL_BONUS
+bonus: $(BONUS_OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
+	$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBS) -o $(NAME)
 
 $(LIBFT_A):
 	make -C $(LIBFT_DIR)
@@ -123,4 +132,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re
