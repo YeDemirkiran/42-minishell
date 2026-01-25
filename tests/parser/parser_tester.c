@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 16:42:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 03:02:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -1300,7 +1300,7 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_WORD, .data.word = "cmd" },
 				{ .type = TOKEN_PAREN_RIGHT },
 			},
-			.token_length = 5,
+			.token_length = 3,
 			.expected_ast = TEST_SUBSHELL(TEST_COMMAND("cmd"))
 		},
 		{
@@ -1629,10 +1629,8 @@ void	test_parser(int	test_number)
 				{ .type = TOKEN_PAREN_RIGHT },
 				{ .type = TOKEN_PAREN_RIGHT },
 				{ .type = TOKEN_PAREN_RIGHT },
-				{ .type = TOKEN_PAREN_RIGHT },
-				{ .type = TOKEN_PAREN_RIGHT },
 			},
-			.token_length = 27,
+			.token_length = 25,
 			.expected_ast = TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_SUBSHELL(TEST_COMMAND("cmd1 arg1 arg2 arg3 arg4")))))))))))
 		},
 
