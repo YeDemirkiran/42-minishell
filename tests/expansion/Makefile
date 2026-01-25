@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/19 20:56:36 by yademirk          #+#    #+#              #
-#    Updated: 2026/01/14 16:18:39 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/25 17:09:11 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -32,9 +32,20 @@ all: $(NAME)
 $(NAME): $(SRC)
 	$(CC) $(CC_FLAGS) $(INC_FLAGS) $^ $(LIB_FLAGS) -o $(NAME)
 
+bonus: $(SRC)
+	$(CC) $(CC_FLAGS) -D MINISHELL_BONUS $(INC_FLAGS) $^ $(LIB_FLAGS) -o $(NAME)
+
 fclean:
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all fclean re
+reb: fclean bonus
+
+run: re
+	valgrind ./$(NAME)
+
+rub: reb
+	valgrind ./$(NAME)
+
+.PHONY: all bonus fclean re reb run rub
