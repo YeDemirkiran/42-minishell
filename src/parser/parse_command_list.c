@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:23:57 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 03:08:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/25 03:27:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -45,7 +45,9 @@ t_parse_result	parse_command_list(t_list *tokens, t_shell shell)
 		{
 			level -= 1;
 			ast_free_tree(result.ast);
-			return (parse_syntax_error(result.current_token));
+			if (result.type == PARSE_RESULT_SUCCESS)
+				result.type = PARSE_RESULT_RUNTIME_ERROR;
+			return (result);
 		}
 	}
 	level -= 1;
