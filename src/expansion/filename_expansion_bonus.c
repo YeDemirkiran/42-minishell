@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/26 01:30:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:55:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -80,9 +80,23 @@ static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
 	pre->next = new;
 }
 
+static int	pattern_match(const char *pattern,
+	const char *name, t_glob_flags flags)
+{
+	if (pattern == name)
+		return (1);
+	else if (pattern == NULL || name == NULL)
+		return (0);
+	if ((flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] != '.')
+		return (0);
+	else if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] == '.')
+		return (0);
+	return (1);
+}
+
 /**
  * @brief Takes a pattern, matches the files in the current directory
- * and returns a struct.
+ * and returns a struct of word list.
  */
 t_glob	ft_glob(const char *pattern)
 {
@@ -105,6 +119,8 @@ t_glob	ft_glob(const char *pattern)
 		dir_entry = readdir(dir);
 		if (dir_entry == NULL)
 			break ;
+		if (pattern_match(pattern, dir_entry->d_name, glob.flags) != 1)
+			continue ;
 		new = ft_lstnew((void *)(ft_strdup(dir_entry->d_name)));
 		lst_add_to_sorted_place(&(glob.word_list), new);
 	}
