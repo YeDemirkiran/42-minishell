@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/26 17:55:16 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/26 20:00:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -83,6 +83,11 @@ static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
 static int	pattern_match(const char *pattern,
 	const char *name, t_glob_flags flags)
 {
+	size_t	i;
+	size_t	j;
+	size_t	k;
+	char	buff[256];
+
 	if (pattern == name)
 		return (1);
 	else if (pattern == NULL || name == NULL)
@@ -91,7 +96,35 @@ static int	pattern_match(const char *pattern,
 		return (0);
 	else if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] == '.')
 		return (0);
-	return (1);
+	//printf("pattern: %s, name: %s\n", pattern, name);
+	i = 0;
+	j = 0;
+	while (1)
+	{
+		while (pattern[j] == '*')
+			j++;
+		if (pattern[j] == '\0')
+			break ;
+		k = j;
+		while (pattern[j] != '*' && pattern[j] != '\0')
+			j++;
+		ft_strlcpy(buff, pattern + k, j - k + 1);
+		//printf("J: %lu, K: %lu, BUFF: %s\n", j, k, buff);
+		while (name[i] != '\0')
+		{
+			if (ft_strncmp(buff, name + i, ft_strlen(buff)) == 0)
+			{
+				i += j - k;
+				break ;
+			}
+			i++;
+		}
+		if (name[i] == '\0')
+			return (0) ;
+	}
+	if (pattern[j] == '\0')
+		return (1);
+	return (0);
 }
 
 /**
