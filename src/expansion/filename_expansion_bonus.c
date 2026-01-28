@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/26 20:00:43 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/28 20:50:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,6 +15,7 @@
 #include "modules/utils.h"
 
 #include "filename_expansion_bonus.h"
+#include "remove_quotes.h"
 
 static void	set_glob_struct(const char *pattern, t_glob *glob)
 {
@@ -37,6 +38,8 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 			glob->result = GLOB_SUCCESS;
 		i++;
 	}
+	if (i >= 4096)
+		glob->result = GLOB_NO_NEED;
 }
 
 /**
@@ -83,22 +86,21 @@ static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
 static int	pattern_match(const char *pattern,
 	const char *name, t_glob_flags flags)
 {
-	size_t	i;
 	size_t	j;
 	size_t	k;
-	char	buff[256];
+	char	*current;
+	char	buff[4096];
+	char	quote;
 
 	if (pattern == name)
 		return (1);
 	else if (pattern == NULL || name == NULL)
 		return (0);
-	if ((flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] != '.')
+	if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] == '.')
 		return (0);
-	else if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] == '.')
-		return (0);
-	//printf("pattern: %s, name: %s\n", pattern, name);
-	i = 0;
 	j = 0;
+	quote = 0;
+	current = (char *)name;
 	while (1)
 	{
 		while (pattern[j] == '*')
@@ -106,21 +108,14 @@ static int	pattern_match(const char *pattern,
 		if (pattern[j] == '\0')
 			break ;
 		k = j;
-		while (pattern[j] != '*' && pattern[j] != '\0')
-			j++;
+		while ((quote != 0 || pattern[j] != '*') && pattern[j] != '\0')
+			set_quote(pattern[j++], &quote);
 		ft_strlcpy(buff, pattern + k, j - k + 1);
-		//printf("J: %lu, K: %lu, BUFF: %s\n", j, k, buff);
-		while (name[i] != '\0')
-		{
-			if (ft_strncmp(buff, name + i, ft_strlen(buff)) == 0)
-			{
-				i += j - k;
-				break ;
-			}
-			i++;
-		}
-		if (name[i] == '\0')
-			return (0) ;
+		remove_quotes(buff);
+		current = ft_strnstr(current, buff, ft_strlen(current));
+		if (current == NULL || (k == 0 && current != name))
+			return (0);
+		current += j - k;
 	}
 	if (pattern[j] == '\0')
 		return (1);
