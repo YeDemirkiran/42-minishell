@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/28 20:50:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/28 21:09:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -115,11 +115,14 @@ static int	pattern_match(const char *pattern,
 		current = ft_strnstr(current, buff, ft_strlen(current));
 		if (current == NULL || (k == 0 && current != name))
 			return (0);
+		else if (pattern[j] == '\0' && current[j - k] != '\0')
+			return (0);
 		current += j - k;
 	}
-	if (pattern[j] == '\0')
-		return (1);
-	return (0);
+	// if (pattern[j] == '\0')
+	// 	return (1);
+	//return (0);
+	return (1);
 }
 
 /**
@@ -196,9 +199,7 @@ int	perform_filename_expansion(t_ast *ast)
 	if (ast == NULL)
 		return (2);
 	if (ast->type == AST_COMMAND)
-	{
 		filename_expand_args(&(ast->data->ast_command.arguments));
-	}
 	if (ast->left != NULL)
 		perform_filename_expansion(ast->left);
 	if (ast->right != NULL)
