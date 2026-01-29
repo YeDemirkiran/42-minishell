@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/24 03:34:09 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/29 16:20:47 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void run_builtin(t_ast *ast, t_shell *shell, int print_exit_value)
 	len = ft_strlen(command);
 	if(isbuiltin(command))
 	{
+		update_special_parameter(ast, shell);
 		if(!ft_strncmp("cd", command, len))
 		shell->exit_status = cd(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("pwd", command, len))

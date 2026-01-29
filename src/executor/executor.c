@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/24 03:36:07 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/29 15:59:02 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 
 	if(ast == NULL || shell == NULL)
 		return -1;
+	update_special_parameter(ast, shell);
 	exec_utils(ast, shell, fd_in, fd_out);
 	exit_status = 0;
 	tmp_pid_list = shell->env->pid_list;
