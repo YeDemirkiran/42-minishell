@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:14:20 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 23:40:40 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/29 15:32:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -352,10 +352,25 @@ static void	test_expansion(void)
 		#ifdef MINISHELL_BONUS
 
 		// // TEST 18: * wildcard (globbing)
-		TEST_EXPANSION("*", "expansion_tester expansion_tester.c glob_test Makefile"),
-		TEST_EXPANSION("            *           ", "expansion_tester expansion_tester.c glob_test Makefile"),
+		// 99
+		TEST_EXPANSION("*", "Makefile expansion_tester expansion_tester.c glob_test"),
+		TEST_EXPANSION("            *           ", "Makefile expansion_tester expansion_tester.c glob_test"),
 		TEST_EXPANSION(".*", ". .. .gitignore"),
-		TEST_EXPANSION(".*", "./expansion_tester ./expansion_tester.c ./glob_test ./Makefile"),
+		TEST_EXPANSION("M*", "Makefile"),
+		TEST_EXPANSION("Make*", "Makefile"),
+		TEST_EXPANSION("Makefil*", "Makefile"),
+		TEST_EXPANSION("*e", "Makefile"),
+		TEST_EXPANSION("*file", "Makefile"),
+		TEST_EXPANSION("*akefile", "Makefile"),
+		TEST_EXPANSION("Mak*file", "Makefile"),
+		TEST_EXPANSION("Make*file", "Makefile"),
+		TEST_EXPANSION("*/", "glob_test/"),
+		TEST_EXPANSION("*////////////////////", "glob_test/"),
+		TEST_EXPANSION(".*/", "./ ../"),
+		TEST_EXPANSION(".*////////////////////", "./ ../"),
+		TEST_EXPANSION("\"*\"", "*"),
+		TEST_EXPANSION("'*'", "*"),
+		TEST_EXPANSION("'*'", "*"),
 		#endif
 	};
 	t_test_result results;
