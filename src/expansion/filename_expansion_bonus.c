@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 15:04:24 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/29 15:09:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,20 +23,19 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 {
 	size_t	i;
 	char	c;
-	//char	quote;
+	char	quote;
 
 	if (pattern == NULL || glob == NULL)
 		return ;
 	i = 0;
-	//quote = 0;
+	quote = 0;
 	while (pattern[i] != '\0')
 	{
 		c = pattern[i];
 		if (i == 0 && c == '.')
 			glob->flags |= GLOB_FLAG_EXPAND_HIDDEN;
-		//set_quote(c, &quote);
-		//if (c == '*' && quote == 0)
-		if (c == '*')
+		set_quote(c, &quote);
+		if (c == '*' && quote == 0)
 			glob->result = GLOB_SUCCESS;
 		i++;
 	}
@@ -126,7 +125,7 @@ static int	pattern_match(const char *pattern,
 
 /**
  * @brief Takes a pattern, matches the files in the current directory
- * and returns a struct of word list.
+ * and returns a struct of matched files' list.
  */
 t_glob	ft_glob(const char *pattern)
 {
@@ -158,6 +157,10 @@ t_glob	ft_glob(const char *pattern)
 	return (glob);
 }
 
+/**
+ * @brief Takes a list of arguments, expands filenames in it
+ * and then replaces the old word with the new word(list).
+ */
 static int	filename_expand_args(t_list **args)
 {
 	char	*str;
