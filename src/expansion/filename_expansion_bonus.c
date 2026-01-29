@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 20:24:20 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/29 20:37:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -84,7 +84,7 @@ static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
 	pre->next = new;
 }
 
-static char	*find_in_name(char *name, const char *buff)
+static char	*find_in_name(char *name, const char *buff, int force_first)
 {
 	char	*previous;
 	char	*current;
@@ -98,6 +98,8 @@ static char	*find_in_name(char *name, const char *buff)
 		current = ft_strnstr(current, buff, ft_strlen(current));
 		if (current == NULL)
 			break ;
+		else if (force_first != 0)
+			return (current);
 		previous = current;
 		current = current + 1;
 	}
@@ -133,7 +135,7 @@ static int	pattern_match(const char *pattern,
 			set_quote(pattern[j++], &quote);
 		ft_strlcpy(buff, pattern + k, j - k + 1);
 		remove_quotes(buff);
-		current = find_in_name(current, buff);
+		current = find_in_name(current, buff, k == 0);
 		if (current == NULL || (k == 0 && current != name))
 			return (0);
 		else if (pattern[j] == '\0' && current[ft_strlen(buff)] != '\0')
