@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/28 21:09:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/29 15:04:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -16,6 +16,8 @@
 
 #include "filename_expansion_bonus.h"
 #include "remove_quotes.h"
+
+#define GLOB_BUFFER_SIZE 4096
 
 static void	set_glob_struct(const char *pattern, t_glob *glob)
 {
@@ -38,7 +40,7 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 			glob->result = GLOB_SUCCESS;
 		i++;
 	}
-	if (i >= 4096)
+	if (i >= GLOB_BUFFER_SIZE)
 		glob->result = GLOB_NO_NEED;
 }
 
@@ -89,8 +91,8 @@ static int	pattern_match(const char *pattern,
 	size_t	j;
 	size_t	k;
 	char	*current;
-	char	buff[4096];
 	char	quote;
+	char	buff[GLOB_BUFFER_SIZE];
 
 	if (pattern == name)
 		return (1);
@@ -115,13 +117,10 @@ static int	pattern_match(const char *pattern,
 		current = ft_strnstr(current, buff, ft_strlen(current));
 		if (current == NULL || (k == 0 && current != name))
 			return (0);
-		else if (pattern[j] == '\0' && current[j - k] != '\0')
+		else if (pattern[j] == '\0' && current[ft_strlen(buff)] != '\0')
 			return (0);
 		current += j - k;
 	}
-	// if (pattern[j] == '\0')
-	// 	return (1);
-	//return (0);
 	return (1);
 }
 
