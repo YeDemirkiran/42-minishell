@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 15:09:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/29 20:24:20 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -84,6 +84,26 @@ static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
 	pre->next = new;
 }
 
+static char	*find_in_name(char *name, const char *buff)
+{
+	char	*previous;
+	char	*current;
+
+	if (name == NULL || buff == NULL)
+		return (NULL);
+	previous = NULL;
+	current = name;
+	while (*current != '\0')
+	{
+		current = ft_strnstr(current, buff, ft_strlen(current));
+		if (current == NULL)
+			break ;
+		previous = current;
+		current = current + 1;
+	}
+	return (previous);
+}
+
 static int	pattern_match(const char *pattern,
 	const char *name, t_glob_flags flags)
 {
@@ -113,7 +133,7 @@ static int	pattern_match(const char *pattern,
 			set_quote(pattern[j++], &quote);
 		ft_strlcpy(buff, pattern + k, j - k + 1);
 		remove_quotes(buff);
-		current = ft_strnstr(current, buff, ft_strlen(current));
+		current = find_in_name(current, buff);
 		if (current == NULL || (k == 0 && current != name))
 			return (0);
 		else if (pattern[j] == '\0' && current[ft_strlen(buff)] != '\0')
