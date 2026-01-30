@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:23:43 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 15:59:13 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/30 17:23:45 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,5 @@ char	**list_to_char_arr(t_list *list);
 int		isbuiltin(const char *command);
 /**/
 void	update_special_parameter(t_ast *ast, t_shell *shell);
+void find_shell_level(t_shell *shell);
 #endif

@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:24:14 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 17:16:50 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/30 17:19:18 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,7 @@ int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
 	shell->env->pid_list = ft_malloc(sizeof(t_pid_list), 0);
 	shell->env->pid_list->pid = 0;
+	find_shell_level(shell);
 	if (argc > 1)
 	{
 		if (ft_strncmp(argv[1], "-s", 2) == 0)

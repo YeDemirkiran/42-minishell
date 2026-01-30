@@ -6,7 +6,7 @@
 #    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/29 15:58:51 by muayna           ###   ########.fr        #
+#    Updated: 2026/01/30 15:31:25 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,7 +63,7 @@ EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c variable_expansion.c
 
 ## Executor
 EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c special_parameter.c)
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c special_parameter.c shell_level.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
