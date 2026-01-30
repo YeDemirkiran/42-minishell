@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 23:38:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/30 17:31:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -19,6 +19,8 @@ typedef enum e_glob_flags
 {
 	GLOB_FLAG_NONE = 0,
 	GLOB_FLAG_EXPAND_HIDDEN = 1,
+	GLOB_FLAG_EXPAND_DIRS = 2,
+	GLOB_FLAG_ADD_LOCAL_PREFIX = 4,
 }	t_glob_flags;
 
 typedef enum e_glob_result

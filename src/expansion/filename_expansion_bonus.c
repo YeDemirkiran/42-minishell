@@ -6,9 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 20:37:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/30 18:21:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <dirent.h>
 
@@ -32,13 +36,17 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 	while (pattern[i] != '\0')
 	{
 		c = pattern[i];
-		if (i == 0 && c == '.')
+		if (i == 0 && c == '.' && pattern[1] == '/')
+			glob->flags |= GLOB_FLAG_ADD_LOCAL_PREFIX;
+		else if (i == 0 && c == '.')
 			glob->flags |= GLOB_FLAG_EXPAND_HIDDEN;
 		set_quote(c, &quote);
 		if (c == '*' && quote == 0)
 			glob->result = GLOB_SUCCESS;
 		i++;
 	}
+	if (i > 0 && pattern[i - 1] == '/')
+		glob->flags |= GLOB_FLAG_EXPAND_DIRS;
 	if (i >= GLOB_BUFFER_SIZE)
 		glob->result = GLOB_NO_NEED;
 }
@@ -119,7 +127,7 @@ static int	pattern_match(const char *pattern,
 		return (1);
 	else if (pattern == NULL || name == NULL)
 		return (0);
-	if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && name[0] == '.')
+	if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && !(flags & GLOB_FLAG_ADD_LOCAL_PREFIX) && name[0] == '.')
 		return (0);
 	j = 0;
 	quote = 0;
@@ -145,6 +153,43 @@ static int	pattern_match(const char *pattern,
 	return (1);
 }
 
+static char	*get_correct_file_name(const char *original_name,
+	t_glob_flags flags)
+{
+	struct stat	buff;
+	int			res;
+	char		*new_name;
+	char		*tmp;
+
+	if (!(flags & GLOB_FLAG_EXPAND_DIRS)
+		&& !(flags & GLOB_FLAG_ADD_LOCAL_PREFIX))
+		return (ft_strdup(original_name));
+	res = stat(original_name, &buff);
+	if (res < 0)
+		return (NULL);
+	new_name = NULL;
+	if (flags & GLOB_FLAG_ADD_LOCAL_PREFIX && original_name[0] != '.')
+	{
+		new_name = ft_strjoin("./", original_name);
+		if (new_name == NULL)
+			return (NULL);
+	}
+	if (flags & GLOB_FLAG_EXPAND_DIRS && S_ISDIR(buff.st_mode))
+	{
+		if (new_name == NULL)
+			new_name = ft_strjoin(original_name, "/");
+		else
+		{
+			tmp = ft_strjoin(new_name, "/");
+			free(new_name);
+			new_name = tmp;
+		}
+	}
+	if (new_name == NULL)
+		new_name = ft_strdup(original_name);
+	return (new_name);
+}
+
 /**
  * @brief Takes a pattern, matches the files in the current directory
  * and returns a struct of matched files' list.
@@ -155,6 +200,8 @@ t_glob	ft_glob(const char *pattern)
 	DIR				*dir;
 	struct dirent	*dir_entry;
 	t_list			*new;
+	char			*tmp;
+	char			*tmp_2;
 
 	glob.result = GLOB_NO_NEED;
 	glob.flags = GLOB_FLAG_NONE;
@@ -170,9 +217,15 @@ t_glob	ft_glob(const char *pattern)
 		dir_entry = readdir(dir);
 		if (dir_entry == NULL)
 			break ;
-		if (pattern_match(pattern, dir_entry->d_name, glob.flags) != 1)
+		tmp = get_correct_file_name(dir_entry->d_name, glob.flags);
+		if (pattern_match(pattern, tmp, glob.flags) != 1)
+		{
+			free(tmp);
 			continue ;
-		new = ft_lstnew((void *)(ft_strdup(dir_entry->d_name)));
+		}
+		tmp_2 = ft_strdup(tmp);
+		free(tmp);
+		new = ft_lstnew((void *)(tmp_2));
 		lst_add_to_sorted_place(&(glob.word_list), new);
 	}
 	closedir(dir);
