@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:22:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/31 23:59:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/01 00:19:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -21,12 +21,20 @@
 #include "parse_command_list.h"
 
 /**
- * @brief Parses subshells.
+ * @brief The initial checking part of subshell parsing.
+ *
+ * @return
+ * - Runtime error if the token or its content is NULL
+ *
+ * - Uncomplete error if the next token or its content is NULL
+ *
+ * - Uncomplete error if the next token's type is either PAREN_RIGHT or a
+ * newline (meaning it's an empty or unclosed subshell)
+ *
+ * - Success if these checks don't fail
  */
-t_parse_result	parse_subshell(t_list *token, t_shell shell)
+static t_parse_result	parse_subshell_initial_check(t_list *token)
 {
-	t_parse_result	result;
-	t_ast			*root;
 	t_token			*token_obj;
 
 	if (token == NULL || token->content == NULL)
@@ -37,10 +45,45 @@ t_parse_result	parse_subshell(t_list *token, t_shell shell)
 	if (token_obj->type == TOKEN_PAREN_RIGHT
 		|| token_obj->type == TOKEN_NEWLINE)
 		return (parse_uncomplete_error(token));
+	return (parse_success(NULL, NULL));
+}
+
+/**
+ * @brief Builds the parent subshell AST and returns it.
+ *
+ * @return Runtime error on new AST node failure, success if no failure occurs.
+ */
+static t_parse_result	subshell_prepare_final_result(t_parse_result result)
+{
+	t_ast			*root;
+
+	root = ast_new_node(AST_SUBSHELL, NULL, result.ast, NULL);
+	if (root == NULL)
+	{
+		ast_free_tree(result.ast);
+		return (parse_runtime_error(result.current_token));
+	}
+	result.ast = root;
+	result.current_token = result.current_token->next;
+	return (result);
+}
+
+/**
+ * @brief Parses subshells.
+ */
+t_parse_result	parse_subshell(t_list *token, t_shell shell)
+{
+	t_parse_result	result;
+	t_token			*token_obj;
+
+	result = parse_subshell_initial_check(token);
+	if (result.type != PARSE_RESULT_SUCCESS)
+		return (result);
 	result = parse_command_list(token->next, shell);
 	if (result.type != PARSE_RESULT_SUCCESS)
 		return (result);
-	else if (result.current_token == NULL || result.current_token->content == NULL)
+	else if (result.current_token == NULL
+		|| result.current_token->content == NULL)
 	{
 		ast_free_tree(result.ast);
 		return (parse_uncomplete_error(token));
@@ -51,13 +94,5 @@ t_parse_result	parse_subshell(t_list *token, t_shell shell)
 		ast_free_tree(result.ast);
 		return (parse_uncomplete_error(token));
 	}
-	root = ast_new_node(AST_SUBSHELL, NULL, result.ast, NULL);
-	if (root == NULL)
-	{
-		ast_free_tree(result.ast);
-		return (parse_runtime_error(result.current_token));
-	}
-	result.ast = root;
-	result.current_token = result.current_token->next;
-	return (result);
+	return (subshell_prepare_final_result(result));
 }
