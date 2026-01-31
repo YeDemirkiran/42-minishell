@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/24 03:34:09 by muayna           ###   ########.fr       */
+/*   Updated: 2026/01/29 17:14:12 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void run_builtin(t_ast *ast, t_shell *shell, int print_exit_value)
 	len = ft_strlen(command);
 	if(isbuiltin(command))
 	{
+		update_special_parameter(ast, shell);
 		if(!ft_strncmp("cd", command, len))
 		shell->exit_status = cd(&shell->env->envp_list, ast);
 		else if(!ft_strncmp("pwd", command, len))
@@ -121,7 +122,7 @@ char *command_path(t_ast *ast, t_shell shell)
 			path = sort_term_strdup(DEFAULT_PATH);
 		else
 		{
-				splitted_path = ft_split(path, ':');
+			splitted_path = ft_split(path, ':');
 			while(splitted_path[i])
 			{
 				path = sort_term_strjoin(splitted_path[i], sort_term_strjoin("/", ast->data->ast_command.arguments->content));
@@ -131,6 +132,7 @@ char *command_path(t_ast *ast, t_shell shell)
 			}	
 		}
 	}
+	clear_arr(&splitted_path);
 	return path;
 }
 

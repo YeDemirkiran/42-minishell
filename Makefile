@@ -6,9 +6,10 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/25 23:39:47 by yademirk         ###   ########.fr        #
+#    Updated: 2026/01/31 18:29:07 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
+
 
 NAME = minishell
 
@@ -62,7 +63,7 @@ EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c variable_expansion.c
 
 ## Executor
 EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c)
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c special_parameter.c shell_level.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
