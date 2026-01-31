@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:23:57 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 03:40:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/31 23:58:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,7 +36,6 @@ t_parse_result	parse_command_list(t_list *tokens, t_shell shell)
 	if (tokens == NULL || tokens->content == NULL)
 		return (parse_runtime_error(NULL));
 	level += 1;
-	//printf("\ncalling cond\n");
 	result = parse_conditional(tokens, shell);
 	if (level <= 1 && result.current_token != NULL)
 	{
@@ -66,8 +65,6 @@ t_parse_result	parse_command_list(t_list *tokens, t_shell shell)
 
 	if (tokens == NULL || tokens->content == NULL)
 		return (parse_runtime_error(NULL));
-	//printf("\ncalling pipeline\n");
-	result = parse_pipeline(tokens, shell);
 	if (result.current_token != NULL)
 	{
 		token = (t_token *)(result.current_token->content);

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/22 23:28:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/31 23:57:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -183,8 +183,6 @@ t_ast	*parse(t_list *tokens, t_shell *shell)
 	t_ast			*root;
 	t_parse_result	result;
 
-	//printf("(DEBUG: Starting shell step 2: Parser)\n");
-	//printf("(DEBUG: Step 2: Parse AST)\n");
 	if (tokens == NULL || tokens->content == NULL)
 		return (NULL);
 	result = parse_command_list(tokens, *shell);
@@ -199,8 +197,6 @@ t_ast	*parse(t_list *tokens, t_shell *shell)
 		return (NULL);
 	}
 	root = result.ast;
-	//printf("(DEBUG: Step 2.1: Printing AST)\n");
-	//ast_traverse_preorder(root, debug_ast_print_node);
 	return (root);
 }
 

@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/23 21:13:08 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/01/31 23:58:39 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -27,6 +27,7 @@
 /* =============================== FUNCTIONS =============================== */
 
 #ifdef MINISHELL_BONUS
+
 /**
  * @brief Takes a token and parses it into either a simple command or
  * a subshell.
@@ -53,7 +54,9 @@ t_parse_result	parse_command(t_list *tokens, t_shell shell)
 		result = parse_syntax_error(tokens);
 	return (result);
 }
+
 #else
+
 /**
  * @brief Takes a token and parses it into either a simple command or
  * a subshell.
@@ -78,7 +81,7 @@ t_parse_result	parse_command(t_list *tokens, t_shell shell)
 		result = parse_syntax_error(tokens);
 	return (result);
 }
-#endif
 
+#endif
 
 /* ================================== END ================================== */
