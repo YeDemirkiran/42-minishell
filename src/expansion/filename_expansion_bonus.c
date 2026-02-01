@@ -6,15 +6,15 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/01 23:29:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/01 23:57:07 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <dirent.h>
+#include <errno.h>
 
 #include "modules/utils.h"
 
@@ -36,6 +36,9 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 		return ;
 	i = 0;
 	quote = 0;
+	glob->result = GLOB_FAILURE;
+	glob->flags = GLOB_FLAG_NONE;
+	glob->word_list = NULL;
 	while (pattern[i] != '\0')
 	{
 		c = pattern[i];
@@ -221,29 +224,53 @@ t_glob	ft_glob(const char *pattern)
 	char			*tmp;
 	char			*tmp_2;
 
-	glob.result = GLOB_NO_NEED;
-	glob.flags = GLOB_FLAG_NONE;
-	glob.word_list = NULL;
 	if (pattern == NULL)
-		return (glob);
+		return ((t_glob){.result = GLOB_NO_NEED, .word_list = NULL});
 	set_glob_struct(pattern, &glob);
-	if (glob.result == GLOB_NO_NEED)
+	if (glob.result != GLOB_SUCCESS)
 		return (glob);
 	dir = opendir(".");
+	if (dir == NULL)
+		return ((t_glob){.result = GLOB_FAILURE, .word_list = NULL});
 	while (1)
 	{
 		dir_entry = readdir(dir);
 		if (dir_entry == NULL)
+		{
+			if (errno != 0)
+			{
+				ft_lstclear(&(glob.word_list), free);
+				glob.result = GLOB_FAILURE;
+			}
 			break ;
+		}
 		tmp = get_correct_file_name(dir_entry->d_name, glob.flags);
+		if (tmp == NULL)
+		{
+			ft_lstclear(&(glob.word_list), free);
+			glob.result = GLOB_FAILURE;
+			break ;
+		}
 		if (pattern_match(pattern, tmp, glob.flags) != 1)
 		{
 			free(tmp);
 			continue ;
 		}
 		tmp_2 = ft_strdup(tmp);
+		if (tmp_2 == NULL)
+		{
+			ft_lstclear(&(glob.word_list), free);
+			glob.result = GLOB_FAILURE;
+			break ;
+		}
 		free(tmp);
 		new = ft_lstnew((void *)(tmp_2));
+		if (new == NULL)
+		{
+			ft_lstclear(&(glob.word_list), free);
+			glob.result = GLOB_FAILURE;
+			break ;
+		}
 		ft_lstadd_sorted(&(glob.word_list), new);
 	}
 	closedir(dir);
