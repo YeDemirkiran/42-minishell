@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/01 18:37:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/01 23:29:29 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -147,26 +147,16 @@ static int	pattern_match(const char *pattern,
 }
 
 /**
- * @brief Takes the original file name and returns the correct
- * name for pattern matching using the given flags. The returned
- * string is heap-allocated and should be free'd when no longer in use.
+ * @brief Allocates the new filename on heap using the flags.
  *
  * @return NULL on failure.
  */
-static char	*get_correct_file_name(const char *original_name,
-	t_glob_flags flags)
+static char	*get_correct_file_name_flags(const char *original_name,
+	t_glob_flags flags, mode_t st_mode)
 {
-	struct stat	buff;
-	int			res;
-	char		*new_name;
-	char		*tmp;
+	char	*new_name;
+	char	*tmp;
 
-	if (!(flags & GLOB_FLAG_EXPAND_DIRS)
-		&& !(flags & GLOB_FLAG_ADD_LOCAL_PREFIX))
-		return (ft_strdup(original_name));
-	res = stat(original_name, &buff);
-	if (res < 0)
-		return (NULL);
 	new_name = NULL;
 	if (flags & GLOB_FLAG_ADD_LOCAL_PREFIX && original_name[0] != '.')
 	{
@@ -174,7 +164,7 @@ static char	*get_correct_file_name(const char *original_name,
 		if (new_name == NULL)
 			return (NULL);
 	}
-	if (flags & GLOB_FLAG_EXPAND_DIRS && S_ISDIR(buff.st_mode))
+	if (flags & GLOB_FLAG_EXPAND_DIRS && S_ISDIR(st_mode))
 	{
 		if (new_name == NULL)
 			new_name = ft_strjoin(original_name, "/");
@@ -187,6 +177,34 @@ static char	*get_correct_file_name(const char *original_name,
 	}
 	if (new_name == NULL)
 		new_name = ft_strdup(original_name);
+	return (new_name);
+}
+
+/**
+ * @brief Takes the original file name and returns the correct
+ * name for pattern matching using the given flags. The returned
+ * string is heap-allocated and should be free'd when no longer in use.
+ *
+ * @return NULL on failure.
+ */
+static char	*get_correct_file_name(const char *original_name,
+	t_glob_flags flags)
+{
+	struct stat	buff;
+	int			res;
+	char		*new_name;
+
+	new_name = ft_strdup(original_name);
+	if (new_name == NULL)
+		return (NULL);
+	if (!(flags & GLOB_FLAG_EXPAND_DIRS)
+		&& !(flags & GLOB_FLAG_ADD_LOCAL_PREFIX))
+		return (new_name);
+	res = stat(original_name, &buff);
+	if (res < 0)
+		return (new_name);
+	free(new_name);
+	new_name = get_correct_file_name_flags(original_name, flags, buff.st_mode);
 	return (new_name);
 }
 
