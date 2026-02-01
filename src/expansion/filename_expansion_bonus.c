@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/01 23:57:07 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/02 00:11:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -36,7 +36,7 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 		return ;
 	i = 0;
 	quote = 0;
-	glob->result = GLOB_FAILURE;
+	glob->result = GLOB_NO_NEED;
 	glob->flags = GLOB_FLAG_NONE;
 	glob->word_list = NULL;
 	while (pattern[i] != '\0')
@@ -306,6 +306,8 @@ static int	filename_expand_args(t_list **args)
 			ft_lst_replace(args, current, glob.word_list, free);
 			current = tmp;
 		}
+		else if (glob.result == GLOB_FAILURE)
+			return (0);
 		else
 			current = current->next;
 	}
@@ -321,10 +323,13 @@ int	perform_filename_expansion(t_ast *ast)
 	if (ast == NULL)
 		return (2);
 	if (ast->type == AST_COMMAND)
-		filename_expand_args(&(ast->data->ast_command.arguments));
+		if (filename_expand_args(&(ast->data->ast_command.arguments)) != 1)
+			return (0);
 	if (ast->left != NULL)
-		perform_filename_expansion(ast->left);
+		if (perform_filename_expansion(ast->left) != 1)
+			return (0);
 	if (ast->right != NULL)
-		perform_filename_expansion(ast->right);
+		if (perform_filename_expansion(ast->right) != 1)
+			return (0);
 	return (1);
 }
