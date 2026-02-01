@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/30 18:21:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/01 17:02:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -49,47 +49,6 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 		glob->flags |= GLOB_FLAG_EXPAND_DIRS;
 	if (i >= GLOB_BUFFER_SIZE)
 		glob->result = GLOB_NO_NEED;
-}
-
-/**
- * @brief Takes a list with char * content, and adds the new node
- * to its correct place.
- */
-static void	lst_add_to_sorted_place(t_list **lst, t_list *new)
-{
-	t_list	*i;
-	t_list	*pre;
-	char	*str_1;
-	char	*str_new;
-
-	if (lst == NULL || new == NULL || new->content == NULL)
-		return ;
-	if (*lst == NULL)
-	{
-		*lst = new;
-		return ;
-	}
-	str_new = (char *)(new->content);
-	i = *lst;
-	pre = NULL;
-	while (i != NULL)
-	{
-		str_1 = (char *)(i->content);
-		if (ft_strcmp(str_1, str_new) >= 0)
-		{
-			if (pre == NULL)
-				ft_lstadd_front(lst, new);
-			else
-			{
-				pre->next = new;
-				new->next = i;
-			}
-			return ;
-		}
-		pre = i;
-		i = i->next;
-	}
-	pre->next = new;
 }
 
 static char	*find_in_name(char *name, const char *buff, int force_first)
@@ -226,7 +185,7 @@ t_glob	ft_glob(const char *pattern)
 		tmp_2 = ft_strdup(tmp);
 		free(tmp);
 		new = ft_lstnew((void *)(tmp_2));
-		lst_add_to_sorted_place(&(glob.word_list), new);
+		ft_lstadd_sorted(&(glob.word_list), new);
 	}
 	closedir(dir);
 	return (glob);
