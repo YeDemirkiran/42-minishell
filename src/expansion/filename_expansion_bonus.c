@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/01 17:02:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/01 18:37:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,6 +23,9 @@
 
 #define GLOB_BUFFER_SIZE 4096
 
+/**
+ * @brief Initializes the given glob struct's flags and other parameters.
+ */
 static void	set_glob_struct(const char *pattern, t_glob *glob)
 {
 	size_t	i;
@@ -51,10 +54,18 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 		glob->result = GLOB_NO_NEED;
 }
 
-static char	*find_in_name(char *name, const char *buff, int force_first)
+/**
+ * @brief Takes a buffer and a word, and tries to find it in
+ * the given name.
+ *
+ * If first_occurrence is positive, the first occurrence of the buffer is
+ * returned. Otherwise, the last occurrence is returned.
+ */
+static char	*find_buffer_in_name(const char *name,
+	const char *buff, int first_occurrence)
 {
-	char	*previous;
-	char	*current;
+	const char	*previous;
+	const char	*current;
 
 	if (name == NULL || buff == NULL)
 		return (NULL);
@@ -65,53 +76,83 @@ static char	*find_in_name(char *name, const char *buff, int force_first)
 		current = ft_strnstr(current, buff, ft_strlen(current));
 		if (current == NULL)
 			break ;
-		else if (force_first != 0)
-			return (current);
+		else if (first_occurrence > 0)
+			return ((char *)(current));
 		previous = current;
 		current = current + 1;
 	}
-	return (previous);
+	return ((char *)previous);
 }
 
+static int	pattern_match_initial_check(const char *pattern, const char *name,
+	t_glob_flags flags)
+{
+	int	expand_hidden;
+	int	add_local_prefix;
+
+	if (pattern == NULL || name == NULL)
+		return (0);
+	expand_hidden = (flags & GLOB_FLAG_EXPAND_HIDDEN);
+	add_local_prefix = (flags & GLOB_FLAG_ADD_LOCAL_PREFIX);
+	if (!expand_hidden && !add_local_prefix && name[0] == '.')
+		return (0);
+	return (1);
+}
+
+static void	pattern_match_prepare_buffer(char *buffer, const char *pattern,
+	size_t *i, size_t buffer_start)
+{
+	char	quote;
+
+	quote = 0;
+	while ((quote != 0 || pattern[*i] != '*') && pattern[*i] != '\0')
+		set_quote(pattern[(*i)++], &quote);
+	ft_strlcpy(buffer, pattern + buffer_start, *i - buffer_start + 1);
+	remove_quotes(buffer);
+}
+
+/**
+ * @brief Takes a pattern and a name, and checks if they do match.
+ *
+ * @return 1 if pattern matches, 0 otherwise.
+ */
 static int	pattern_match(const char *pattern,
 	const char *name, t_glob_flags flags)
 {
-	size_t	j;
-	size_t	k;
+	size_t	i;
+	size_t	buffer_start;
 	char	*current;
-	char	quote;
-	char	buff[GLOB_BUFFER_SIZE];
+	char	buffer[GLOB_BUFFER_SIZE];
 
-	if (pattern == name)
-		return (1);
-	else if (pattern == NULL || name == NULL)
+	if (pattern_match_initial_check(pattern, name, flags) != 1)
 		return (0);
-	if (!(flags & GLOB_FLAG_EXPAND_HIDDEN) && !(flags & GLOB_FLAG_ADD_LOCAL_PREFIX) && name[0] == '.')
-		return (0);
-	j = 0;
-	quote = 0;
+	i = 0;
 	current = (char *)name;
 	while (1)
 	{
-		while (pattern[j] == '*')
-			j++;
-		if (pattern[j] == '\0')
+		while (pattern[i] == '*')
+			i++;
+		if (pattern[i] == '\0')
 			break ;
-		k = j;
-		while ((quote != 0 || pattern[j] != '*') && pattern[j] != '\0')
-			set_quote(pattern[j++], &quote);
-		ft_strlcpy(buff, pattern + k, j - k + 1);
-		remove_quotes(buff);
-		current = find_in_name(current, buff, k == 0);
-		if (current == NULL || (k == 0 && current != name))
+		buffer_start = i;
+		pattern_match_prepare_buffer(buffer, pattern, &i, buffer_start);
+		current = find_buffer_in_name(current, buffer, buffer_start == 0);
+		if (current == NULL || (buffer_start == 0 && current != name))
 			return (0);
-		else if (pattern[j] == '\0' && current[ft_strlen(buff)] != '\0')
+		else if (pattern[i] == '\0' && current[ft_strlen(buffer)] != '\0')
 			return (0);
-		current += j - k;
+		current += i - buffer_start;
 	}
 	return (1);
 }
 
+/**
+ * @brief Takes the original file name and returns the correct
+ * name for pattern matching using the given flags. The returned
+ * string is heap-allocated and should be free'd when no longer in use.
+ *
+ * @return NULL on failure.
+ */
 static char	*get_correct_file_name(const char *original_name,
 	t_glob_flags flags)
 {
