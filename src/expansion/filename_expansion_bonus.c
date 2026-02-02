@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 09:31:33 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/02 09:39:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -23,6 +23,18 @@
 
 #define GLOB_BUFFER_SIZE 4096
 
+static int	pattern_is_dir(const char *pattern)
+{
+	size_t	i;
+
+	i = ft_strlen(pattern) - 1;
+	while (i > 0 && pattern[i] == '*')
+		i--;
+	if (i > 0 && pattern[i] == '/')
+		return (1);
+	return (0);
+}
+
 /**
  * @brief Initializes the given glob struct's flags and other parameters.
  */
@@ -32,8 +44,6 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 	char	c;
 	char	quote;
 
-	if (pattern == NULL || glob == NULL)
-		return ;
 	i = 0;
 	quote = 0;
 	glob->result = GLOB_NO_NEED;
@@ -51,7 +61,7 @@ static void	set_glob_struct(const char *pattern, t_glob *glob)
 			glob->result = GLOB_SUCCESS;
 		i++;
 	}
-	if (i > 0 && pattern[i - 1] == '/')
+	if (pattern_is_dir(pattern) == 1)
 		glob->flags |= GLOB_FLAG_EXPAND_DIRS;
 	if (i >= GLOB_BUFFER_SIZE)
 		glob->result = GLOB_NO_NEED;
