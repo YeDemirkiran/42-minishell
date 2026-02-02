@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 00:11:47 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/02 09:09:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -277,6 +277,16 @@ t_glob	ft_glob(const char *pattern)
 	return (glob);
 }
 
+static void	filename_replace_arg(t_list **args, t_list **current,
+	t_list *word_list)
+{
+	t_list	*next;
+
+	next = (*current)->next;
+	ft_lst_replace(args, *current, word_list, free);
+	*current = next;
+}
+
 /**
  * @brief Takes a list of arguments, expands filenames in it
  * and then replaces the old word with the new word(list).
@@ -286,7 +296,6 @@ static int	filename_expand_args(t_list **args)
 	char	*str;
 	t_glob	glob;
 	t_list	*current;
-	t_list	*tmp;
 
 	if (args == NULL || *args == NULL)
 		return (2);
@@ -301,11 +310,7 @@ static int	filename_expand_args(t_list **args)
 		str = (char *)(current->content);
 		glob = ft_glob(str);
 		if (glob.result == GLOB_SUCCESS)
-		{
-			tmp = current->next;
-			ft_lst_replace(args, current, glob.word_list, free);
-			current = tmp;
-		}
+			filename_replace_arg(args, &current, glob.word_list);
 		else if (glob.result == GLOB_FAILURE)
 			return (0);
 		else
