@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 09:09:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/02 09:31:33 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -211,6 +211,51 @@ static char	*get_correct_file_name(const char *original_name,
 	return (new_name);
 }
 
+static int	readdir_and_pattern_match(DIR *dir, t_glob *glob,
+	const char *pattern, char **filename_addr)
+{
+	struct dirent	*dir_entry;
+
+	dir_entry = readdir(dir);
+	if (dir_entry == NULL)
+	{
+		if (errno != 0)
+		{
+			ft_lstclear(&(glob->word_list), free);
+			glob->result = GLOB_FAILURE;
+		}
+		return (-1);
+	}
+	*filename_addr = get_correct_file_name(dir_entry->d_name, glob->flags);
+	if (*filename_addr == NULL)
+	{
+		ft_lstclear(&(glob->word_list), free);
+		glob->result = GLOB_FAILURE;
+		return (-1);
+	}
+	if (pattern_match(pattern, *filename_addr, glob->flags) != 1)
+	{
+		free(*filename_addr);
+		return (0);
+	}
+	return (1);
+}
+
+static int	ft_glob_add_to_list(const char *filename, t_glob *glob)
+{
+	t_list	*new;
+
+	new = ft_lstnew((void *)(filename));
+	if (new == NULL)
+	{
+		ft_lstclear(&(glob->word_list), free);
+		glob->result = GLOB_FAILURE;
+		return (0);
+	}
+	ft_lstadd_sorted(&(glob->word_list), new);
+	return (1);
+}
+
 /**
  * @brief Takes a pattern, matches the files in the current directory
  * and returns a struct of matched files' list.
@@ -219,13 +264,9 @@ t_glob	ft_glob(const char *pattern)
 {
 	t_glob			glob;
 	DIR				*dir;
-	struct dirent	*dir_entry;
-	t_list			*new;
-	char			*tmp;
-	char			*tmp_2;
+	int				result;
+	char			*filename;
 
-	if (pattern == NULL)
-		return ((t_glob){.result = GLOB_NO_NEED, .word_list = NULL});
 	set_glob_struct(pattern, &glob);
 	if (glob.result != GLOB_SUCCESS)
 		return (glob);
@@ -234,44 +275,15 @@ t_glob	ft_glob(const char *pattern)
 		return ((t_glob){.result = GLOB_FAILURE, .word_list = NULL});
 	while (1)
 	{
-		dir_entry = readdir(dir);
-		if (dir_entry == NULL)
-		{
-			if (errno != 0)
-			{
-				ft_lstclear(&(glob.word_list), free);
-				glob.result = GLOB_FAILURE;
-			}
+		errno = 0;
+		result = readdir_and_pattern_match(dir, &glob, pattern, &filename);
+		if (result == -1)
 			break ;
-		}
-		tmp = get_correct_file_name(dir_entry->d_name, glob.flags);
-		if (tmp == NULL)
-		{
-			ft_lstclear(&(glob.word_list), free);
-			glob.result = GLOB_FAILURE;
-			break ;
-		}
-		if (pattern_match(pattern, tmp, glob.flags) != 1)
-		{
-			free(tmp);
+		else if (result == 0)
 			continue ;
-		}
-		tmp_2 = ft_strdup(tmp);
-		if (tmp_2 == NULL)
-		{
-			ft_lstclear(&(glob.word_list), free);
-			glob.result = GLOB_FAILURE;
+		result = ft_glob_add_to_list(filename, &glob);
+		if (result == 0)
 			break ;
-		}
-		free(tmp);
-		new = ft_lstnew((void *)(tmp_2));
-		if (new == NULL)
-		{
-			ft_lstclear(&(glob.word_list), free);
-			glob.result = GLOB_FAILURE;
-			break ;
-		}
-		ft_lstadd_sorted(&(glob.word_list), new);
 	}
 	closedir(dir);
 	return (glob);
