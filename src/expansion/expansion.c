@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/25 23:39:29 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/02 10:59:18 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -65,7 +65,6 @@ int	expansion(t_ast *root, t_shell shell)
 	if (perform_filename_expansion(root) != 1)
 		return (0);
 	perform_quote_removal(root);
-	//ast_traverse_preorder(root, print_command_args);
 	return (1);
 }
 
@@ -87,10 +86,7 @@ int	expansion(t_ast *root, t_shell shell)
 	if (perform_word_split(root, shell) != 1)
 		return (0);
 	perform_quote_removal(root);
-	//ast_traverse_preorder(root, print_command_args);
 	return (1);
 }
 
 #endif
-
-

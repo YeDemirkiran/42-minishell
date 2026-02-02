@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/01/31 18:29:07 by yademirk         ###   ########.fr        #
+#    Updated: 2026/02/02 10:57:27 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -78,7 +78,7 @@ UTILS_DIR = utils/
 UTILS_FILES = $(addprefix $(UTILS_DIR), error_handling.c quotes.c shell_utils.c)
 
 ## Bonus files
-BONUS_FILES =	$(addprefix $(PARSER_DIR), parse_conditional_bonus.c parse_subshell_bonus.c) $(addprefix $(EXPANSION_DIR), filename_expansion_bonus.c)
+BONUS_FILES = $(addprefix $(PARSER_DIR), parse_conditional_bonus.c parse_subshell_bonus.c) $(addprefix $(EXPANSION_DIR), filename_expansion_bonus.c glob_bonus.c glob_utils_bonus.c pattern_match_bonus.c)
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
@@ -133,4 +133,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all bonus clean fclean re
+reb: fclean bonus
+
+.PHONY: all bonus clean fclean re reb
