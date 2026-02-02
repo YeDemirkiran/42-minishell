@@ -6,12 +6,13 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/02/02 10:57:27 by yademirk         ###   ########.fr        #
+#    Updated: 2026/02/03 02:20:13 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 
 NAME = minishell
+BONUS_NAME = minishell_bonus
 
 # DIRECTORIES
 ## Main
@@ -99,11 +100,13 @@ FLAGS = $(W_FLAGS) $(INC_FLAGS)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
-	$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $@
 
 bonus: FLAGS += -D MINISHELL_BONUS
-bonus: $(BONUS_OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
-	$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBS) -o $(NAME)
+bonus: $(BONUS_NAME)
+
+$(BONUS_NAME): $(BONUS_OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
+	$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBS) -o $@
 
 $(LIBFT_A):
 	make -C $(LIBFT_DIR)
@@ -123,9 +126,14 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 
 clean:
 	rm -rf $(OBJ_DIR)
+	make -C $(LIBFT_DIR) clean
+	make -C $(LIBMNL_DIR) clean
+	make -C $(LIBGB_DIR) clean
+	make -C $(LIBGNL_DIR) clean
 
 fclean: clean
 	rm -rf $(NAME)
+	rm -rf $(BONUS_NAME)
 	make -C $(LIBFT_DIR) fclean
 	make -C $(LIBMNL_DIR) fclean
 	make -C $(LIBGB_DIR) fclean
