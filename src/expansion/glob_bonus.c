@@ -6,9 +6,11 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 10:45:53 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 10:51:20 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:20:17 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
+
+/* ================================ HEADERS ================================ */
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -21,6 +23,8 @@
 
 #include "glob_bonus.h"
 #include "pattern_match_bonus.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Allocates the new filename on heap using the flags.
@@ -161,3 +165,5 @@ t_glob	ft_glob(const char *pattern)
 	closedir(dir);
 	return (glob);
 }
+
+/* ================================== END ================================== */

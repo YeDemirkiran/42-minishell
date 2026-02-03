@@ -6,23 +6,31 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 08:16:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:31:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Internal libraries
 #include <libft/string.h>
 
+// Project headers
 #include "enums/e_redir_type.h"
 #include "structs/s_token.h"
 #include "structs/s_redirection.h"
 #include "g_sig.h"
 
+// Locla headers
 #include "parse_redirection.h"
 #include "parse_result.h"
 #include "parse_heredoc.h"
 #include "parse_heredoc_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static t_parse_result	is_redir_valid(t_list *token)
 {
@@ -110,3 +118,5 @@ t_parse_result
 		return (result);
 	return (parse_success(NULL, token->next->next));
 }
+
+/* ================================== END ================================== */

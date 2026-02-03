@@ -6,19 +6,26 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:22:18 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/01 00:19:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:32:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <libft/linked_list.h>
 
+// Project hjeaderts
 #include "modules/ast.h"
 #include "structs/s_token.h"
 #include "structs/s_ast.h"
 #include "structs/s_shell.h"
 
+// Local headers
 #include "parse_result.h"
 #include "parse_command_list.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief The initial checking part of subshell parsing.
@@ -96,3 +103,5 @@ t_parse_result	parse_subshell(t_list *token, t_shell shell)
 	}
 	return (subshell_prepare_final_result(result));
 }
+
+/* ================================== END ================================== */

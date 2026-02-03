@@ -6,17 +6,24 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:26:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 07:41:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:17:45 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Project headers
 #include "modules/utils.h"
 
+// Local headers
 #include "variable_utils.h"
 #include "expansion_data.h"
 #include "expansion_data_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static void	advance_expansion_loop(char *word, size_t *i, char *quote)
 {
@@ -99,3 +106,5 @@ t_list	*get_expansion_data(char *word, t_shell shell, int ignore_quotes)
 	}
 	return (root);
 }
+
+/* ================================== END ================================== */

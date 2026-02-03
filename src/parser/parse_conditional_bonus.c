@@ -6,15 +6,21 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 19:46:11 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 21:56:33 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:30:02 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Prohjeect headers
 #include "structs/s_shell.h"
 #include "modules/ast.h"
 
+// Local headers
 #include "parse_result.h"
 #include "parse_pipeline.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Calls ast_free_tree on both left and right, if they are not NULL.
@@ -77,3 +83,5 @@ t_parse_result	parse_conditional(t_list *token, t_shell shell)
 	}
 	return (parse_success(left, token));
 }
+
+/* ================================== END ================================== */

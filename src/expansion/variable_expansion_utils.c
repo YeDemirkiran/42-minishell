@@ -6,16 +6,23 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 09:54:53 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 09:55:54 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:26:35 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Internal libraries
 #include <libft/linked_list.h>
 #include <libft/string.h>
 
+// Local headers
 #include "expansion_data.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes a list of expansion data blocks and returns the total length of
@@ -86,3 +93,5 @@ char	*get_expanded_word(char *str, t_list *expansion_data)
 	}
 	return (word);
 }
+
+/* ================================== END ================================== */

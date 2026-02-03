@@ -6,17 +6,24 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 10:05:50 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 10:08:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:24:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 #include <errno.h>
 
+// Internal libraires
 #include <libft/string.h>
 
+// Project headers
 #include "structs/s_ast.h"
 #include "structs/s_redirection.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static char	*get_tilde_expanded_string(const char *str, const char *home)
 {
@@ -93,3 +100,5 @@ int	expand_tilde_redir_list(t_list *node, const char *home)
 	}
 	return (1);
 }
+
+/* ================================== END ================================== */

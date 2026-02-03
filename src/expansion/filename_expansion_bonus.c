@@ -6,15 +6,22 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 10:54:32 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:19:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Project headers
 #include "structs/s_ast.h"
 
+// Local headers
 #include "glob_bonus.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static void	filename_replace_arg(t_list **args, t_list **current,
 	t_list *word_list)
@@ -77,3 +84,5 @@ int	perform_filename_expansion(t_ast *ast)
 			return (0);
 	return (1);
 }
+
+/* ================================== END ================================== */

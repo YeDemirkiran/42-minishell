@@ -6,13 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 08:14:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 08:15:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:30:51 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Project headers
 #include "enums/e_redir_type.h"
 #include "structs/s_redirection.h"
 #include "structs/s_token.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 // Returns the default FD value for a redirection.
 int	get_redir_default_fd(t_redir_type type)
@@ -43,3 +48,5 @@ t_redir_type	get_redir_type(t_token_type type)
 		redir = REDIR_NONE;
 	return (redir);
 }
+
+/* ================================== END ================================== */

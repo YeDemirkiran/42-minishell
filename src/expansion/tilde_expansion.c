@@ -6,18 +6,25 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 21:50:43 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 10:08:57 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:25:24 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Project headwers
 #include "structs/s_ast.h"
 #include "structs/s_redirection.h"
 #include "structs/s_shell.h"
 
+// Local headers
 #include "variable_utils.h"
 #include "tilde_expansion_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static int	tilde_expand_command(t_ast *ast, const char *home)
 {
@@ -76,3 +83,5 @@ int	perform_tilde_expansion(t_ast *root, t_shell shell)
 	free(home);
 	return (result == 1);
 }
+
+/* ================================== END ================================== */

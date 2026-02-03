@@ -6,19 +6,27 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 22:00:11 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 10:26:36 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:24:04 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 
+// Internal libraries
 #include <libft/linked_list.h>
 
+// Project headers
 #include "structs/s_ast.h"
 
+// Local headers
 #include "split_word_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static int	split_word_advance_loop(t_list **args,
 	t_list **node, const char *ifs)
@@ -118,3 +126,5 @@ int	perform_word_split(t_ast *ast, t_shell shell)
 	free(ifs);
 	return (result);
 }
+
+/* ================================== END ================================== */

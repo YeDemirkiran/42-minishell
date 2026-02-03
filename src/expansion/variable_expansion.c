@@ -6,25 +6,33 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 13:22:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 09:58:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:26:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 
+// Internal libraries
 #include <libft/string.h>
 #include <libft/predicate.h>
 
+// Project headers
 #include "structs/s_ast.h"
 #include "enums/e_redir_type.h"
 #include "structs/s_redirection.h"
 #include "modules/ast.h"
 
+// Local headers
 #include "expansion_data.h"
 #include "expansion_data_utils.h"
 #include "variable_expansion_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes a string, performs expansion on it if it's needed and
@@ -141,3 +149,5 @@ int	perform_variable_expansion(t_ast *root, t_shell shell)
 	}
 	return (1);
 }
+
+/* ================================== END ================================== */

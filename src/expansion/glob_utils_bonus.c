@@ -6,16 +6,23 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 10:45:50 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 10:58:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:21:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Internal libraries
 #include <libft/string.h>
 
+// Project headers
 #include "modules/utils.h"
 
+// Local headers
 #include "remove_quotes.h"
 #include "glob_bonus.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 static int	is_pattern_dir(const char *pattern)
 {
@@ -60,3 +67,5 @@ void	set_glob_struct(const char *pattern, t_glob *glob)
 	if (i >= GLOB_BUFFER_SIZE)
 		glob->result = GLOB_NO_NEED;
 }
+
+/* ================================== END ================================== */

@@ -6,21 +6,28 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 23:23:57 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 02:22:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:29:36 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Project headers
 #include "structs/s_ast.h"
 #include "structs/s_shell.h"
 #include "modules/ast.h"
 
+// Local headers
 #include "parse_result.h"
 
+// Bonus headers
 #ifdef MINISHELL_BONUS
 # include "parse_conditional_bonus.h"
 #else
 # include "parse_pipeline.h"
 #endif
+
+/* =============================== FUNCTIONS =============================== */
 
 #ifdef MINISHELL_BONUS
 
@@ -81,3 +88,5 @@ t_parse_result	parse_command_list(t_list *tokens, t_shell shell)
 }
 
 #endif
+
+/* ================================== END ================================== */

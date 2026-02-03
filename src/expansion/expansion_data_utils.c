@@ -1,19 +1,23 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   expansion_data_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 20:15:34 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 16:44:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:16:56 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 
+// Internal libraries
 #include <minishell_lb.h>
 #include <libft/predicate.h>
 #include <libft/string.h>
@@ -21,10 +25,14 @@
 #include <libft/write.h>
 #include <libft/math.h>
 
+// Project headers
 #include "structs/s_shell.h"
 
+// Local headers
 #include "variable_utils.h"
 #include "expansion_data.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Saves an expansion data block of type WORD
@@ -140,3 +148,5 @@ void	*on_expansion_data_error(t_list **root, char *key)
 		ft_putstr_fd("minishell: unknown error during variable expansion\n", 2);
 	return (NULL);
 }
+
+/* ================================== END ================================== */

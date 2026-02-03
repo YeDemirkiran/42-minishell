@@ -6,11 +6,16 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:46:49 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/07 21:49:56 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:35:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stddef.h>
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes a character and a pointer to a quote character,
@@ -41,3 +46,5 @@ void	set_quote(char c, char *quote_addr)
 			*quote_addr = '"';
 	}
 }
+
+/* ================================== END ================================== */

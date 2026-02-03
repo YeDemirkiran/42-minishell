@@ -1,23 +1,30 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   shell_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 07:52:25 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 03:29:29 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/03 16:36:21 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Internal libraires
 #include <readline/readline.h>
 #include <libft/string.h>
 #include <minishell_lb.h>
 #include <gb.h>
 
+// Project headers
 #include "structs/s_shell.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Prints an optional exit messsage depending on 'interactive'
@@ -45,3 +52,5 @@ int	rl_event(void)
 {
 	return (0);
 }
+
+/* ================================== END ================================== */
