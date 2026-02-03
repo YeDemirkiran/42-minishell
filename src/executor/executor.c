@@ -117,7 +117,7 @@ static void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
  * * 		For run command for executor
  * @return	Forks pid
 */
-pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
+pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_type)
 {
 	pid_t pid;
 	t_list *redirs;
@@ -126,29 +126,38 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	if(args == NULL)
 		return -1;
-	pid = fork();
-	install_command_signals();
-	if(pid == 0)
+	if(ast_root_type == AST_IF && isbuiltin(args[0]))
 	{
-		install_default_signals();
-		dup2(fd_in, 0);
-		dup2(fd_out, 1);
-		close_child_user_fd();
-		redirs = ast->data->ast_command.redirs;
-		check_redirs_status_in_fork(redirs);
-		if (ast->data->ast_command.arguments == NULL)
-			exit(EXIT_SUCCESS);
-		check_builtin_status(ast, shell, 0);
-		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
-		print_exec_error_message(args, shell->env->envp_char,
-			shell->interactive);
-		exit(errno_to_exit_code());
+		run_builtin(ast, shell, 0);
+		pid = -1;
+	}
+	else
+	{
+		printf("DEBUG FORK ELSE \n");
+		pid = fork();
+		install_command_signals();
+		if(pid == 0)
+		{
+			install_default_signals();
+			dup2(fd_in, 0);
+			dup2(fd_out, 1);
+			close_child_user_fd();
+			redirs = ast->data->ast_command.redirs;
+			check_redirs_status_in_fork(redirs);
+			if (ast->data->ast_command.arguments == NULL)
+				exit(EXIT_SUCCESS);
+			check_builtin_status(ast, shell, 0);
+			execve(command_path(ast, (*shell)), args, shell->env->envp_char);
+			print_exec_error_message(args, shell->env->envp_char,
+				shell->interactive);
+			exit(errno_to_exit_code());
+		}
 	}
 	clear_arr(&args);
 	return pid;
 }
 
-void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
+void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_type)
 {
 	int pipefd[2];
 	pid_t	pid;
@@ -157,17 +166,24 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		return ;
 	if(ast->type == AST_COMMAND)
 	{
-		pid = run_command(ast, shell, fd_in, fd_out);
+		pid = run_command(ast, shell, fd_in, fd_out, ast_root_type);
 		create_pid_list(shell->env->pid_list, pid);
 	}
 	else if (ast->type == AST_PIPE)
 	{
 		if(pipe(pipefd) == -1)
 			return ;
-		exec_utils(ast->left, shell, fd_in, pipefd[1]);
+		exec_utils(ast->left, shell, fd_in, pipefd[1], AST_PIPE);
 		close(pipefd[1]);
-		exec_utils(ast->right, shell, pipefd[0], fd_out);
+		exec_utils(ast->right, shell, pipefd[0], fd_out, AST_PIPE);
 		close(pipefd[0]);
+	}
+	else if (ast->type == AST_IF)
+	{
+		exec_utils(ast->left, shell, fd_in, fd_out, AST_IF);
+		printf("DEBUG : %d\n", shell->exit_status);
+		if(shell->exit_status == 0)
+			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
 	}
 	return ;
 }
@@ -224,13 +240,17 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	if(ast == NULL || shell == NULL)
 		return -1;
 	update_special_parameter(ast, shell);
-	exec_utils(ast, shell, fd_in, fd_out);
+	exec_utils(ast, shell, fd_in, fd_out, 0);
 	exit_status = 0;
 	tmp_pid_list = shell->env->pid_list;
-	while (tmp_pid_list != NULL)
+	if(tmp_pid_list->next != NULL)
 	{
-		waitpid(tmp_pid_list->pid, &exit_status, 0);
-		tmp_pid_list = tmp_pid_list->next;
+		while (tmp_pid_list != NULL)
+		{
+			if(tmp_pid_list->pid != -1)
+				waitpid(tmp_pid_list->pid, &exit_status, 0);
+			tmp_pid_list = tmp_pid_list->next;
+		}
 	}
 	if (WIFSIGNALED(exit_status))
 	{
