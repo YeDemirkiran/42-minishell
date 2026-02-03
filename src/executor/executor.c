@@ -243,14 +243,11 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	exec_utils(ast, shell, fd_in, fd_out, 0);
 	exit_status = 0;
 	tmp_pid_list = shell->env->pid_list;
-	if(tmp_pid_list->next != NULL)
+	while (tmp_pid_list != NULL)
 	{
-		while (tmp_pid_list != NULL)
-		{
-			if(tmp_pid_list->pid != -1)
-				waitpid(tmp_pid_list->pid, &exit_status, 0);
-			tmp_pid_list = tmp_pid_list->next;
-		}
+		if(tmp_pid_list->pid != -1)
+			waitpid(tmp_pid_list->pid, &exit_status, 0);
+		tmp_pid_list = tmp_pid_list->next;
 	}
 	if (WIFSIGNALED(exit_status))
 	{
