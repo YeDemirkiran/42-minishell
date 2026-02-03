@@ -184,10 +184,10 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_
 		if(shell->env->pid_list->pid != -1)
 		{
 			waitpid(shell->env->pid_list->pid, &test, 0);
-			shell->exit_status = WEXITSTATUS(test);
+			shell->exit_status_for_bonus = test;
 		}
 		shell->env->pid_list->pid = -1;
-		if(shell->exit_status == 0)
+		if(WEXITSTATUS(test) == 0)
 			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
 		else
 			return ;

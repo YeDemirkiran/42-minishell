@@ -23,6 +23,7 @@ typedef struct s_shell
 	unsigned char		exit_status;
 	int					pid;
 	int					interactive;
+	int					exit_status_for_bonus;
 }	t_shell;
 
 #endif
