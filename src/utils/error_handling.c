@@ -6,17 +6,24 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 21:29:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 07:00:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:35:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
 
+// Internal libraries
 #include <libft/write.h>
 
+// Project headers
 #include "structs/s_shell.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Writes an error message to STDERR with maximum 3 columns.
@@ -87,3 +94,5 @@ int	errno_to_exit_code(void)
 		code = 1;
 	return (code);
 }
+
+/* ================================== END ================================== */

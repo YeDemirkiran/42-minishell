@@ -6,23 +6,31 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 23:02:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/11 22:23:39 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:33:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// For signal.h
 #define _POSIX_C_SOURCE 200809L
 
+// Standxard libraries
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <errno.h>
 
+// Internal libraries
 #include <readline/readline.h>
 
+// Project headers
 #include "g_sig.h"
 
 volatile sig_atomic_t	g_sig = 0;
+
+/* =============================== FUNCTIONS =============================== */
 
 static void	on_sigint_prompt(int i)
 {
@@ -75,3 +83,5 @@ void	install_default_signals(void)
 	sigaction(SIGINT, &action, NULL);
 	signal(SIGQUIT, SIG_DFL);
 }
+
+/* ================================== END ================================== */

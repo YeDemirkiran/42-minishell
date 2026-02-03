@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:42:07 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 15:41:06 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:31:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -170,3 +170,5 @@ t_parse_result	parse_simple_command(t_list *tokens, t_shell shell)
 		return (free_parse_lists(&args, &redirs, parse_runtime_error(tokens)));
 	return (parse_success(result.ast, tokens));
 }
+
+/* ================================== END ================================== */
