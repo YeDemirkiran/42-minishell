@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 23:42:07 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/18 23:46:23 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 15:41:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -30,6 +30,7 @@
 // Local headers
 #include "parse_result.h"
 #include "parse_redirection.h"
+#include "parse_heredoc_utils.h"
 
 /* =============================== FUNCTIONS =============================== */
 
@@ -97,7 +98,10 @@ static t_parse_result	free_parse_lists(t_list **args, t_list **redirs,
 	if (args != NULL)
 		ft_lstclear(args, free);
 	if (redirs != NULL)
+	{
+		clear_heredoc_tmp_files(*redirs);
 		ft_lstclear(redirs, free_redir_struct);
+	}
 	return (result);
 }
 
