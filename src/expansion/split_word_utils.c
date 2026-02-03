@@ -1,24 +1,32 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_words_utils.c                                :+:      :+:    :+:   */
+/*   split_word_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 10:21:24 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/21 10:24:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:23:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdlib.h>
 
+// Internal libraries
 #include <libft/string.h>
 #include <libft/linked_list.h>
 
+// Project headers
 #include "structs/s_shell.h"
 #include "modules/utils.h"
 
+// Local headers
 #include "variable_utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 char	*get_ifs(t_shell shell)
 {
@@ -108,3 +116,5 @@ int	does_need_split(char *str, const char *ifs)
 	}
 	return (0);
 }
+
+/* ================================== END ================================== */

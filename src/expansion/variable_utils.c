@@ -1,31 +1,37 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   variable_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 14:00:08 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/15 16:44:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:27:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stddef.h>
 
+// Project headers
 #include "structs/s_shell.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Checks if the given parameter is a special, or a positional
  * argument. These include:
- * 
+ *
  * - $$: Get PID
- * 
+ *
  * - $?: Get the exit code of the last executed command
- * 
+ *
  * - $#: Number of positional arguments
- * 
+ *
  * - $0...$9: Positional arguments from 0 to 9
- * 
+ *
  * @return 0 if not special variable, 1 if it is.
  */
 int	is_special_variable(char *word)
@@ -115,3 +121,5 @@ char	*get_env_var(char *key, t_shell shell)
 		value = ft_strdup(value);
 	return (value);
 }
+
+/* ================================== END ================================== */

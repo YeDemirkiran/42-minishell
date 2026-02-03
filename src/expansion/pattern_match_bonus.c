@@ -6,16 +6,23 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 10:42:37 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 10:58:25 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:22:08 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Internal libraires
 #include <libft/string.h>
 
+// Project headers
 #include "modules/utils.h"
 
+// Local headers
 #include "remove_quotes.h"
 #include "glob_bonus.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes a buffer and a word, and tries to find it in
@@ -107,3 +114,5 @@ int	pattern_match(const char *pattern, const char *name, t_glob_flags flags)
 	}
 	return (1);
 }
+
+/* ================================== END ================================== */

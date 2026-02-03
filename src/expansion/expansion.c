@@ -6,46 +6,33 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:28 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/02 10:59:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:18:57 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stdio.h>
 
+// Project headers
 #include "structs/s_ast.h"
 #include "modules/ast.h"
 
+// Local headers
 #include "variable_expansion.h"
 #include "tilde_expansion.h"
 #include "split_word.h"
 #include "remove_quotes.h"
 
+// Bonus headers
 #ifdef MINISHELL_BONUS
 # include "filename_expansion_bonus.h"
 #endif
 
-//TODO: Remove
-/*static void	print_command_args(t_ast *ast)
-{
-	t_list	*lst;
-
-	if (ast == NULL || ast->type != AST_COMMAND || ast->data == NULL)
-		return ;
-	lst = ast->data->ast_command.arguments;
-	if (lst == NULL)
-		return ;
-	printf("CMD: %s, Args: ", (char *)(lst->content));
-	while (lst != NULL)
-	{
-		printf("%s", (char *)(lst->content));
-		if (lst->next != NULL)
-			printf(", ");
-		lst = lst->next;
-	}
-	printf("\n");
-}*/
-
 #ifdef MINISHELL_BONUS
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Starts the process of full expansion, word splitting
@@ -90,3 +77,5 @@ int	expansion(t_ast *root, t_shell shell)
 }
 
 #endif
+
+/* ================================== END ================================== */

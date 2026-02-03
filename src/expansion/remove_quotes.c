@@ -6,20 +6,27 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/28 16:00:54 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/14 15:38:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:22:43 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
+/* ================================ HEADERS ================================ */
+
+// Standard libraries
 #include <stddef.h>
 #include <stdio.h>
 
+// Internal libraries
 #include <libft/string.h>
 #include <libft/memory.h>
 
+// Project headers
 #include "structs/s_ast.h"
 #include "enums/e_redir_type.h"
 #include "structs/s_redirection.h"
 #include "modules/utils.h"
+
+/* =============================== FUNCTIONS =============================== */
 
 /**
  * @brief Takes a string and removes outer-level quotes from it.
@@ -89,3 +96,5 @@ void	perform_quote_removal(t_ast *ast)
 	if (ast->right != NULL)
 		perform_quote_removal(ast->right);
 }
+
+/* ================================== END ================================== */
