@@ -133,7 +133,6 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_roo
 	}
 	else
 	{
-		printf("DEBUG FORK ELSE \n");
 		pid = fork();
 		install_command_signals();
 		if(pid == 0)
@@ -161,6 +160,7 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_
 {
 	int pipefd[2];
 	pid_t	pid;
+	int test;
 
 	if (ast == NULL)
 		return ;
@@ -181,9 +181,16 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_
 	else if (ast->type == AST_IF)
 	{
 		exec_utils(ast->left, shell, fd_in, fd_out, AST_IF);
-		printf("DEBUG : %d\n", shell->exit_status);
+		if(shell->env->pid_list->pid != -1)
+		{
+			waitpid(shell->env->pid_list->pid, &test, 0);
+			shell->exit_status = WEXITSTATUS(test);
+		}
+		shell->env->pid_list->pid = -1;
 		if(shell->exit_status == 0)
 			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
+		else
+			return ;
 	}
 	return ;
 }
