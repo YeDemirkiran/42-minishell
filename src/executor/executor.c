@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/04 17:54:38 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/05 01:45:33 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_ty
 				shell->exit_status = signal_handler(test);
 			else
 				shell->exit_status = WEXITSTATUS(test);
+			printf("DEBUG :: EXİT %d\n", shell->exit_status);
 			pid = -1;
 		}
 	}
@@ -179,11 +180,7 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_type
 {
 	int pipefd[2];
 	pid_t	pid;
-	int test;
-	t_pid_list *temp;
 
-	temp = shell->env->pid_list;
-	test = 0;
 	if (ast == NULL)
 		return ;
 	if(ast->type == AST_COMMAND)
@@ -206,7 +203,10 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_type
 		if(shell->exit_status == 0)
 			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
 		else
+		{
+			printf("DEBUG : EXECUTİSL ::%d\n", shell->exit_status);
 			return ;
+		}
 	}
 	return ;
 }
@@ -271,9 +271,10 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 			waitpid(tmp_pid_list->pid, &exit_status, 0);
 		tmp_pid_list = tmp_pid_list->next;
 	}
-	if(signal_handler(exit_status) != -1)
-		return signal_handler(exit_status);
+	printf("DEBUG : executor ::%d\n", shell->exit_status);
 	shell->env->pid_list->pid = 0;
+	if(shell->exit_status != 0)
+		return shell->exit_status;
 	return (WEXITSTATUS(exit_status));
 }
 
