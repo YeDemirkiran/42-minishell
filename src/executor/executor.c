@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/05 01:45:33 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/05 02:01:31 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,35 +140,42 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_ty
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	if(args == NULL)
 		return -1;
-	pid = fork();
-	install_command_signals();
-	if(pid == 0)
+	if(isbuiltin(args[0]) && root_type == AST_IF)
 	{
-		install_default_signals();
-		dup2(fd_in, 0);
-		dup2(fd_out, 1);
-		close_child_user_fd();
-		redirs = ast->data->ast_command.redirs;
-		check_redirs_status_in_fork(redirs);
-		if (ast->data->ast_command.arguments == NULL)
-			exit(EXIT_SUCCESS);
-		check_builtin_status(ast, shell, 0);
-		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
-		print_exec_error_message(args, shell->env->envp_char,
-			shell->interactive);
-		exit(errno_to_exit_code());
+		run_builtin(ast, shell, 0);
+		pid = -1;
 	}
 	else
 	{
-		if(root_type == AST_IF)
+		pid = fork();
+		install_command_signals();
+		if(pid == 0)
 		{
-			waitpid(pid, &test, 0);
-			if(signal_handler(test) != -1)
-				shell->exit_status = signal_handler(test);
-			else
-				shell->exit_status = WEXITSTATUS(test);
-			printf("DEBUG :: EXİT %d\n", shell->exit_status);
-			pid = -1;
+			install_default_signals();
+			dup2(fd_in, 0);
+			dup2(fd_out, 1);
+			close_child_user_fd();
+			redirs = ast->data->ast_command.redirs;
+			check_redirs_status_in_fork(redirs);
+			if (ast->data->ast_command.arguments == NULL)
+				exit(EXIT_SUCCESS);
+			check_builtin_status(ast, shell, 0);
+			execve(command_path(ast, (*shell)), args, shell->env->envp_char);
+			print_exec_error_message(args, shell->env->envp_char,
+				shell->interactive);
+			exit(errno_to_exit_code());
+		}
+		else
+		{
+			if(root_type == AST_IF)
+			{
+				waitpid(pid, &test, 0);
+				if(signal_handler(test) != -1)
+					shell->exit_status = signal_handler(test);
+				else
+					shell->exit_status = WEXITSTATUS(test);
+				pid = -1;
+			}
 		}
 	}
 	clear_arr(&args);
@@ -203,10 +210,7 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_type
 		if(shell->exit_status == 0)
 			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
 		else
-		{
-			printf("DEBUG : EXECUTİSL ::%d\n", shell->exit_status);
 			return ;
-		}
 	}
 	return ;
 }
@@ -271,7 +275,6 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 			waitpid(tmp_pid_list->pid, &exit_status, 0);
 		tmp_pid_list = tmp_pid_list->next;
 	}
-	printf("DEBUG : executor ::%d\n", shell->exit_status);
 	shell->env->pid_list->pid = 0;
 	if(shell->exit_status != 0)
 		return shell->exit_status;
