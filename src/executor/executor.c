@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/29 15:59:02 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/04 16:01:04 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,10 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_
 	int pipefd[2];
 	pid_t	pid;
 	int test;
+	t_pid_list *temp;
 
+	temp = shell->env->pid_list;
+	test = 0;
 	if (ast == NULL)
 		return ;
 	if(ast->type == AST_COMMAND)
@@ -181,13 +184,14 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int ast_root_
 	else if (ast->type == AST_IF)
 	{
 		exec_utils(ast->left, shell, fd_in, fd_out, AST_IF);
-		if(shell->env->pid_list->pid != -1)
+		while(temp != NULL && WEXITSTATUS(test) == 0)
 		{
 			waitpid(shell->env->pid_list->pid, &test, 0);
 			shell->exit_status_for_bonus = test;
+			temp = temp->next;
 		}
 		shell->env->pid_list->pid = -1;
-		if(WEXITSTATUS(test) == 0)
+		if(shell->exit_status == 0 && WEXITSTATUS(test) == 0)
 			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
 		else
 			return ;
@@ -248,7 +252,7 @@ int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		return -1;
 	update_special_parameter(ast, shell);
 	exec_utils(ast, shell, fd_in, fd_out, 0);
-	exit_status = 0;
+	exit_status = shell->exit_status_for_bonus;
 	tmp_pid_list = shell->env->pid_list;
 	while (tmp_pid_list != NULL)
 	{
