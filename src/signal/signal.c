@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 23:02:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 16:33:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/05 12:34:20 by muayna           ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -70,7 +70,9 @@ void	install_command_signals(void)
 	sigemptyset(&(action.sa_mask));
 	action.sa_flags = 0;
 	sigaction(SIGINT, &action, NULL);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_DFL); 
+	signal(SIGQUIT, SIG_DFL);
 }
 
 void	install_default_signals(void)
@@ -81,7 +83,7 @@ void	install_default_signals(void)
 	sigemptyset(&(action.sa_mask));
 	action.sa_flags = 0;
 	sigaction(SIGINT, &action, NULL);
-	signal(SIGQUIT, SIG_DFL);
+	//signal(SIGQUIT, SIG_DFL);
 }
 
 /* ================================== END ================================== */

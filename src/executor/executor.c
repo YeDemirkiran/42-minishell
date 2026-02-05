@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/05 02:01:31 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/05 12:39:46 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,11 @@ int signal_handler(int exit_status)
 	return -1;
 }
 
+void signal_handler2(int sig)
+{
+	(void)sig;
+}
+
 pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_type)
 {
 	pid_t pid;
@@ -147,6 +152,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_ty
 	}
 	else
 	{
+		signal(SIGINT, SIG_IGN);
 		pid = fork();
 		install_command_signals();
 		if(pid == 0)
@@ -167,13 +173,23 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_ty
 		}
 		else
 		{
+			signal(SIGINT, signal_handler2);
+			test = 0;
 			if(root_type == AST_IF)
 			{
+				int sig;
 				waitpid(pid, &test, 0);
-				if(signal_handler(test) != -1)
-					shell->exit_status = signal_handler(test);
+				if (WIFSIGNALED(test))
+				{
+					sig = WTERMSIG(test);
+					print_signal_message(sig, test);
+					shell->exit_status = (128 + sig);
+				}
 				else
-					shell->exit_status = WEXITSTATUS(test);
+				{
+					printf("TEST VALUE %d\n", test);
+					shell->exit_status = 99;
+				}
 				pid = -1;
 			}
 		}
