@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/24 03:36:41 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/05 16:28:47 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ int	main(int argc, char **argv, char **envp)
 		result = prepare_ast(input, &shell, &ast);
 		if (result == 1)
 			continue ;
+		printf("DEBUG MAİN AST TYPE : %d\n", ast->type);
 		run_exec(ast, &shell);
 		ast_free_tree(ast);
 		sort_malloc(1, 1);

@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/05 12:39:46 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/05 16:55:29 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,27 @@ int signal_handler(int exit_status)
 	return -1;
 }
 
+void wait_process_list(t_shell *shell)
+{
+	t_pid_list *tmp_pid_list;
+	int exit_status;
+
+	exit_status = 0;
+	tmp_pid_list = shell->env->pid_list;
+	while (tmp_pid_list != NULL)
+	{
+		if(tmp_pid_list->pid != -1)
+			waitpid(tmp_pid_list->pid, &exit_status, 0);
+		tmp_pid_list = tmp_pid_list->next;
+	}
+	if(WIFSIGNALED(exit_status))
+	{
+		shell->exit_status = signal_handler(exit_status);
+		return ;
+	}
+	shell->exit_status = WEXITSTATUS(exit_status);
+}
+
 void signal_handler2(int sig)
 {
 	(void)sig;
@@ -186,10 +207,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_ty
 					shell->exit_status = (128 + sig);
 				}
 				else
-				{
-					printf("TEST VALUE %d\n", test);
-					shell->exit_status = 99;
-				}
+					shell->exit_status = WEXITSTATUS(test);
 				pid = -1;
 			}
 		}
@@ -223,6 +241,7 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out, int root_type
 	else if (ast->type == AST_IF)
 	{
 		exec_utils(ast->left, shell, fd_in, fd_out, AST_IF);
+		wait_process_list(shell);
 		if(shell->exit_status == 0)
 			exec_utils(ast->right, shell, fd_in, fd_out, AST_IF);
 		else
@@ -276,24 +295,15 @@ void	print_signal_message(int sig, int status)
 
 int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
-	t_pid_list	*tmp_pid_list;
-	int			exit_status;
+	//t_pid_list	*tmp_pid_list;
 
 	if(ast == NULL || shell == NULL)
 		return -1;
 	update_special_parameter(ast, shell);
 	exec_utils(ast, shell, fd_in, fd_out, 0);
-	exit_status = 0;
-	tmp_pid_list = shell->env->pid_list;
-	while (tmp_pid_list != NULL)
-	{
-		if(tmp_pid_list->pid != -1)
-			waitpid(tmp_pid_list->pid, &exit_status, 0);
-		tmp_pid_list = tmp_pid_list->next;
-	}
+	//tmp_pid_list = shell->env->pid_list;
+	wait_process_list(shell);
 	shell->env->pid_list->pid = 0;
-	if(shell->exit_status != 0)
-		return shell->exit_status;
-	return (WEXITSTATUS(exit_status));
+	return (shell->exit_status);
 }
 
