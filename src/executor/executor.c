@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/29 15:59:02 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/07 15:17:07 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,23 @@
 * *	System waiting cat because cat input door(pipefd[0]) is open, if you use this func. close all parent fds, mean close(pipefd) force way.
 * *	After that system looking input door and system see input door is closed, and system kill the cat func.
 */
+
+#ifdef WCOREDUMP
+
+int	has_core_dump(int status)
+{
+	return (WCOREDUMP(status));
+}
+
+#else
+
+int	has_core_dump(int status)
+{
+	return (status & 0x80);
+}
+
+#endif
+
 static void close_child_user_fd(void)
 {
 	int fds;
@@ -74,6 +91,92 @@ static void print_exec_error_message(char **args, char **envp, int interactive)
 	}
 	else
 		error_message("minishell", args[0], NULL);
+}
+
+static void	print_signal_message(int sig, int status)
+{
+	if (sig == SIGQUIT)
+		ft_putstr_fd("Quit", STDERR_FILENO);
+	else if (sig == SIGSEGV)
+		ft_putstr_fd("Segmentation fault", STDERR_FILENO);
+	else if (sig == SIGFPE)
+		ft_putstr_fd("Floating point exception", STDERR_FILENO);
+	else if (sig == SIGILL)
+		ft_putstr_fd("Illegal instruction", STDERR_FILENO);
+	else if (sig == SIGBUS)
+		ft_putstr_fd("Bus error", STDERR_FILENO);
+	else if (sig == SIGTERM)
+		ft_putstr_fd("Terminated", STDERR_FILENO);
+	else if (sig == SIGKILL)
+		ft_putstr_fd("Killed", STDERR_FILENO);
+	else if (sig == SIGUSR1)
+		ft_putstr_fd("User defined signal 1", STDERR_FILENO);
+	else if (sig == SIGUSR2)
+		ft_putstr_fd("User defined signal 2", STDERR_FILENO);
+	else if (sig == SIGPIPE)
+		ft_putstr_fd("Broken pipe", STDERR_FILENO);
+	if (has_core_dump(status) > 0)
+		ft_putstr_fd(" (core dumped)", STDERR_FILENO);
+	ft_putchar_fd('\n', STDERR_FILENO);
+}
+
+/*
+** Pipe hattındaki (veya tekil komuttaki) birikmiş PID'leri bekler.
+** Listenin sonundaki PID, pipeline'ın exit statusunu belirler.
+*/
+void reset_pid_list(t_pid_list **list)
+{
+	t_pid_list *tmp;
+	
+	tmp = (*list);
+	while(tmp != NULL)
+	{
+		tmp->pid = 0;
+		tmp = tmp->next;
+	}
+}
+
+int wait_for_pipeline(t_shell *shell)
+{
+    t_pid_list  *tmp_pid_list;
+    int         exit_status;
+    int         last_status;
+    int         sig;
+
+    last_status = 0;
+    exit_status = 0;
+    tmp_pid_list = shell->env->pid_list;
+    
+    // Listede bekleyen işlem yoksa mevcut durumu dön
+    if (!tmp_pid_list || tmp_pid_list->pid == 0)
+        return (shell->exit_status);
+
+    while (tmp_pid_list != NULL)
+    {
+        // waitpid ile süreci bekle
+        waitpid(tmp_pid_list->pid, &exit_status, 0);
+        
+        // Sinyal kontrolü (Ctrl+C, Segfault vs)
+        if (WIFSIGNALED(exit_status))
+        {
+            sig = WTERMSIG(exit_status);
+            print_signal_message(sig, exit_status); // Senin mevcut fonksiyonun
+            last_status = 128 + sig;
+        }
+        else
+            last_status = WEXITSTATUS(exit_status);
+            
+        tmp_pid_list = tmp_pid_list->next;
+    }
+    
+    // PID listesini sıfırla/temizle (Çok önemli!)
+    // Çünkü bir sonraki && komutu için liste boş olmalı.
+    // (Burada garbage collector kullandığın için free yerine 
+    // root pid'i 0 yaparak resetlemek yeterli olabilir veya
+    // listeyi tamamen temizleyen bir fonksiyon yazmalısın)
+    reset_pid_list(&shell->env->pid_list); 
+    
+    return (last_status);
 }
 
 static void check_redirs_status_in_fork(t_list *redirs)
@@ -150,95 +253,75 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 
 void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
-	int pipefd[2];
-	pid_t	pid;
+    int pipefd[2];
+    int status;
+    pid_t pid;
 
-	if (ast == NULL)
-		return ;
-	if(ast->type == AST_COMMAND)
-	{
-		pid = run_command(ast, shell, fd_in, fd_out);
-		create_pid_list(shell->env->pid_list, pid);
-	}
-	else if (ast->type == AST_PIPE)
-	{
-		if(pipe(pipefd) == -1)
-			return ;
-		exec_utils(ast->left, shell, fd_in, pipefd[1]);
-		close(pipefd[1]);
-		exec_utils(ast->right, shell, pipefd[0], fd_out);
-		close(pipefd[0]);
-	}
-	return ;
+    if (ast == NULL)
+        return;
+
+    // 1. Durum: Basit Komut (Değişmedi)
+    if (ast->type == AST_COMMAND)
+    {
+        pid = run_command(ast, shell, fd_in, fd_out);
+        create_pid_list(shell->env->pid_list, pid);
+    }
+    // 2. Durum: Pipe (Değişmedi - Paralel çalışma için wait yapmıyoruz)
+    else if (ast->type == AST_PIPE)
+    {
+        if (pipe(pipefd) == -1)
+            return;
+        exec_utils(ast->left, shell, fd_in, pipefd[1]);
+        close(pipefd[1]);
+        exec_utils(ast->right, shell, pipefd[0], fd_out);
+        close(pipefd[0]);
+    }
+    // 3. Durum: AND (&&) - Bonus Kısmı
+    else if (ast->type == AST_IF)
+    {
+        // Sol tarafı çalıştır (Bu bir komut veya bir pipe zinciri olabilir)
+        exec_utils(ast->left, shell, fd_in, fd_out);
+        
+        // KRİTİK NOKTA: Sağ tarafa geçmeden önce BEKLEMEMİZ lazım.
+        // Çünkü sağ tarafın çalışması, sol tarafın başarısına bağlı.
+        status = wait_for_pipeline(shell);
+        shell->exit_status = status; // Status'u güncelle
+
+        // Eğer sol taraf başarılıysa (0), sağ tarafı çalıştır
+        if (status == 0)
+        {
+            exec_utils(ast->right, shell, fd_in, fd_out);
+        }
+    }
+    // 4. Durum: OR (||) - Bonus Kısmı
+    else if (ast->type == AST_OR)
+    {
+        exec_utils(ast->left, shell, fd_in, fd_out);
+        
+        // Yine bekliyoruz
+        status = wait_for_pipeline(shell);
+        shell->exit_status = status;
+
+        // Eğer sol taraf başarısızsa (!= 0), sağ tarafı çalıştır
+        if (status != 0)
+        {
+            exec_utils(ast->right, shell, fd_in, fd_out);
+        }
+    }
 }
 
-#ifdef WCOREDUMP
-
-int	has_core_dump(int status)
+int executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
-	return (WCOREDUMP(status));
-}
+    if (ast == NULL || shell == NULL)
+        return (-1);
 
-#else
+    update_special_parameter(ast, shell); // Heredoc vb. hazırlıklar
+    
+    // Ağacı dolaşmaya başla
+    exec_utils(ast, shell, fd_in, fd_out);
 
-int	has_core_dump(int status)
-{
-	return (status & 0x80);
-}
-
-#endif
-
-static void	print_signal_message(int sig, int status)
-{
-	if (sig == SIGQUIT)
-		ft_putstr_fd("Quit", STDERR_FILENO);
-	else if (sig == SIGSEGV)
-		ft_putstr_fd("Segmentation fault", STDERR_FILENO);
-	else if (sig == SIGFPE)
-		ft_putstr_fd("Floating point exception", STDERR_FILENO);
-	else if (sig == SIGILL)
-		ft_putstr_fd("Illegal instruction", STDERR_FILENO);
-	else if (sig == SIGBUS)
-		ft_putstr_fd("Bus error", STDERR_FILENO);
-	else if (sig == SIGTERM)
-		ft_putstr_fd("Terminated", STDERR_FILENO);
-	else if (sig == SIGKILL)
-		ft_putstr_fd("Killed", STDERR_FILENO);
-	else if (sig == SIGUSR1)
-		ft_putstr_fd("User defined signal 1", STDERR_FILENO);
-	else if (sig == SIGUSR2)
-		ft_putstr_fd("User defined signal 2", STDERR_FILENO);
-	else if (sig == SIGPIPE)
-		ft_putstr_fd("Broken pipe", STDERR_FILENO);
-	if (has_core_dump(status) > 0)
-		ft_putstr_fd(" (core dumped)", STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
-}
-
-int	executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
-{
-	t_pid_list	*tmp_pid_list;
-	int			exit_status;
-	int			sig;
-
-	if(ast == NULL || shell == NULL)
-		return -1;
-	update_special_parameter(ast, shell);
-	exec_utils(ast, shell, fd_in, fd_out);
-	exit_status = 0;
-	tmp_pid_list = shell->env->pid_list;
-	while (tmp_pid_list != NULL)
-	{
-		waitpid(tmp_pid_list->pid, &exit_status, 0);
-		tmp_pid_list = tmp_pid_list->next;
-	}
-	if (WIFSIGNALED(exit_status))
-	{
-		sig = WTERMSIG(exit_status);
-		print_signal_message(sig, exit_status);
-		return (128 + sig);
-	}
-	shell->env->pid_list->pid = 0;
-	return (WEXITSTATUS(exit_status));
+    // Eğer ağacın en sağında kalan ve henüz beklenmemiş 
+    // son bir komut/pipe varsa onu bekle ve sonucu dön.
+    return (wait_for_pipeline(shell));
 }
 
