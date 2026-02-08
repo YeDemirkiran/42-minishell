@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 15:30:10 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/30 18:27:27 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/08 10:59:25 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,16 @@ void find_shell_level(t_shell *shell)
 {
 	char *shlvl_value;
 	int value;
+	t_list SHLVL;
 
+	SHLVL.content = "SHLVL=1";
+	SHLVL.next = NULL;
 	shlvl_value = find_value_on_envp(&shell->env->envp_list, "SHLVL");
+	if(shlvl_value == NULL)
+	{
+		add_variable_on_envplist(&shell->env->envp_list, &SHLVL);
+		return ;
+	}
 	value = ft_atoi(shlvl_value);
 	value++;
 	update_envp_value(&shell->env->envp_list, "SHLVL", ft_long_term_itoa(value));
