@@ -58,7 +58,7 @@ static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 	(*list) = (*list)->next;
 	(*list)->id_name = take_variable_name(command);
 	(*list)->value = take_variable_value(command);
-	if((*list)->id_name == NULL || (*list)->value == NULL)
+	if((*list)->id_name == NULL)
 		return ;
 	if(ft_strchr(command->content, '='))
 		(*list)->isvaluempty = 0;
