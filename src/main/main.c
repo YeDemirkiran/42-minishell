@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/24 03:36:41 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/08 12:06:01 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static void	init_main(t_shell *shell, int argc, char **argv, char **envp)
 	init_result = init_shell(shell, argc, argv, envp);
 	if (init_result != 0)
 		shell_exit(init_result, *shell);
+	update_bash_value_on_envp(shell);
 	rl_catch_signals = 0;
 	rl_event_hook = rl_event;
 }
