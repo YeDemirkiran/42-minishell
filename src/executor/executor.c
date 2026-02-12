@@ -120,10 +120,6 @@ static void	print_signal_message(int sig, int status)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
-/*
-** Pipe hattındaki (veya tekil komuttaki) birikmiş PID'leri bekler.
-** Listenin sonundaki PID, pipeline'ın exit statusunu belirler.
-*/
 void reset_pid_list(t_pid_list **list)
 {
 	t_pid_list *tmp;
@@ -146,21 +142,17 @@ int wait_for_pipeline(t_shell *shell)
     last_status = 0;
     exit_status = 0;
     tmp_pid_list = shell->env->pid_list;
-    
-    // Listede bekleyen işlem yoksa mevcut durumu dön
+
     if (!tmp_pid_list || tmp_pid_list->pid == 0)
         return (shell->exit_status);
 
     while (tmp_pid_list != NULL)
     {
-        // waitpid ile süreci bekle
         waitpid(tmp_pid_list->pid, &exit_status, 0);
-        
-        // Sinyal kontrolü (Ctrl+C, Segfault vs)
         if (WIFSIGNALED(exit_status))
         {
             sig = WTERMSIG(exit_status);
-            print_signal_message(sig, exit_status); // Senin mevcut fonksiyonun
+            print_signal_message(sig, exit_status);
             last_status = 128 + sig;
         }
         else
@@ -168,12 +160,6 @@ int wait_for_pipeline(t_shell *shell)
             
         tmp_pid_list = tmp_pid_list->next;
     }
-    
-    // PID listesini sıfırla/temizle (Çok önemli!)
-    // Çünkü bir sonraki && komutu için liste boş olmalı.
-    // (Burada garbage collector kullandığın için free yerine 
-    // root pid'i 0 yaparak resetlemek yeterli olabilir veya
-    // listeyi tamamen temizleyen bir fonksiyon yazmalısın)
     reset_pid_list(&shell->env->pid_list); 
     
     return (last_status);
@@ -260,13 +246,11 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
     if (ast == NULL)
         return;
 
-    // 1. Durum: Basit Komut (Değişmedi)
     if (ast->type == AST_COMMAND)
     {
         pid = run_command(ast, shell, fd_in, fd_out);
         create_pid_list(shell->env->pid_list, pid);
     }
-    // 2. Durum: Pipe (Değişmedi - Paralel çalışma için wait yapmıyoruz)
     else if (ast->type == AST_PIPE)
     {
         if (pipe(pipefd) == -1)
@@ -276,33 +260,21 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
         exec_utils(ast->right, shell, pipefd[0], fd_out);
         close(pipefd[0]);
     }
-    // 3. Durum: AND (&&) - Bonus Kısmı
     else if (ast->type == AST_IF)
     {
-        // Sol tarafı çalıştır (Bu bir komut veya bir pipe zinciri olabilir)
         exec_utils(ast->left, shell, fd_in, fd_out);
-        
-        // KRİTİK NOKTA: Sağ tarafa geçmeden önce BEKLEMEMİZ lazım.
-        // Çünkü sağ tarafın çalışması, sol tarafın başarısına bağlı.
         status = wait_for_pipeline(shell);
-        shell->exit_status = status; // Status'u güncelle
-
-        // Eğer sol taraf başarılıysa (0), sağ tarafı çalıştır
+        shell->exit_status = status;
         if (status == 0)
         {
             exec_utils(ast->right, shell, fd_in, fd_out);
         }
     }
-    // 4. Durum: OR (||) - Bonus Kısmı
     else if (ast->type == AST_OR)
     {
         exec_utils(ast->left, shell, fd_in, fd_out);
-        
-        // Yine bekliyoruz
         status = wait_for_pipeline(shell);
         shell->exit_status = status;
-
-        // Eğer sol taraf başarısızsa (!= 0), sağ tarafı çalıştır
         if (status != 0)
         {
             exec_utils(ast->right, shell, fd_in, fd_out);
@@ -315,13 +287,8 @@ int executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
     if (ast == NULL || shell == NULL)
         return (-1);
 
-    update_special_parameter(ast, shell); // Heredoc vb. hazırlıklar
-    
-    // Ağacı dolaşmaya başla
+    update_special_parameter(ast, shell);
     exec_utils(ast, shell, fd_in, fd_out);
-
-    // Eğer ağacın en sağında kalan ve henüz beklenmemiş 
-    // son bir komut/pipe varsa onu bekle ve sonucu dön.
     return (wait_for_pipeline(shell));
 }
 
