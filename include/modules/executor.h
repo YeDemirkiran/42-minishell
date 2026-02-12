@@ -46,4 +46,14 @@ int		isbuiltin(const char *command);
 /**/
 void	update_special_parameter(t_ast *ast, t_shell *shell);
 void find_shell_level(t_shell *shell);
+/*executor_pid_list.c*/
+void reset_pid_list(t_pid_list **list);
+void	create_pid_list(t_pid_list *root_pid_list, pid_t pid);
+int wait_for_pipeline(t_shell *shell);
+/*executor_errors.c*/
+void print_exec_error_message(char **args, char **envp, int interactive);
+void	print_signal_message(int sig, int status);
+void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit);
+void close_child_user_fd(void);
+int	has_core_dump(int status);
 #endif

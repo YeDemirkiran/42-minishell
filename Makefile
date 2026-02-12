@@ -64,7 +64,7 @@ EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c variable_expansion.c
 
 ## Executor
 EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_utils.c special_parameter.c shell_level.c)
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_errors.c executor_pid_list.c executor_utils.c special_parameter.c shell_level.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/
