@@ -106,10 +106,10 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
     int pipefd[2];
     int status;
     pid_t pid;
+    pid_t pid_subshell;
 
     if (ast == NULL)
         return;
-
     if (ast->type == AST_COMMAND)
     {
         pid = run_command(ast, shell, fd_in, fd_out);
@@ -119,28 +119,49 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
     {
         if (pipe(pipefd) == -1)
             return;
+        shell->root_shell_type = AST_PIPE;
         exec_utils(ast->left, shell, fd_in, pipefd[1]);
         close(pipefd[1]);
+        shell->root_shell_type = AST_PIPE;
         exec_utils(ast->right, shell, pipefd[0], fd_out);
         close(pipefd[0]);
     }
     else if (ast->type == AST_IF)
     {
+        shell->root_shell_type = AST_IF;
         exec_utils(ast->left, shell, fd_in, fd_out);
         status = wait_for_pipeline(shell);
         shell->exit_status = status;
         if (status == 0)
         {
+            shell->root_shell_type = AST_IF;
             exec_utils(ast->right, shell, fd_in, fd_out);
         }
     }
     else if (ast->type == AST_OR)
     {
+        shell->root_shell_type = AST_OR;
         exec_utils(ast->left, shell, fd_in, fd_out);
         status = wait_for_pipeline(shell);
         shell->exit_status = status;
         if (status != 0)
         {
+            shell->root_shell_type = AST_OR;
+            exec_utils(ast->right, shell, fd_in, fd_out);
+        }
+    }
+    else if (ast->type == AST_SUBSHELL)
+    {
+        pid_subshell = fork();
+        if(pid_subshell == 0)
+        {
+            exec_utils(ast->left, shell, fd_in, fd_out);
+            exit(shell->exit_status);
+        }
+        else
+        {
+            waitpid(pid_subshell, &status, 0);
+            shell->exit_status = status;
             exec_utils(ast->right, shell, fd_in, fd_out);
         }
     }

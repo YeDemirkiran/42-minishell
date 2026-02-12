@@ -24,7 +24,7 @@ static int cpy_envplst_mlc_cntrl(t_envp_list **new_list, t_envp_list **tmp)
 	(*new_list)->id_name = sort_term_strdup((*tmp)->id_name);
 	(*new_list)->value = sort_term_strdup((*tmp)->value);
 	(*new_list)->isvaluempty = (*tmp)->isvaluempty;
-	if((*new_list)->id_name == NULL || (*new_list)->value == NULL)
+	if((*new_list)->id_name == NULL)
 		return -1;
 	if((*tmp)->next != NULL)
 	{
