@@ -79,6 +79,12 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	if(args == NULL)
 		return -1;
+    if(isbuiltin(args[0]) && (shell->root_shell_type == AST_OR || shell->root_shell_type == AST_IF))
+    {
+        run_builtin(ast, shell, 0);
+        clear_arr(&args);
+        return -1;
+    }
 	pid = fork();
 	install_command_signals();
 	if(pid == 0)
@@ -152,18 +158,16 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
     }
     else if (ast->type == AST_SUBSHELL)
     {
+        shell->root_shell_type = AST_SUBSHELL;
         pid_subshell = fork();
         if(pid_subshell == 0)
         {
             exec_utils(ast->left, shell, fd_in, fd_out);
-            exit(shell->exit_status);
+            status = wait_for_pipeline(shell);
+            exit(status);
         }
-        else
-        {
-            waitpid(pid_subshell, &status, 0);
-            shell->exit_status = status;
-            exec_utils(ast->right, shell, fd_in, fd_out);
-        }
+        waitpid(pid_subshell, &status, 0);
+        shell->exit_status = WEXITSTATUS(status);
     }
 }
 

@@ -72,6 +72,11 @@ int wait_for_pipeline(t_shell *shell)
 
     while (tmp_pid_list != NULL)
     {
+        if(tmp_pid_list->pid == -1)
+        {
+            tmp_pid_list = tmp_pid_list->next;
+            continue;
+        }
         waitpid(tmp_pid_list->pid, &exit_status, 0);
         if (WIFSIGNALED(exit_status))
         {

@@ -54,10 +54,10 @@ void exit_builtin(t_ast *ast, t_shell *shell, int shell_interactive)
 		write(2, ": numeric argument required\n", 29);
 		exit_value = 2;
 	}
-	else if(ft_lstsize(args) != 1)
+	else if(ft_lstsize(args) > 2)
 	{
 		write(2, "babashell: exit: too many arguments\n", 37);
-		shell->exit_status = 127;
+		shell->exit_status = 1;
 		return ;
 	}
 	shell->interactive = shell_interactive;

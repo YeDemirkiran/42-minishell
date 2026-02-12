@@ -147,6 +147,7 @@ int	init_shell(t_shell *shell, int argc, char **argv, char **envp)
 	shell->env->envp_char = envp_list_to_char_arr(shell->env->envp_list);
 	shell->env->pid_list = ft_malloc(sizeof(t_pid_list), 0);
 	shell->env->pid_list->pid = 0;
+	shell->root_shell_type = 0;
 	find_shell_level(shell);
 	if (argc > 1)
 	{
