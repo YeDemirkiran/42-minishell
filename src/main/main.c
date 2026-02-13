@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/02/13 12:58:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/13 13:39:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,22 +113,32 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	free_tokens(&tokens);
 	if (*ast_addr == NULL)
 		return (1);
-	// if (expansion(*ast_addr, *shell) != 1)
-	// {
-	// 	ast_free_tree(*ast_addr);
-	// 	return (1);
-	// }
 	return (0);
 }
 
 static void	run_exec(t_ast *ast, t_shell *shell)
 {
+	int		std[3];
+	t_list	*redir;
+
 	if (ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
 		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
 		if (expansion(ast, *shell) != 1)
 			return ;
-		run_builtin(ast, shell, 1);	
+		std[0] = dup(STDIN_FILENO);
+		std[1] = dup(STDOUT_FILENO);
+		std[2] = dup(STDERR_FILENO);
+		redir = ast->data->ast_command.redirs;
+		while (redir != NULL)
+			run_redirs(&redir);
+		run_builtin(ast, shell, 1);
+		dup2(std[0], STDIN_FILENO);
+		dup2(std[1], STDOUT_FILENO);
+		dup2(std[2], STDERR_FILENO);
+		close(std[0]);
+		close(std[1]);
+		close(std[2]);
 	}
 	else
 		shell->exit_status = executor(ast, shell, 0, 1);
