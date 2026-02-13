@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 23:02:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 16:33:38 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/13 18:34:06 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -46,11 +46,6 @@ static void	on_sigint_prompt(int i)
 	errno = 0;
 }
 
-static void	on_sigint_normal(int i)
-{
-	g_sig = i;
-}
-
 void	install_prompt_signals(void)
 {
 	struct sigaction	action;
@@ -66,7 +61,7 @@ void	install_command_signals(void)
 {
 	struct sigaction	action;
 
-	action.sa_handler = on_sigint_normal;
+	action.sa_handler = SIG_IGN;
 	sigemptyset(&(action.sa_mask));
 	action.sa_flags = 0;
 	sigaction(SIGINT, &action, NULL);
