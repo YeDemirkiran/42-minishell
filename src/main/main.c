@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/01/24 03:36:41 by muayna           ###   ########.fr       */
+/*   Created: Invalid Date        by                   #+#    #+#             */
+/*   Updated: 2026/02/13 12:58:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,11 +113,11 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	free_tokens(&tokens);
 	if (*ast_addr == NULL)
 		return (1);
-	if (expansion(*ast_addr, *shell) != 1)
-	{
-		ast_free_tree(*ast_addr);
-		return (1);
-	}
+	// if (expansion(*ast_addr, *shell) != 1)
+	// {
+	// 	ast_free_tree(*ast_addr);
+	// 	return (1);
+	// }
 	return (0);
 }
 
@@ -125,7 +125,11 @@ static void	run_exec(t_ast *ast, t_shell *shell)
 {
 	if (ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
 		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
-		run_builtin(ast, shell, 1);
+	{
+		if (expansion(ast, *shell) != 1)
+			return ;
+		run_builtin(ast, shell, 1);	
+	}
 	else
 		shell->exit_status = executor(ast, shell, 0, 1);
 }

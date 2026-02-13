@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/07 15:17:07 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/13 12:56:52 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 #include "modules/builtin.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
+#include "modules/expansion.h"
 /**
 * ? This func close all parent fds in child (without system fd 0,1,2).
 * *	Mean when use for example cat | ls, cat need input but does not have input, ls working fine and will be finished.
@@ -76,6 +77,8 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	t_list *redirs;
 	char **args;
 
+    if (expansion(ast, *shell) != 1)
+		return (-1);
 	args = list_to_char_arr(ast->data->ast_command.arguments);
 	if(args == NULL)
 		return -1;
