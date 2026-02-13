@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/13 12:56:52 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/13 13:06:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		return -1;
     if(isbuiltin(args[0]) && (shell->root_shell_type == AST_OR || shell->root_shell_type == AST_IF))
     {
-        run_builtin(ast, shell, 0);
+        run_builtin(ast, shell, 1);
         clear_arr(&args);
         return -1;
     }
