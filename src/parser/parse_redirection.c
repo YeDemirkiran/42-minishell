@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:26:52 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 16:31:24 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/13 17:15:47 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -78,8 +78,7 @@ static t_parse_result	handle_heredoc(t_redirection *redir, t_shell shell,
 	if (redir->redir_type == REDIR_HEREDOC)
 	{
 		heredoc_result = parse_heredoc(redir, shell);
-		if (heredoc_result != 1)
-			clear_heredoc_tmp_files(redirs);
+		(void)redirs;
 		if (g_sig != 0)
 			return (parse_result(PARSE_RESULT_ABORT, NULL, NULL));
 		else if (heredoc_result != 1)
