@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 12:11:25 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/13 09:49:51 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/14 13:03:14 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -26,6 +26,7 @@ typedef enum e_token_type
 	TOKEN_REDIR_APPEND,
 	TOKEN_PAREN_LEFT,
 	TOKEN_PAREN_RIGHT,
+	TOKEN_SINGLE_AND,
 	TOKEN_IF_AND,
 	TOKEN_IF_OR
 }	t_token_type;

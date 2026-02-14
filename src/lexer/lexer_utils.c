@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 11:44:55 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 16:27:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/14 13:03:26 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -74,6 +74,8 @@ static t_token_type	get_token_type_one_char(char c)
 		type = TOKEN_PAREN_LEFT;
 	else if (c == ')')
 		type = TOKEN_PAREN_RIGHT;
+	else if (c == '&')
+		type = TOKEN_SINGLE_AND;
 	else
 		type = TOKEN_NONE;
 	return (type);
