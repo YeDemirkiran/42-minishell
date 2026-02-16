@@ -102,10 +102,14 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		check_redirs_status_in_fork(redirs);
 		if (ast->data->ast_command.arguments == NULL)
 			exit(EXIT_SUCCESS);
-		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
         check_builtin_status(ast, shell, 0, &args);
+		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
 		print_exec_error_message(args, shell->env->envp_char,
 			shell->interactive);
+        ft_malloc(1, 1);
+        sort_malloc(1, 1);
+        ast_free_tree(shell->root_ast);
+        clear_arr(&shell->env->envp_char);
 		exit(errno_to_exit_code());
 	}
 	clear_arr(&args);
@@ -171,7 +175,7 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
             status = wait_for_pipeline(shell);
             ft_malloc(1, 1);
             sort_malloc(1, 1);
-            ast_free_tree(ast);
+            ast_free_tree(shell->root_ast);
             clear_arr(&shell->env->envp_char);
             exit(status);
         }
