@@ -37,52 +37,66 @@ static t_envp_list *find_node_back_enplist(t_envp_list *source, t_envp_list *tar
 	}
 	return NULL;
 }
-/*First if else for gb, second if els for envplist*/
-static void redirection_for_norm(t_unset_god_list *godlist, t_envp_list ***list)
+
+static t_envp_list *unset_variable_on_envplist(t_envp_list **list, char *variable_name)
 {
-	if((*(*godlist).root_longterm_gb)->address_pointer == (*godlist).target_node)
-		(*(*godlist).root_longterm_gb) = (*(*godlist).root_longterm_gb)->next;
-	else if((*godlist).tmp->next == NULL);
+	t_envp_list *unsetted_node;
+	t_envp_list *back_unsetted_node;
+
+	if(variable_name == NULL)
+		return NULL;
+	unsetted_node = find_node_address(list, variable_name);
+	if(unsetted_node == NULL)
+		return NULL;
+	back_unsetted_node = find_node_back_enplist((*list), unsetted_node);
+	if(back_unsetted_node == NULL)
+		return NULL;
+	if(back_unsetted_node == (*list))
+		(*list) = (*list)->next;
+	else if(unsetted_node->next == NULL)
+		back_unsetted_node->next = NULL;
 	else
-		(*godlist).back_tmp->next = (*godlist).tmp->next;
-	(*godlist).target_node_back = find_node_back_enplist((**list), (*godlist).target_node);
-	if((*godlist).target_node == (**list))
-		(**list) = (**list)->next;
-	else if((*godlist).target_node->next == NULL)
-		(*godlist).target_node_back->next = NULL;
-	else
-		(*godlist).target_node_back->next = (*godlist).target_node->next;
-	free((*godlist).target_node->id_name);
-	free((*godlist).target_node->value);
-	free((*godlist).target_node);
-	if((*godlist).tmp->next != NULL)
-		free((*godlist).tmp);
+		back_unsetted_node->next = unsetted_node->next;
+	return unsetted_node;
+}
+
+static t_gb *find_node_on_gb(t_gb *gb, void *target)
+{
+	t_gb *tmp;
+
+	tmp = gb;
+	while(tmp != NULL)
+	{
+		if(tmp->address_pointer == target)
+			return tmp;
+		tmp = tmp->next;
+	}
+	return NULL;
 }
 
 void unset(t_envp_list **list, t_ast *ast)
 {
-	t_unset_god_list godlist;
-
-	godlist.root_longterm_gb = ft_malloc(0, 5);
-	godlist.tmp = (*godlist.root_longterm_gb);
-	godlist.back_tmp = godlist.tmp;
-	godlist.args = ast->data->ast_command.arguments->next;
-	if(godlist.root_longterm_gb == NULL || godlist.args == NULL)
+	t_envp_list *unsetted_node;
+	t_gb **root_gb;
+	t_gb *target_node;
+	t_list *args;
+	
+	root_gb = ft_malloc(0, 5);
+	args = ast->data->ast_command.arguments;
+	if(args == NULL || args->next == NULL)
 		return ;
-	while(godlist.args != NULL)
+	args = args->next;
+	while(args != NULL)
 	{
-		godlist.target_node = find_node_address(list, godlist.args->content);
-		godlist.tmp = (*godlist.root_longterm_gb);
-		while(godlist.tmp != NULL && godlist.target_node != NULL)
+		unsetted_node =	unset_variable_on_envplist(list, (char *)args->content);
+		if(unsetted_node == NULL)
 		{
-				if(godlist.tmp->address_pointer == godlist.target_node)
-				{
-					redirection_for_norm(&godlist, &list);
-					break ;
-				}
-				godlist.back_tmp = godlist.tmp;
-				godlist.tmp = godlist.tmp->next;
+			args = args->next;
+			continue;
 		}
-		godlist.args = godlist.args->next;
-	}	
+		target_node = find_node_on_gb((*root_gb), unsetted_node);
+		free(target_node->address_pointer);
+		target_node->address_pointer = NULL;
+		args = args->next;
+	}
 }
