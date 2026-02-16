@@ -38,6 +38,8 @@ void	update_special_parameter(t_ast *ast, t_shell *shell)
     if(ast->type != AST_COMMAND)
         return ;
     args = ast->data->ast_command.arguments;
+    if(args == NULL)
+        return ;
     while(args->next != NULL)
     {
         args = args->next;

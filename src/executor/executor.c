@@ -87,7 +87,10 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
     if(isbuiltin(args[0]) && (shell->root_shell_type == AST_OR || shell->root_shell_type == AST_IF))
     {
         clear_arr(&args);
-        run_builtin(ast, shell, 1);
+        if(shell->root_ast->type == AST_SUBSHELL)
+            run_builtin(ast, shell, 0);
+        else
+            run_builtin(ast, shell, 1);
         return -1;
     }
 	pid = fork();
