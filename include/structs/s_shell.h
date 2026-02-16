@@ -14,6 +14,7 @@
 # define S_SHELL_H
 
 # include "modules/executor.h"
+#include  "structs/s_ast.h"
 
 typedef struct s_shell
 {
@@ -23,7 +24,8 @@ typedef struct s_shell
 	unsigned char		exit_status;
 	int					pid;
 	int					interactive;
-	unsigned int			root_shell_type;
+	unsigned int		root_shell_type;
+	t_ast				*root_ast;	
 }	t_shell;
 
 #endif

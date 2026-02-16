@@ -18,6 +18,7 @@
 #include <dirent.h>
 #include "unistd.h"
 
+#include <modules/ast.h>
 #include "structs/s_ast.h"
 #include <minishell_lb.h>
 
@@ -61,5 +62,6 @@ void exit_builtin(t_ast *ast, t_shell *shell, int shell_interactive)
 		return ;
 	}
 	shell->interactive = shell_interactive;
+	ast_free_tree(shell->root_ast);
 	shell_exit(exit_value, (*shell));
 }

@@ -143,6 +143,7 @@ static void	run_exec(t_ast *ast, t_shell *shell)
 	else
 		shell->exit_status = executor(ast, shell, 0, 1);
 }
+#include <valgrind/memcheck.h>
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -164,7 +165,9 @@ int	main(int argc, char **argv, char **envp)
 		result = prepare_ast(input, &shell, &ast);
 		if (result == 1)
 			continue ;
+		shell.root_ast = ast;
 		run_exec(ast, &shell);
+		VALGRIND_DO_LEAK_CHECK;
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}

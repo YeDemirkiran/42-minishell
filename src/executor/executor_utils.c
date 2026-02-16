@@ -26,6 +26,7 @@
 #include "modules/executor.h"
 #include "modules/builtin.h"
 #include "modules/utils.h"
+#include "modules/ast.h"
 
 int isbuiltin(const char *command)
 {

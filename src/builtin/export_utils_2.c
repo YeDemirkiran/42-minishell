@@ -55,9 +55,17 @@ static int is_variable_name_correct(char *variable_name)
 
 static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 {
+	char *tmp_idname;
+	char *tmp_value;
+
+	tmp_idname = take_variable_name(command);
+	tmp_value = take_variable_value(command);
 	(*list) = (*list)->next;
-	(*list)->id_name = take_variable_name(command);
-	(*list)->value = take_variable_value(command);
+	(*list)->id_name = long_term_strdup(tmp_idname);
+	(*list)->value = long_term_strdup(tmp_value);
+	free(tmp_idname);
+	if(tmp_value != NULL)
+		free(tmp_value);
 	if((*list)->id_name == NULL)
 		return ;
 	if(ft_strchr(command->content, '='))

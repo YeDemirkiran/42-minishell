@@ -39,6 +39,7 @@ void	shell_exit(unsigned char status, t_shell shell)
 	{
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 	}
+	ft_malloc(1, 1);
 	exit(status);
 }
 

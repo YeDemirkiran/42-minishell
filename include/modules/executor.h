@@ -53,7 +53,7 @@ int wait_for_pipeline(t_shell *shell);
 /*executor_errors.c*/
 void print_exec_error_message(char **args, char **envp, int interactive);
 void	print_signal_message(int sig, int status);
-void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit);
+void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit, char ***args);
 void close_child_user_fd(void);
 int	has_core_dump(int status);
 #endif

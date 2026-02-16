@@ -21,6 +21,7 @@
 #include "sys/wait.h"
 #include "signal.h"
 #include "../../lib/garbage_collector/gb.h"
+#include <readline/readline.h>
 
 #include "structs/s_ast.h"
 #include "structs/s_redirection.h"
@@ -31,6 +32,7 @@
 #include "modules/signal.h"
 #include "modules/utils.h"
 #include "modules/expansion.h"
+#include "modules/ast.h"
 /**
 * ? This func close all parent fds in child (without system fd 0,1,2).
 * *	Mean when use for example cat | ls, cat need input but does not have input, ls working fine and will be finished.
@@ -84,8 +86,8 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		return -1;
     if(isbuiltin(args[0]) && (shell->root_shell_type == AST_OR || shell->root_shell_type == AST_IF))
     {
-        run_builtin(ast, shell, 1);
         clear_arr(&args);
+        run_builtin(ast, shell, 1);
         return -1;
     }
 	pid = fork();
@@ -100,8 +102,8 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		check_redirs_status_in_fork(redirs);
 		if (ast->data->ast_command.arguments == NULL)
 			exit(EXIT_SUCCESS);
-		check_builtin_status(ast, shell, 0);
 		execve(command_path(ast, (*shell)), args, shell->env->envp_char);
+        check_builtin_status(ast, shell, 0, &args);
 		print_exec_error_message(args, shell->env->envp_char,
 			shell->interactive);
 		exit(errno_to_exit_code());
@@ -167,6 +169,10 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
         {
             exec_utils(ast->left, shell, fd_in, fd_out);
             status = wait_for_pipeline(shell);
+            ft_malloc(1, 1);
+            sort_malloc(1, 1);
+            ast_free_tree(ast);
+            clear_arr(&shell->env->envp_char);
             exit(status);
         }
         waitpid(pid_subshell, &status, 0);

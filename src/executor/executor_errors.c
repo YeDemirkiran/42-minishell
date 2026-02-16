@@ -9,6 +9,7 @@
 #include "sys/wait.h"
 #include "signal.h"
 #include "../../lib/garbage_collector/gb.h"
+#include <readline/readline.h>
 
 #include "structs/s_ast.h"
 #include "structs/s_redirection.h"
@@ -18,6 +19,7 @@
 #include "modules/builtin.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
+#include "modules/ast.h"
 
 void print_exec_error_message(char **args, char **envp, int interactive)
 {
@@ -65,11 +67,17 @@ void	print_signal_message(int sig, int status)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
-void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit)
+void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit, char ***args)
 {
 	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
 		run_builtin(ast, shell, shell_print_exit);
+		ast_free_tree(ast);
+		sort_malloc(1, 1);
+		clear_arr(&(shell->env->envp_char));
+		rl_clear_history();
+		ft_malloc(1, 1);
+		clear_arr(args);
 		exit(shell->exit_status);
 	}
 }
