@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 15:35:45 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 16:28:52 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/17 19:28:25 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,24 +32,21 @@
 #include <minishell_lb.h>
 #include <readline/readline.h>
 
-void	print_exec_error_message(char **args, char **envp, int interactive)
-{
-	char	*not_found_args[3];
+#ifdef WCOREDUMP
 
-	if (errno == ENOENT || args[0][0] == '\0')
-	{
-		if (interactive == 1)
-		{
-			not_found_args[0] = "/usr/lib/command-not-found";
-			not_found_args[1] = args[0];
-			not_found_args[2] = NULL;
-			execve(not_found_args[0], not_found_args, envp);
-		}
-		error_message("minishell", args[0], "command not found\n");
-	}
-	else
-		error_message("minishell", args[0], NULL);
+int	has_core_dump(int status)
+{
+	return (WCOREDUMP(status));
 }
+
+#else
+
+int	has_core_dump(int status)
+{
+	return (status & 0x80);
+}
+
+#endif
 
 void	print_signal_message(int sig, int status)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 19:03:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 19:28:09 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,21 +44,6 @@
  * *	After that system looking input door and system see input door is closed,
 		and system kill the cat func.
  */
-#ifdef WCOREDUMP
-
-int	has_core_dump(int status)
-{
-	return (WCOREDUMP(status));
-}
-
-#else
-
-int	has_core_dump(int status)
-{
-	return (status & 0x80);
-}
-
-#endif
 
 static void	run_exec_dup_usage_for_norm(int *std, int select_type)
 {
