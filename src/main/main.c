@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/02/17 14:50:46 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 17:33:01 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ static void	init_main(t_shell *shell, int argc, char **argv, char **envp)
 {
 	int	init_result;
 
+	if (process_args((const char **)argv, argc) == 0)
+		exit(EXIT_SUCCESS);
 	init_result = init_shell(shell, argc, argv, envp);
 	if (init_result != 0)
 		shell_exit(init_result, *shell);
