@@ -6,7 +6,7 @@
 #    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/02/03 02:20:13 by yademirk         ###   ########.fr        #
+#    Updated: 2026/02/17 08:31:41 by yademirk         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -125,19 +125,37 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(FLAGS) $^ -c -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)
-	make -C $(LIBFT_DIR) clean
-	make -C $(LIBMNL_DIR) clean
-	make -C $(LIBGB_DIR) clean
-	make -C $(LIBGNL_DIR) clean
+	@echo "Starting partial cleanup..."
+	@echo "	Removing obj/ dir"
+	@rm -rf $(OBJ_DIR)
+	@echo "Done. Starting clearing libraries..."
+
+	@echo "	Cleaning Libft:"
+	@make -s -C $(LIBFT_DIR) clean
+	@echo "	Libft cleared."
+
+	@echo "	Cleaning LibMNL:"
+	@make -s -C $(LIBMNL_DIR) clean
+	@echo "	LibMNL cleared."
+
+	@echo "	Cleaning LibGB:"
+	@make -s -C $(LIBGB_DIR) clean
+	@echo "	LibGB cleared."
+
+	@echo "	Cleaning LibGNL:"
+	@make -s -C $(LIBGNL_DIR) clean
+	@echo "	LibGNL cleared."
+
+	@echo "Partial cleanup is done."
 
 fclean: clean
-	rm -rf $(NAME)
-	rm -rf $(BONUS_NAME)
-	make -C $(LIBFT_DIR) fclean
-	make -C $(LIBMNL_DIR) fclean
-	make -C $(LIBGB_DIR) fclean
-	make -C $(LIBGNL_DIR) fclean
+	@echo "Starting full cleanup..."
+	@rm -rf $(NAME)
+	@rm -rf $(BONUS_NAME)
+	@make -s -C $(LIBFT_DIR) fclean
+	@make -s -C $(LIBMNL_DIR) fclean
+	@make -s -C $(LIBGB_DIR) fclean
+	@make -s -C $(LIBGNL_DIR) fclean
 
 re: fclean all
 
