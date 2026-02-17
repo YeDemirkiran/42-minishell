@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/24 03:22:17 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/17 18:39:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char *cd_shortcut(t_envp_list **list, char *input)
 	{
 		old_pwd = find_value_on_envp(list, "OLDPWD");
 		if(old_pwd != NULL)
-			printf("%s\n", old_pwd);
+			ft_putendl_fd(old_pwd, STDOUT_FILENO);
 		return old_pwd;
 	}
 	return input;

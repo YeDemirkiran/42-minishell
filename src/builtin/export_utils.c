@@ -75,10 +75,14 @@ void print_list(t_envp_list **list)
 	{
 		small = find_smallest_node((*list));
 		back_node_small = find_node_back_enplist((*list), small);
-		if(small->isvaluempty == 0)
-			printf("declare -x %s=\"%s\"\n",small->id_name, small->value);
-		else
-			printf("declare -x %s\n",small->id_name);
+		ft_putstr_fd("declare -x ", STDOUT_FILENO);
+		ft_putstr_fd(small->id_name, STDOUT_FILENO);
+		if (small->isvaluempty == 0)
+		{
+			ft_putstr_fd("=\"", STDOUT_FILENO);
+			ft_putstr_fd(small->value, STDOUT_FILENO);
+			ft_putstr_fd("\"\n", STDOUT_FILENO);
+		}
 		print_list_utils(&list, &back_node_small, &small);
 		list_size--;
 	}
