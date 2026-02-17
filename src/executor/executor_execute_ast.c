@@ -100,7 +100,7 @@ static void	run_subshell(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 
 void	exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
-	pid_t pid;
+	pid_t	pid;
 
 	if (ast == NULL)
 		return ;

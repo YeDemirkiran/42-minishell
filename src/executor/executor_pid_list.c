@@ -51,6 +51,7 @@ void	reset_pid_list(t_pid_list **list)
 		ls output write on terminal. Cat still wait input but ls is finished,
 		you can see ls output in terminal.
  */
+
 void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
 {
 	if (root_pid_list->pid == 0)
@@ -70,18 +71,19 @@ void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
 		root_pid_list->next = NULL;
 	}
 }
-static void take_exit_status_value(int *last_status, int *exit_status)
-{
-    int sig;
 
-    if (WIFSIGNALED((*exit_status)))
-    {
-        sig = WTERMSIG((*exit_status));
-        print_signal_message(sig, (*exit_status));
-        (*last_status) = 128 + sig;
-    }
-    else
-        (*last_status) = WEXITSTATUS((*exit_status));
+static void	take_exit_status_value(int *last_status, int *exit_status)
+{
+	int	sig;
+
+	if (WIFSIGNALED((*exit_status)))
+	{
+		sig = WTERMSIG((*exit_status));
+		print_signal_message(sig, (*exit_status));
+		(*last_status) = 128 + sig;
+	}
+	else
+		(*last_status) = WEXITSTATUS((*exit_status));
 }
 
 int	wait_for_pipeline(t_shell *shell)
@@ -103,7 +105,7 @@ int	wait_for_pipeline(t_shell *shell)
 			continue ;
 		}
 		waitpid(tmp_pid_list->pid, &exit_status, 0);
-        take_exit_status_value(&last_status, &exit_status);
+		take_exit_status_value(&last_status, &exit_status);
 		tmp_pid_list = tmp_pid_list->next;
 	}
 	reset_pid_list(&shell->env->pid_list);

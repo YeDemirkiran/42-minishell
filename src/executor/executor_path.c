@@ -54,8 +54,8 @@ static char	*find_correct_path(t_ast *ast, char *source_path)
 
 char	*command_path(t_ast *ast, t_shell shell)
 {
-	char *cmd;
-	char *path;
+	char	*cmd;
+	char	*path;
 
 	cmd = (char *)ast->data->ast_command.arguments->content;
 	if (ft_strchr(cmd, '/'))

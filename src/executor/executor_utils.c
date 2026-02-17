@@ -105,7 +105,6 @@ int	run_redirs(t_list **redirs)
 char	**list_to_char_arr(t_list *list)
 {
 	char	**args;
-	int		size_args;
 	t_list	*tmp;
 	int		i;
 
@@ -113,11 +112,10 @@ char	**list_to_char_arr(t_list *list)
 		return (NULL);
 	i = 0;
 	tmp = list;
-	size_args = ft_lstsize(list) + 1;
-	args = malloc(sizeof(char *) * size_args);
+	args = malloc(sizeof(char *) * (ft_lstsize(list) + 1));
 	if (args == NULL)
 		return (NULL);
-	args[size_args - 1] = NULL;
+	args[(ft_lstsize(list) + 1) - 1] = NULL;
 	while (tmp != NULL)
 	{
 		args[i] = ft_strdup((char *)tmp->content);
