@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:53:23 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 16:19:53 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 23:32:52 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -44,7 +44,7 @@ static int	filename_expand_args(t_list **args)
 	t_list	*current;
 
 	if (args == NULL || *args == NULL)
-		return (2);
+		return (1);
 	current = *args;
 	while (current != NULL)
 	{
