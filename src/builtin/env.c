@@ -5,16 +5,15 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/23 16:25:09 by muayna            #+#    #+#             */
-/*   Updated: 2025/12/23 16:25:09 by muayna           ###   ########.fr       */
+/*   Created: 2026/02/18 00:55:27 by muayna            #+#    #+#             */
+/*   Updated: 2026/02/18 00:55:27 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h" 
-#include <libft.h>
-#include "unistd.h"
-
+#include "stdio.h"
 #include "structs/s_ast.h"
+#include "unistd.h"
+#include <libft.h>
 #include <minishell_lb.h>
 
 void	env(t_envp_list **list)

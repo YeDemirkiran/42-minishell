@@ -5,58 +5,57 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/05 07:28:13 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/05 07:28:13 by muayna           ###   ########.fr       */
+/*   Created: 2026/02/18 00:56:46 by muayna            #+#    #+#             */
+/*   Updated: 2026/02/18 00:56:46 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdio.h"
-#include <modules/builtin.h>
-#include <libft.h>
-#include <dirent.h>
-#include "unistd.h"
-
 #include "structs/s_ast.h"
+#include "unistd.h"
+#include <dirent.h>
+#include <libft.h>
 #include <minishell_lb.h>
+#include <modules/builtin.h>
 
-static void print_error(char *variable)
+static void	print_error(char *variable)
 {
 	write(2, "-babashell: export: '", 22);
 	write(2, variable, ft_strlen(variable));
 	write(2, "': not a valid identifier\n", 27);
 }
 
-static int is_variable_name_correct(char *variable_name)
+static int	is_variable_name_correct(char *variable_name)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	if(variable_name[0] == '=' || ft_isdigit(variable_name[0]))
+	if (variable_name[0] == '=' || ft_isdigit(variable_name[0]))
 	{
-
 		print_error(variable_name);
 		free(variable_name);
-		return 1;
+		return (1);
 	}
-	while(variable_name[i])
+	while (variable_name[i])
 	{
-		if(variable_name[i] == '_');
-		else if(!ft_isalnum(variable_name[i]))
+		if (variable_name[i] == '_')
+			;
+		else if (!ft_isalnum(variable_name[i]))
 		{
 			print_error(variable_name);
 			free(variable_name);
-			return 1;
+			return (1);
 		}
 		i++;
 	}
 	free(variable_name);
-	return 0;
+	return (0);
 }
 
-static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
+static void	add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 {
-	char *tmp_idname;
-	char *tmp_value;
+	char	*tmp_idname;
+	char	*tmp_value;
 
 	tmp_idname = take_variable_name(command);
 	tmp_value = take_variable_value(command);
@@ -64,62 +63,63 @@ static void add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 	(*list)->id_name = long_term_strdup(tmp_idname);
 	(*list)->value = long_term_strdup(tmp_value);
 	free(tmp_idname);
-	if(tmp_value != NULL)
+	if (tmp_value != NULL)
 		free(tmp_value);
-	if((*list)->id_name == NULL)
+	if ((*list)->id_name == NULL)
 		return ;
-	if(ft_strchr(command->content, '='))
+	if (ft_strchr(command->content, '='))
 		(*list)->isvaluempty = 0;
 	else
 		(*list)->isvaluempty = 1;
 	(*list)->next = NULL;
 }
+//same_variable_update
 
-int same_variable_update(t_envp_list **list, char *name, char *value)
+static int	smu(t_envp_list **list, char *name, char *value)
 {
-	int return_value;
+	int	return_value;
 
 	return_value = 0;
-	if(name == NULL)
-		return -1;
-	if(find_id_name_on_envp(list, name) != NULL)
+	if (name == NULL)
+		return (-1);
+	if (find_id_name_on_envp(list, name) != NULL)
 	{
-		if(value != NULL)
+		if (value != NULL)
 		{
-			update_envp_value(list, name, value);	
+			update_envp_value(list, name, value);
 		}
 		return_value = 1;
 	}
 	free(name);
 	free(value);
-	return return_value;
+	return (return_value);
 }
 
-int add_variable_on_envplist(t_envp_list **list, t_list *command)
+int	add_variable_on_envplist(t_envp_list **list, t_list *command)
 {
-	t_list *tmp;
-	t_envp_list *envp_tmp;
-	int return_value;
+	t_list		*tmp;
+	t_envp_list	*envp_tmp;
+	int			return_value;
 
 	envp_tmp = (*list);
 	tmp = command;
 	return_value = 0;
-	while(envp_tmp->next != NULL)
+	while (envp_tmp->next != NULL)
 		envp_tmp = envp_tmp->next;
-	while(tmp != NULL)
+	while (tmp != NULL)
 	{
-		if(is_variable_name_correct(take_variable_name(tmp)))
+		if (is_variable_name_correct(take_variable_name(tmp)))
 		{
 			tmp = tmp->next;
 			return_value = 1;
-			continue;
+			continue ;
 		}
-		if(same_variable_update(list, take_variable_name(tmp), take_variable_value(tmp)) != 1)
+		if (smu(list, take_variable_name(tmp), take_variable_value(tmp)) != 1)
 		{
 			envp_tmp->next = ft_malloc(sizeof(t_envp_list), 0);
 			add_variable_on_envplist_utils(&envp_tmp, tmp);
 		}
 		tmp = tmp->next;
 	}
-	return return_value;
+	return (return_value);
 }
