@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 17:54:30 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/17 19:01:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ char	**list_to_char_arr(t_list *list)
 	t_list	*tmp;
 	int		i;
 
+	if (list == NULL)
+		return (NULL);
 	i = 0;
 	tmp = list;
 	size_args = ft_lstsize(list) + 1;

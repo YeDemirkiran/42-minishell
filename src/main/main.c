@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/02/17 17:33:01 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 19:05:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,11 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 {
 	int		std[3];
 	t_list	*redir;
+	int		args;
 
-	if (ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
+	args = ast->data->ast_command.arguments != NULL
+		&& ast->data->ast_command.arguments->content != NULL;
+	if (ast->type == AST_COMMAND && args
 		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
 		if (expansion(ast, *shell) != 1)

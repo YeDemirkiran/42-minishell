@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 17:55:21 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/17 19:03:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,9 +121,7 @@ pid_t	run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	if (expansion(ast, *shell) != 1)
 		return (-1);
 	args = list_to_char_arr(ast->data->ast_command.arguments);
-	if (args == NULL)
-		return (-1);
-	if (isbuiltin(args[0]) && (shell->root_shell_type == AST_OR
+	if (args != NULL && isbuiltin(args[0]) && (shell->root_shell_type == AST_OR
 			|| shell->root_shell_type == AST_IF))
 	{
 		clear_arr(&args);
@@ -136,7 +134,8 @@ pid_t	run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 	install_command_signals();
 	if (pid == 0)
 		run_command_fork(norm_solver, shell, fd_in, fd_out);
-	clear_arr(&args);
+	if (args != NULL)
+		clear_arr(&args);
 	return (pid);
 }
 
