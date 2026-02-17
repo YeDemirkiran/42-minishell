@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 23:37:35 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/03 16:38:31 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/14 13:04:53 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -34,14 +34,14 @@
 
 static char	*get_token_string(t_token *token)
 {
-	if (token == NULL)
-		return (NULL);
 	if (token->type == TOKEN_WORD)
 		return (token->data.word);
 	if (token->type == TOKEN_NEWLINE)
 		return ("newline");
 	if (token->type == TOKEN_PIPE)
 		return ("|");
+	if (token->type == TOKEN_SINGLE_AND)
+		return ("&");
 	if (token->type == TOKEN_IF_AND)
 		return ("&&");
 	if (token->type == TOKEN_IF_OR)
