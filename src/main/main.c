@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/02/13 13:39:58 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 14:50:46 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	return (0);
 }
 
-static void	run_exec(t_ast *ast, t_shell *shell)
+ static void	run_exec(t_ast *ast, t_shell *shell)
 {
 	int		std[3];
 	t_list	*redir;
@@ -132,7 +132,7 @@ static void	run_exec(t_ast *ast, t_shell *shell)
 		redir = ast->data->ast_command.redirs;
 		while (redir != NULL)
 			run_redirs(&redir);
-		run_builtin(ast, shell, 1);
+        run_builtin(ast, shell, 1);
 		dup2(std[0], STDIN_FILENO);
 		dup2(std[1], STDOUT_FILENO);
 		dup2(std[2], STDERR_FILENO);
@@ -143,7 +143,6 @@ static void	run_exec(t_ast *ast, t_shell *shell)
 	else
 		shell->exit_status = executor(ast, shell, 0, 1);
 }
-#include <valgrind/memcheck.h>
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -167,7 +166,6 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		shell.root_ast = ast;
 		run_exec(ast, &shell);
-		VALGRIND_DO_LEAK_CHECK;
 		ast_free_tree(ast);
 		sort_malloc(1, 1);
 	}
