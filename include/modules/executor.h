@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:23:43 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/30 17:23:45 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/17 17:56:32 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ typedef struct s_god_struct_envp t_god_struct_envp;
 # include "structs/s_shell.h"
 /*BUILTIN NAMES*/
 
+typedef struct s_fork_variable_list_for_norm
+{
+	char ***args;
+	t_ast *ast;
+}t_fork_variable_list_for_norm;
+
 typedef struct s_pid_list
 {
 	pid_t				pid;
@@ -36,7 +42,11 @@ typedef struct s_god_struct_envp
 }	t_god_struct_envp;
 
 
+void	check_redirs_status_in_fork(t_list *redirs);
+void	run_command_fork(t_fork_variable_list_for_norm norm_solver, t_shell *shell, int fd_in, int fd_out);
+pid_t	run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out);
 int		executor(t_ast *ast, t_shell *shell, int fd_in, int fd_out);
+void	exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out);
 int		isbuiltin(const char *command);
 void	run_builtin(t_ast *ast, t_shell *shell, int print_exit_value);
 int		run_redirs(t_list **redirs);

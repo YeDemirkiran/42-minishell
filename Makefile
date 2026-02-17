@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
+#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: Invalid Date        by                   #+#    #+#              #
-#    Updated: 2026/02/17 13:11:16 by yademirk         ###   ########.fr        #
+#    Created: Invalid date        by                   #+#    #+#              #
+#    Updated: 2026/02/17 17:56:02 by muayna           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ EXPANSION_FILES = $(addprefix $(EXPANSION_DIR), expansion.c variable_expansion.c
 
 ## Executor
 EXECUTOR_DIR = executor/
-EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor.c executor_errors.c executor_pid_list.c executor_utils.c special_parameter.c shell_level.c)
+EXECUTOR_FILES = $(addprefix $(EXECUTOR_DIR), executor_fork.c executor_execute_ast.c executor_path.c executor.c executor_errors.c executor_pid_list.c executor_utils.c special_parameter.c shell_level.c)
 
 ## Built-ins
 BUILTIN_DIR = builtin/

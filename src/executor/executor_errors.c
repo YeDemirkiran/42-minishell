@@ -1,27 +1,38 @@
-#define _GNU_SOURCE
-#include "stdio.h"
-#include <libft.h>
-#include <errno.h>
-#include "stdlib.h"
-#include "unistd.h"
-#include "string.h"
-#include "fcntl.h"
-#include "sys/wait.h"
-#include "signal.h"
-#include "../../lib/garbage_collector/gb.h"
-#include <readline/readline.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_errors.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/17 15:35:45 by muayna            #+#    #+#             */
+/*   Updated: 2026/02/17 16:28:52 by muayna           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
+#define _GNU_SOURCE
+#include "../../lib/garbage_collector/gb.h"
 #include "enums/e_redir_type.h"
-#include <minishell_lb.h>
-#include "modules/executor.h"
+#include "fcntl.h"
+#include "modules/ast.h"
 #include "modules/builtin.h"
+#include "modules/executor.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
-#include "modules/ast.h"
+#include "signal.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "structs/s_ast.h"
+#include "structs/s_redirection.h"
+#include "sys/wait.h"
+#include "unistd.h"
+#include <errno.h>
+#include <libft.h>
+#include <minishell_lb.h>
+#include <readline/readline.h>
 
-void print_exec_error_message(char **args, char **envp, int interactive)
+void	print_exec_error_message(char **args, char **envp, int interactive)
 {
 	char	*not_found_args[3];
 
@@ -67,9 +78,10 @@ void	print_signal_message(int sig, int status)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
-void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit, char ***args)
+void	check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit,
+		char ***args)
 {
-	if(isbuiltin((char *)(ast->data->ast_command.arguments->content)))
+	if (isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
 		run_builtin(ast, shell, shell_print_exit);
 		ast_free_tree(ast);
@@ -82,9 +94,9 @@ void check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit, char
 	}
 }
 
-void close_child_user_fd(void)
+void	close_child_user_fd(void)
 {
-	int fds;
+	int	fds;
 
 	fds = 3;
 	while (fds < 500)
