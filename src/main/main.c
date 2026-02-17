@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid Date        by                   #+#    #+#             */
-/*   Updated: 2026/02/17 19:05:59 by yademirk         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2026/02/17 23:26:14 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -124,7 +124,9 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	t_list	*redir;
 	int		args;
 
-	args = ast->data->ast_command.arguments != NULL
+	if (ast == NULL)
+		return ;
+	args = ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
 		&& ast->data->ast_command.arguments->content != NULL;
 	if (ast->type == AST_COMMAND && args
 		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
