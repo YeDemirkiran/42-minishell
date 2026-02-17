@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/13 13:06:37 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 13:13:15 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,10 +176,10 @@ void exec_utils(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
         {
             exec_utils(ast->left, shell, fd_in, fd_out);
             status = wait_for_pipeline(shell);
-            ft_malloc(1, 1);
-            sort_malloc(1, 1);
             ast_free_tree(shell->root_ast);
             clear_arr(&shell->env->envp_char);
+            ft_malloc(1, 1);
+            sort_malloc(1, 1);
             exit(status);
         }
         waitpid(pid_subshell, &status, 0);
