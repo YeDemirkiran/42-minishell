@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 13:13:15 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/17 15:01:16 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,41 @@ static void check_redirs_status_in_fork(t_list *redirs)
 	}
 }
 
+ static void	run_exec(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
+{
+	int		std[3];
+	t_list	*redir;
+
+	if (ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
+		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
+	{
+		if (expansion(ast, *shell) != 1)
+			return ;
+		std[0] = dup(STDIN_FILENO);
+		std[1] = dup(STDOUT_FILENO);
+		std[2] = dup(STDERR_FILENO);
+        if (fd_in != STDIN_FILENO)
+            dup2(fd_in, STDIN_FILENO);
+        if (fd_out != STDERR_FILENO)
+            dup2(fd_out, STDOUT_FILENO);
+		redir = ast->data->ast_command.redirs;
+		while (redir != NULL)
+			run_redirs(&redir);
+		if(shell->root_ast->type == AST_SUBSHELL)
+            run_builtin(ast, shell, 0);
+        else
+            run_builtin(ast, shell, 1);
+		dup2(std[0], STDIN_FILENO);
+		dup2(std[1], STDOUT_FILENO);
+		dup2(std[2], STDERR_FILENO);
+		close(std[0]);
+		close(std[1]);
+		close(std[2]);
+	}
+	else
+		shell->exit_status = executor(ast, shell, 0, 1);
+}
+
 /**
  * * 		For run command for executor
  * @return	Forks pid
@@ -86,11 +121,8 @@ pid_t run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		return -1;
     if(isbuiltin(args[0]) && (shell->root_shell_type == AST_OR || shell->root_shell_type == AST_IF))
     {
-        clear_arr(&args);
-        if(shell->root_ast->type == AST_SUBSHELL)
-            run_builtin(ast, shell, 0);
-        else
-            run_builtin(ast, shell, 1);
+        clear_arr(&args);  
+        run_exec(ast, shell, fd_in, fd_out);
         return -1;
     }
 	pid = fork();
