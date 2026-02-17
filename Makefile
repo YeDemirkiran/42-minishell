@@ -1,14 +1,14 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/02/17 19:47:47 by muayna           ###   ########.fr        #
+#    Updated: 2026/02/17 23:10:28 by yademirk         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
+#******************************************************************************#
 
 
 NAME = minishell
@@ -18,6 +18,8 @@ BONUS_NAME = minishell_bonus
 ## Main
 SRC_DIR = ./src/
 OBJ_DIR = ./obj/
+MAND_OBJ_DIR = $(OBJ_DIR)mandatory/
+BONUS_OBJ_DIR = $(OBJ_DIR)bonus/
 INC_DIR = ./include/
 
 ## Libraries
@@ -83,10 +85,10 @@ BONUS_FILES = $(addprefix $(PARSER_DIR), parse_conditional_bonus.c parse_subshel
 
 # SOURCES
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
-OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o))
+OBJS = $(addprefix $(MAND_OBJ_DIR), $(C_FILES:.c=.o))
 
 BONUS_SRCS = $(addprefix $(SRC_DIR), $(C_FILES) $(BONUS_FILES))
-BONUS_OBJS = $(addprefix $(OBJ_DIR), $(C_FILES:.c=.o) $(BONUS_FILES:.c=.o))
+BONUS_OBJS = $(addprefix $(BONUS_OBJ_DIR), $(C_FILES:.c=.o) $(BONUS_FILES:.c=.o))
 
 # CONFIGURATION
 CC = cc
@@ -102,7 +104,6 @@ all: $(NAME)
 $(NAME): $(OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
 	$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $@
 
-bonus: FLAGS += -D MINISHELL_BONUS
 bonus: $(BONUS_NAME)
 
 $(BONUS_NAME): $(BONUS_OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
@@ -120,9 +121,13 @@ $(LIBGNL_A): $(LIBFT_A)
 $(LIBMNL_A): $(LIBFT_A) $(LIBGB_A)
 	make -C $(LIBMNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes -I../garbage_collector -I../get_next_line/includes"
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+$(MAND_OBJ_DIR)%.o: $(SRC_DIR)%.c
 	mkdir -p $(dir $@)
 	$(CC) $(FLAGS) $^ -c -o $@
+
+$(BONUS_OBJ_DIR)%.o: $(SRC_DIR)%.c
+	mkdir -p $(dir $@)
+	$(CC) $(FLAGS) -D MINISHELL_BONUS $^ -c -o $@
 
 clean:
 	@echo "Starting partial cleanup..."
