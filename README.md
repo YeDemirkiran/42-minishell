@@ -49,20 +49,19 @@ extra abilities that are not within the project requirements but could be accomp
 - Environment variables
 	- Default variables like `$HOME`, `$PATH` and `$USER` are expected. However, the shell still works fine even without them.
 - Exit codes and the special parameter `$?`
-	- `$?` expands to these: The last executed command's exit code, parser error code on syntax errors, error code on misused shell abilities, or the last recieved signal (128 + signal number)
+	- `$?` expands to these: The last executed command's exit code, parser error code on syntax errors, error code on misused shell abilities, or the last received signal (128 + signal number)
 	- All programs return with an exit code.
 - Command history navigation using up and down scroll buttons
-	- Extra: Thanks to the Readline library, other keyboard controls are available, such as Ctrl-R search in the history. However, this is not required by the original project, and nor has been implemented by us. It's merely a side effect of the Readline library.
+	- Extra: Thanks to the Readline library, other keyboard controls are available, such as Ctrl-R search in the history. However, this is not required by the original project, and nor has it been implemented by us. It's merely a side effect of the Readline library.
 - Signal handling and controls (Ctrl-C, Ctrl-D, Ctrl-\\)
 	- Ctrl-C: Sends the SIGINT signal. If in prompt or here-document mode, clears the current prompt and displays a new one. If a command is running, sends the SIGINT signal to it to early termination.
 	- Ctrl-D: Sends EOF. If in prompt mode (and the prompt is fully empty), exits the shell. If a program is running, sends EOF to it. Depending on the context of the program, the program may take this EOF and end its input prompt. (For example, running `cat` and then pressing Ctrl-D causes it to exit).
 	- Ctrl-\: Sends the SIGQUIT signal. This signal is ignored in prompt mode. When a command is running, the signal is sent to the running program. Depending on whether the program accepts or ignores SIGQUIT, it may exit.
 
 ## Bonus
-
 - Conditionals (&& and ||)
 	- `&&`: IF token. Executes the command on its left, and only if it returns 0 (success), executes the rightmost command and returns it exit  code.
-	- '||': OR token. Executes the command on its left, and only if it DOESN'T return 0 (on failure), executes the rightmost command and returns its exit code.
+	- `||`: OR token. Executes the command on its left, and only if it DOESN'T return 0 (on failure), executes the rightmost command and returns its exit code.
 - Subshells (Parentheses `()`)
 	- Executes the command list inside the parentheses in a cloned environment (fork). This environment is identical to the parent environment, however, changes in the child environment doesn't affect the parent environment.
 	- It can also be used to group command lists.
@@ -86,7 +85,7 @@ extra abilities that are not within the project requirements but could be accomp
 		- `.*`: Matches all hidden files and directories
 		- `.*/`: Matches all hidden directories
 		- `./*`: Matches all files and directories but adds a ./ prefix
-		- `'*'*`: Searches for gilenames that end with the * character literally. 
+		- `'*'*`: Searches for filenames that end with the * character literally. 
 
 ## Extra Features
 Like we said before, there are extra features implemented in this project that are not required neither by the mandatory nor the bonus parts.
@@ -143,19 +142,31 @@ Most of the program is here. In order:
 1. Prepare prompt string
 2. Present the prompt string to the user
 3. Wait for input
-4. Take and process the input
+4. Take and process the input (also add it to history if interactive)
 5. Lexically analyze the input (the lexer)
 6. Feed the tokens from the lexer to the parser and build an AST (Abstract Syntax Tree)
-7. 
+7. Feed the AST to the executor
+8. Decide if the command is a builtin or a normal command and prepare it according to that
+9. Expansion on the arguments and redirection parameters
+10. Execute the command
+11. Return the command's exit code
+12. Return to the main loop
+13. Restart the loop
 
 In any of these steps, further measurements are taken to detect user errors, misuses and syntax errors. Any error recovers gracefully and either restarts the loop, or skips to the Exit part.
+
+## Cleanup and Exit
+If an exit signal is received (Ctrl-D, exit command, etc), the program enters the Cleanup and Exit phase.
+
+1. Cleanup: Clean any leftover memory stuff
+2. Exit: Exit with the latest exit code (or with the exit command's optional argument if it's provided)
 
 # Development Process
 The early development of Minishell began in September 2025. It started off as a simple prompt taker. No parsing and execution were performed in the initial state.
 
 - November 2025: The actual development began as I partnered with Muhammed Emin Ayna (muayna). The first two weeks were reserved for planning, resource gathering and tasking
 - Muayna decided to handle the backend of the program (execution, builtins, signals), meanwhile yademirk decided to develop the frontend (lexer, parser, expansion)
-- Parser and executor were completed around late December 2025 and early January 2026. At that point, the shell was in an usable state, apart from weird edge cases and lack of variable expansion.
+- Parser and executor were completed around late December 2025 and early January 2026. At that point, the shell was in a usable state, apart from weird edge cases and lack of variable expansion.
 - Variable expansion was added by yademirk around mid-January 2026.
 - We started developing the bonus features around mid-to-late January 2026.
 - The bonus features were completed in early February 2026.
@@ -163,7 +174,7 @@ The early development of Minishell began in September 2025. It started off as a 
 - The project is aimed to be finished in February 2026.
 
 ## What We Learned
-Minishell, so far, has been the most difficult and challenging, yet fun and educational programming project of our entire lives. We learned in-depth about how shells and Bash work, how to handle processes and redirections, parse commands, build parser tree structures and more. But most importantly, it teached about organizing, planning, testing, communication, and being a good teammate.
+Minishell, so far, has been the most difficult and challenging, yet fun and educational programming project of our entire lives. We learned in-depth about how shells and Bash work, how to handle processes and redirections, parse commands, build parser tree structures and more. But most importantly, it taught about organizing, planning, testing, communication, and being a good teammate.
 
 # Collaborators
 ## Main Developers
