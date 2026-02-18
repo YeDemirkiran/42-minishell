@@ -82,8 +82,9 @@ void	print_list(t_envp_list **list)
 		{
 			ft_putstr_fd("=\"", STDOUT_FILENO);
 			ft_putstr_fd(small->value, STDOUT_FILENO);
-			ft_putstr_fd("\"\n", STDOUT_FILENO);
+			ft_putstr_fd("\"", STDOUT_FILENO);
 		}
+		ft_putchar_fd('\n', STDOUT_FILENO);
 		print_list_utils(&list, &back_node_small, &small);
 		list_size--;
 	}
