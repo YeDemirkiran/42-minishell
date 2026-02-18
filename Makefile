@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
+#    By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/02/18 15:15:08 by muayna           ###   ########.fr        #
+#    Created: Invalid Date        by                   #+#    #+#              #
+#    Updated: 2026/02/18 16:16:36 by yademirk         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -102,32 +102,40 @@ FLAGS = $(W_FLAGS) $(INC_FLAGS)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
-	$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $@
+	@echo Linking all Mandatory binaries...
+	@$(CC) $(FLAGS) $(OBJS) $(LIBS) -o $@
 
 bonus: $(BONUS_NAME)
 
 $(BONUS_NAME): $(BONUS_OBJS) $(LIBFT_A) $(LIBGB_A) $(LIBGNL_A) $(LIBMNL_A)
-	$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBS) -o $@
+	@echo Linking all Bonus binaries...
+	@$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBS) -o $@
 
 $(LIBFT_A):
-	make -C $(LIBFT_DIR)
+	@echo Compiling Libft...
+	make -s -C $(LIBFT_DIR)
 
 $(LIBGB_A):
-	make -C $(LIBGB_DIR)
+	@echo Compiling LibGB..
+	@make -s -C $(LIBGB_DIR)
 
 $(LIBGNL_A): $(LIBFT_A)
-	make -C $(LIBGNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes"
+	@echo Compiling Get Next Line...
+	@make -s -C $(LIBGNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes"
 
 $(LIBMNL_A): $(LIBFT_A) $(LIBGB_A)
-	make -C $(LIBMNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes -I../garbage_collector -I../get_next_line/includes"
+	@echo Compiling LibMNL...
+	@make -s -C $(LIBMNL_DIR) CFLAGS="-Wall -Wextra -Werror -I../../lib/libft/include -Iincludes -I../garbage_collector -I../get_next_line/includes"
 
 $(MAND_OBJ_DIR)%.o: $(SRC_DIR)%.c
-	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) $^ -c -o $@
+	@mkdir -p $(dir $@)
+	@echo Compiling $^...
+	@$(CC) $(FLAGS) $^ -c -o $@
 
 $(BONUS_OBJ_DIR)%.o: $(SRC_DIR)%.c
-	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) -D MINISHELL_BONUS $^ -c -o $@
+	@mkdir -p $(dir $@)
+	@echo Compiling $^...
+	@$(CC) $(FLAGS) -D MINISHELL_BONUS $^ -c -o $@
 
 clean:
 	@echo "Starting partial cleanup..."
