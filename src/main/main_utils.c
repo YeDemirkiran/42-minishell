@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:12:18 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 15:15:40 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/18 15:16:20 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 
 void	init_main(t_shell *shell, int argc, char **argv, char **envp)
 {
-	int init_result;
+	int	init_result;
 
 	if (process_args((const char **)argv, argc) == 0)
 		exit(EXIT_SUCCESS);
