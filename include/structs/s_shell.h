@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:20:17 by yademirk          #+#    #+#             */
-/*   Updated: 2026/01/29 17:16:37 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/18 16:00:04 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define S_SHELL_H
 
 # include "modules/executor.h"
-#include  "structs/s_ast.h"
+# include "structs/s_ast.h"
 
 typedef struct s_shell
 {
@@ -25,7 +25,7 @@ typedef struct s_shell
 	int					pid;
 	int					interactive;
 	unsigned int		root_shell_type;
-	t_ast				*root_ast;	
-}	t_shell;
+	t_ast				*root_ast;
+}						t_shell;
 
 #endif
