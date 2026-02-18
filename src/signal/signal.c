@@ -6,14 +6,13 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 23:02:10 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/17 13:57:34 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/18 13:15:27 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
-// For signal.h
-#define _POSIX_C_SOURCE 200809L
+#include "posix_source.h" // for signal.h
 
 // Standxard libraries
 #include <unistd.h>
