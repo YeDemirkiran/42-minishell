@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 13:18:09 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 15:14:40 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/18 15:44:28 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,9 @@ static int	should_run_builtin(t_ast *ast)
 {
 	t_list	*args;
 
-	args = ast->data->ast_command.arguments;
 	if (ast->type != AST_COMMAND)
 		return (0);
+	args = ast->data->ast_command.arguments;
 	if (args == NULL)
 		return (0);
 	if (args->content == NULL)
