@@ -1,14 +1,14 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2026/02/17 23:26:14 by yademirk         ###   ########.fr       */
+/*   Created: 2026/02/18 13:18:09 by yademirk          #+#    #+#             */
+/*   Updated: 2026/02/18 13:33:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
@@ -118,18 +118,30 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	return (0);
 }
 
- static void	run_exec(t_ast *ast, t_shell *shell)
+static int	should_run_builtin(t_ast *ast)
+{
+	t_list	*args;
+
+	args = ast->data->ast_command.arguments;
+	if (ast->type != AST_COMMAND)
+		return (0);
+	if (args == NULL)
+		return (0);
+	if (args->content == NULL)
+		return (0);
+	if (isbuiltin((char *)(args->content)) == 0)
+		return (0);
+	return (1);
+}
+
+static void	run_exec(t_ast *ast, t_shell *shell)
 {
 	int		std[3];
 	t_list	*redir;
-	int		args;
 
 	if (ast == NULL)
 		return ;
-	args = ast->type == AST_COMMAND && ast->data->ast_command.arguments != NULL
-		&& ast->data->ast_command.arguments->content != NULL;
-	if (ast->type == AST_COMMAND && args
-		&& isbuiltin((char *)(ast->data->ast_command.arguments->content)))
+	if (should_run_builtin(ast) != 0)
 	{
 		if (expansion(ast, *shell) != 1)
 			return ;
@@ -139,7 +151,7 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 		redir = ast->data->ast_command.redirs;
 		while (redir != NULL)
 			run_redirs(&redir);
-        run_builtin(ast, shell, 1);
+		run_builtin(ast, shell, 1);
 		dup2(std[0], STDIN_FILENO);
 		dup2(std[1], STDOUT_FILENO);
 		dup2(std[2], STDERR_FILENO);
