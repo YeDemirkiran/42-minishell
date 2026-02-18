@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 00:56:23 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/18 23:15:27 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ char	*cd_shortcut(t_envp_list **list, char *input)
 	return (input);
 }
 
-static void	update_envp_value_for_cd(t_envp_list **list)
+static void	update_envp_value_for_cd(t_envp_list **list, char *old_location)
 {
 	char	buf[1024];
 
-	update_envp_value(list, "OLDPWD", buf);
+	update_envp_value(list, "OLDPWD", old_location);
 	getcwd(buf, 1024);
 	update_envp_value(list, "PWD", buf);
 }
@@ -65,6 +65,6 @@ int	cd(t_envp_list **list, t_ast *ast)
 		&& is_there_path(ast->data->ast_command.arguments->next->content,
 			check))
 		return (1);
-	update_envp_value_for_cd(list);
+	update_envp_value_for_cd(list, buf);
 	return (0);
 }
