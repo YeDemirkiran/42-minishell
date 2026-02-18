@@ -1,14 +1,14 @@
-#******************************************************************************#
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2026/02/17 23:10:28 by yademirk         ###   ########.fr        #
+#    Updated: 2026/02/18 15:15:08 by muayna           ###   ########.fr        #
 #                                                                              #
-#******************************************************************************#
+# **************************************************************************** #
 
 
 NAME = minishell
@@ -46,7 +46,7 @@ C_FILES = $(MAIN_FILES) $(LEXER_FILES) $(PARSER_FILES) $(AST_FILES) $(EXPANSION_
 
 ## Main
 MAIN_DIR = main/
-MAIN_FILES = $(addprefix $(MAIN_DIR), main.c args.c shell_init.c read_input.c read_input_utils.c history.c get_pid.c)
+MAIN_FILES = $(addprefix $(MAIN_DIR), main_utils.c main.c args.c shell_init.c read_input.c read_input_utils.c history.c get_pid.c)
 
 ## Lexer
 LEXER_DIR = lexer/

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 13:18:09 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 13:33:05 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/18 15:14:40 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@
 #include "history.h"
 #include "shell_init.h"
 #include "args.h"
+#include "main_utils.h"
 
 /* =============================== FUNCTIONS =============================== */
 
@@ -53,18 +54,6 @@
  *
  * Exits the program early when necessary.
  */
-static void	init_main(t_shell *shell, int argc, char **argv, char **envp)
-{
-	int	init_result;
-
-	if (process_args((const char **)argv, argc) == 0)
-		exit(EXIT_SUCCESS);
-	init_result = init_shell(shell, argc, argv, envp);
-	if (init_result != 0)
-		shell_exit(init_result, *shell);
-	rl_catch_signals = 0;
-	rl_event_hook = rl_event;
-}
 
 static int	main_prepare_input(t_shell *shell, char **input)
 {
