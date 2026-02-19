@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 16:24:11 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 11:01:57 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/19 07:44:51 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ static int	check_option(char *str)
 {
 	int	i;
 
-	i = 1;
+	i = 0;
 	if (str == NULL)
 		return (1);
-	if (str[0] == '-')
+	if (str[i] == '-')
 	{
 		i++;
 		while (str[i])
@@ -34,6 +34,8 @@ static int	check_option(char *str)
 				return (1);
 			i++;
 		}
+		if (str[1] == '\0')
+			return (1);
 	}
 	else
 		return (1);
