@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 17:55:29 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 19:28:34 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/19 09:15:44 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,14 @@
 #include <minishell_lb.h>
 #include <readline/readline.h>
 
+static void all_free_in_fork(t_shell *shell)
+{
+	ast_free_tree(shell->root_ast);
+	clear_arr(&shell->env->envp_char);
+	ft_malloc(1, 1);
+	sort_malloc(1, 1);
+}
+
 void	run_command_fork(t_fork_variable_list_for_norm norm_solver,
 		t_shell *shell, int fd_in, int fd_out)
 {
@@ -49,13 +57,13 @@ void	run_command_fork(t_fork_variable_list_for_norm norm_solver,
 	redirs = ast->data->ast_command.redirs;
 	check_redirs_status_in_fork(redirs);
 	if (ast->data->ast_command.arguments == NULL)
+	{
+		all_free_in_fork(shell);
 		exit(EXIT_SUCCESS);
+	}
 	check_builtin_status(ast, shell, 0, &args);
 	execve(command_path(ast, (*shell)), args, shell->env->envp_char);
 	print_exec_error_message(args, shell->env->envp_char, shell->interactive);
-	ft_malloc(1, 1);
-	sort_malloc(1, 1);
-	ast_free_tree(shell->root_ast);
-	clear_arr(&shell->env->envp_char);
+	all_free_in_fork(shell);
 	exit(errno_to_exit_code());
 }
