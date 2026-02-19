@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 15:35:45 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/19 07:38:13 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/19 08:51:42 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit,
 	if (isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
 		run_builtin(ast, shell, shell_print_exit);
-		ast_free_tree(ast);
+		ast_free_tree(shell->root_ast);
 		sort_malloc(1, 1);
 		clear_arr(&(shell->env->envp_char));
 		rl_clear_history();
