@@ -30,7 +30,8 @@ static int	is_variable_name_correct(char *variable_name)
 	int	i;
 
 	i = 0;
-	if (variable_name[0] == '=' || ft_isdigit(variable_name[0]) || variable_name[0] == '\0')
+	if (variable_name[0] == '=' || ft_isdigit(variable_name[0])
+		|| variable_name[0] == '\0')
 	{
 		print_error(variable_name);
 		free(variable_name);

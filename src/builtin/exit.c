@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 13:48:53 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 00:56:31 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/19 08:06:55 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,14 @@ static int	all_character_is_digit(char *str)
 	int	i;
 
 	i = 0;
+	if (str == NULL)
+		return (0);
+	if (str[i] == '-')
+	{
+		i++;
+		if (str[i] == '\0')
+			return (1);
+	}
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
