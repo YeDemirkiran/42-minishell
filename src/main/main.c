@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 13:18:09 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 15:44:28 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/20 21:13:05 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -61,7 +61,7 @@ static int	main_prepare_input(t_shell *shell, char **input)
 
 	install_prompt_signals();
 	prompt = rl_header(&(shell->env->envp_list), shell->env->envp_char);
-	*input = read_input(prompt, "> ", shell->interactive);
+	*input = read_input(prompt, "> ", shell->interactive, shell);
 	if (*input == NULL && (g_sig != SIGINT && errno != EINTR))
 	{
 		if (errno != 0)

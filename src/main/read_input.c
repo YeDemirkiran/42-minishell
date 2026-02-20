@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   read_input.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 14:26:22 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 13:17:44 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/20 21:12:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 /* ================================ HEADERS ================================ */
 
@@ -25,6 +25,7 @@
 
 // Project headers
 #include "g_sig.h"
+#include "structs/s_shell.h"
 
 // Local headers
 #include "read_input_utils.h"
@@ -115,7 +116,8 @@ char	*get_input_line(const char *prompt, int interactive)
 	return (str);
 }
 
-static int	check_new_input(const char *new, char **old, char quote)
+static int	check_new_input(const char *new, char **old,
+	char quote, t_shell *shell)
 {
 	if (new == NULL)
 	{
@@ -126,6 +128,7 @@ static int	check_new_input(const char *new, char **old, char quote)
 		if (g_sig == SIGINT)
 			return (0);
 		print_uncompleted_eof_error(quote);
+		shell->exit_status = 2;
 		return (2);
 	}
 	return (1);
@@ -137,7 +140,7 @@ static int	check_new_input(const char *new, char **old, char quote)
  * @return Multi-line (or single) input on success, NULL on failure.
  */
 char	*read_input(const char *primary_prompt, const char *secondary_prompt,
-	int interactive)
+	int interactive, t_shell *shell)
 {
 	char	*input;
 	char	*new;
@@ -150,7 +153,7 @@ char	*read_input(const char *primary_prompt, const char *secondary_prompt,
 	{
 		new = get_input_line(get_prompt(primary_prompt,
 					secondary_prompt, input), interactive);
-		res = check_new_input(new, &input, quote);
+		res = check_new_input(new, &input, quote, shell);
 		if (res == 0)
 			return (input);
 		else if (res == 2)
