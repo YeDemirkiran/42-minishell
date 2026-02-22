@@ -6,32 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 14:31:22 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:18:58 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _GNU_SOURCE
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/ast.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
-#include "modules/expansion.h"
-#include "modules/signal.h"
-#include "modules/utils.h"
-#include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
-#include "unistd.h"
-#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <structs/s_redirection.h>
+#include <structs/s_shell.h>
+#include <enums/e_redir_type.h>
+#include <modules/expansion.h>
+#include <modules/signal.h>
 #include <libft.h>
-#include <minishell_lb.h>
-#include <readline/readline.h>
 
 /**
  * ? This func close all parent fds in child (without system fd 0,1,2).
@@ -109,7 +95,6 @@ static void	run_exec(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
  * * 		For run command for executor
  * @return	Forks pid
  */
-
 pid_t	run_command(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	pid_t							pid;

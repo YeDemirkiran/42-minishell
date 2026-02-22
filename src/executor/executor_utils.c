@@ -6,26 +6,36 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 14:21:45 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:15:55 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/ast.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
-#include "modules/utils.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
-#include "unistd.h"
-#include <libft.h>
+// #include "enums/e_redir_type.h"
+// #include "fcntl.h"
+// #include "modules/ast.h"
+// #include "modules/builtin.h"
+// #include "modules/utils.h"
+// #include "stdio.h"
+// #include "stdlib.h"
+// #include "structs/s_ast.h"
+// #include "sys/wait.h"
+// #include "unistd.h"
+// #include <libft.h>
+// #include <minishell_lb.h>
+
+// #include "modules/executor.h"
+// #include "structs/s_redirection.h"
+
+// #include <libft.h>
 #include <minishell_lb.h>
+#include <structs/s_ast.h>
+#include <structs/s_shell.h>
+#include <structs/s_redirection.h>
+#include <enums/e_redir_type.h>
+#include <modules/executor.h>
+#include <modules/builtin.h>
+#include <modules/utils.h>
+
 
 int	isbuiltin(const char *command)
 {
