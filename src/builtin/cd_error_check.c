@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cd_error_check.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 17:55:53 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 00:56:08 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:48:13 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
 #include "unistd.h"
-#include <dirent.h>
 #include <libft.h>
 #include <minishell_lb.h>
 

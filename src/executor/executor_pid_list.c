@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 15:35:50 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 15:10:18 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:27:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	reset_pid_list(t_pid_list **list)
 		tmp = tmp->next;
 	}
 }
+
 /**
  * ? This func. create pid_list for executor
  * ! Example : cat | ls

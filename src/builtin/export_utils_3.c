@@ -3,20 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils_3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 17:54:05 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 01:02:25 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:37:54 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
-#include "unistd.h"
-#include <dirent.h>
 #include <libft.h>
 #include <minishell_lb.h>
-#include <modules/builtin.h>
 
 char	*take_variable_value(t_list *arguments)
 {

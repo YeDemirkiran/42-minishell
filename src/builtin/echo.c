@@ -3,20 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 16:24:11 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/19 07:44:51 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:46:00 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
 #include "unistd.h"
-#include <dirent.h>
-#include <libft.h>
-#include <minishell_lb.h>
-#include <modules/builtin.h>
+#include "libft.h"
+#include "structs/s_ast.h"
 
 static int	check_option(char *str)
 {

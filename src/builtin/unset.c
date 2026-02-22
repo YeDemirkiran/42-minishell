@@ -3,21 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 17:42:56 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 01:04:56 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:44:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../lib/garbage_collector/s_gb.h"
-#include "stdio.h"
 #include "structs/s_ast.h"
-#include "unistd.h"
-#include <dirent.h>
-#include <libft.h>
+#include <s_gb.h>
 #include <minishell_lb.h>
-#include <modules/builtin.h>
 
 static t_envp_list	*find_node_back_enplist(t_envp_list *source,
 		t_envp_list *target)

@@ -10,13 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
 #include "unistd.h"
-#include <dirent.h>
+#include "stdlib.h"
 #include <libft.h>
-#include <minishell_lb.h>
 #include <modules/builtin.h>
+#include <dirent.h>
 
 static void	print_error(char *variable)
 {
@@ -74,7 +72,6 @@ static void	add_variable_on_envplist_utils(t_envp_list **list, t_list *command)
 		(*list)->isvaluempty = 1;
 	(*list)->next = NULL;
 }
-//same_variable_update
 
 static int	smu(t_envp_list **list, char *name, char *value)
 {

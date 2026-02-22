@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 15:15:55 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:27:41 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@
 #include <modules/executor.h>
 #include <modules/builtin.h>
 #include <modules/utils.h>
-
 
 int	isbuiltin(const char *command)
 {
