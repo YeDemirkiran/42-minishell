@@ -6,7 +6,7 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 17:55:29 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/19 09:15:44 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 07:12:28 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 #include <minishell_lb.h>
 #include <readline/readline.h>
 
-static void all_free_in_fork(t_shell *shell)
+static void	all_free_in_fork(t_shell *shell)
 {
 	ast_free_tree(shell->root_ast);
 	clear_arr(&shell->env->envp_char);
