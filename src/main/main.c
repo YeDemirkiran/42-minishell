@@ -6,35 +6,27 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/22 12:01:31 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 14:45:12 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:55:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
 // Standard libraries
-#include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <signal.h>
 #include <errno.h>
 
 // Internal libraries
 #include <readline/readline.h>
-#include <get_next_line.h>
-#include <minishell_lb.h>
 #include <gb.h>
 
 // Project headers
-#include "macros/m_colors.h"
 #include "structs/s_ast.h"
 #include "structs/s_shell.h"
 #include "modules/lexer.h"
 #include "modules/ast.h"
 #include "modules/parser.h"
-#include "modules/expansion.h"
-#include "modules/executor.h"
-#include "modules/builtin.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
 #include "g_sig.h"
