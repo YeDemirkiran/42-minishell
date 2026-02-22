@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 15:31:52 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 19:01:15 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 14:21:45 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ int	run_redirs(t_list **redirs)
 	if (fd < 0)
 	{
 		error_message("minishell", redir->path, NULL);
+		(*redirs) = (*redirs)->next;
 		return (0);
 	}
 	if (fd >= 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/22 12:01:31 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 12:01:32 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 14:39:31 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,25 @@ static int	should_run_builtin(t_ast *ast)
 	return (1);
 }
 
+static int	run_redir_loop(t_list *redir, t_shell *shell, int *std)
+{
+	while (redir != NULL)
+	{
+		if (run_redirs(&redir) != 1)
+		{
+			shell->exit_status = 1;
+			dup2(std[0], STDIN_FILENO);
+			dup2(std[1], STDOUT_FILENO);
+			dup2(std[2], STDERR_FILENO);
+			close(std[0]);
+			close(std[1]);
+			close(std[2]);
+			return (0);
+		}
+	}
+	return (1);
+}
+
 static void	run_exec(t_ast *ast, t_shell *shell)
 {
 	int		std[3];
@@ -138,8 +157,8 @@ static void	run_exec(t_ast *ast, t_shell *shell)
 		std[1] = dup(STDOUT_FILENO);
 		std[2] = dup(STDERR_FILENO);
 		redir = ast->data->ast_command.redirs;
-		while (redir != NULL)
-			run_redirs(&redir);
+		if (run_redir_loop(redir, shell, std) != 1)
+			return ;
 		run_builtin(ast, shell, 1);
 		dup2(std[0], STDIN_FILENO);
 		dup2(std[1], STDOUT_FILENO);

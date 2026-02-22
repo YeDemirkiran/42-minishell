@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 22:56:23 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/19 09:12:41 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 14:31:22 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,19 @@ static void	run_exec_dup_usage_for_norm(int *std, int select_type)
 	}
 }
 
+static int	run_redir_loop(t_list *redir, t_shell *shell)
+{
+	while (redir != NULL)
+	{
+		if (run_redirs(&redir) != 1)
+		{
+			shell->exit_status = 1;
+			return (0);
+		}
+	}
+	return (1);
+}
+
 static void	run_exec(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 {
 	int		std[3];
@@ -80,8 +93,8 @@ static void	run_exec(t_ast *ast, t_shell *shell, int fd_in, int fd_out)
 		if (fd_out != STDERR_FILENO)
 			dup2(fd_out, STDOUT_FILENO);
 		redir = ast->data->ast_command.redirs;
-		while (redir != NULL)
-			run_redirs(&redir);
+		if (run_redir_loop(redir, shell) != 1)
+			return ;
 		if (shell->root_ast->type == AST_SUBSHELL)
 			run_builtin(ast, shell, 0);
 		else
