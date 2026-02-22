@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 14:57:42 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 16:13:13 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:57:55 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 
 # include "structs/s_ast.h"
 # include "structs/s_shell.h"
-
-# include "../../src/expansion/variable_utils.h"
-
 /**
  * @brief Takes a string and removes outer-level quotes from it.
  * @note Quotes inside quotes are preserved.

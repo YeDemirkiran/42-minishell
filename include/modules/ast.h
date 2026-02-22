@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:44:24 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 16:13:09 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:56:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define AST_H
 
 # include <structs/s_ast.h>
-# include <stddef.h>
 
 void		ast_traverse_preorder(t_ast *ast, void (*f)(t_ast *));
 void		ast_traverse_postorder(t_ast *ast, void (*f)(t_ast *));

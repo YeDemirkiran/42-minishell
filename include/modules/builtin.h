@@ -6,21 +6,18 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:24:16 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 16:13:10 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 15:57:28 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-# include "structs/s_ast.h"
-# include <dirent.h>
 # include <libft.h>
 # include <minishell_lb.h>
 # include <s_gb.h>
-# include <stdio.h>
-# include <structs/s_shell.h>
-# include <unistd.h>
+# include "structs/s_ast.h"
+# include "structs/s_shell.h"
 
 void			unset(t_envp_list **list, t_ast *ast);
 /*CD ERROR CHECK*/
