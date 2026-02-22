@@ -3,34 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   executor_errors_2.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 19:28:54 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 19:29:03 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 14:48:40 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _GNU_SOURCE
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/ast.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
-#include "modules/signal.h"
-#include "modules/utils.h"
-#include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
-#include "unistd.h"
 #include <errno.h>
-#include <libft.h>
-#include <minishell_lb.h>
-#include <readline/readline.h>
+
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "modules/utils.h"
 
 void	print_exec_error_message(char **args, char **envp, int interactive)
 {

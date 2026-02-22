@@ -6,7 +6,7 @@
 /*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:20:17 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 16:13:20 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/22 14:54:38 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "modules/executor.h"
 # include "structs/s_ast.h"
+
+typedef struct s_god_struct_envp	t_god_struct_envp;
 
 typedef struct s_shell
 {
