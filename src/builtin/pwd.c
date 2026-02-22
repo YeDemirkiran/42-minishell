@@ -12,11 +12,20 @@
 
 #include "unistd.h"
 #include <libft.h>
+#include <stdlib.h>
 
 void	pwd(void)
 {
 	char	buf[1024];
+	char	*check_getcwd;
 
-	getcwd(buf, 1024);
-	ft_putendl_fd(buf, STDOUT_FILENO);
+	check_getcwd = getcwd(NULL, 1024);
+	if (check_getcwd == NULL)
+		ft_putendl_fd("Zombie Directory", STDOUT_FILENO);
+	else
+	{
+		free(check_getcwd);
+		getcwd(buf, 1024);
+		ft_putendl_fd(buf, STDOUT_FILENO);
+	}
 }
