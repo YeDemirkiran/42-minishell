@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_fork.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 17:55:29 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/22 07:12:28 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 13:58:59 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,13 @@ void	run_command_fork(t_fork_variable_list_for_norm norm_solver,
 	if (ast->data->ast_command.arguments == NULL)
 	{
 		all_free_in_fork(shell);
+		clear_arr(norm_solver.args);
 		exit(EXIT_SUCCESS);
 	}
 	check_builtin_status(ast, shell, 0, &args);
 	execve(command_path(ast, (*shell)), args, shell->env->envp_char);
 	print_exec_error_message(args, shell->env->envp_char, shell->interactive);
 	all_free_in_fork(shell);
+	clear_arr(norm_solver.args);
 	exit(errno_to_exit_code());
 }
