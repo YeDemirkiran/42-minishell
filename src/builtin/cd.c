@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
+/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/22 15:47:00 by yademirk         ###   ########.fr       */
+/*   Updated: 2026/02/23 08:13:34 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,30 @@ char	*cd_shortcut(t_envp_list **list, char *input)
 	return (input);
 }
 
-static void	update_envp_value_for_cd(t_envp_list **list, char *old_location)
+static void	update_envp_value_for_cd(t_envp_list **list)
 {
-	char	buf[1024];
+	char	*check_fwd;
 
-	update_envp_value(list, "OLDPWD", old_location);
-	getcwd(buf, 1024);
-	update_envp_value(list, "PWD", buf);
+	check_fwd = getcwd(NULL, 1024);
+	if(check_fwd != NULL)
+	{
+		update_envp_value(list, "OLDPWD", check_fwd);
+		free(check_fwd);
+	}
+	check_fwd = getcwd(NULL, 1024);
+	if(check_fwd != NULL)
+	{
+		update_envp_value(list, "PWD", check_fwd);
+		free(check_fwd);
+	}
 }
 
 int	cd(t_envp_list **list, t_ast *ast)
 {
-	char	buf[1024];
 	int		check;
 
 	if (check_cd_args_count(ast->data->ast_command.arguments))
 		return (1);
-	getcwd(buf, 1024);
 	if (ast->data->ast_command.arguments->next == NULL)
 	{
 		if (check_envp_home_path((*list)))
@@ -62,6 +69,6 @@ int	cd(t_envp_list **list, t_ast *ast)
 		&& is_there_path(ast->data->ast_command.arguments->next->content,
 			check))
 		return (1);
-	update_envp_value_for_cd(list, buf);
+	update_envp_value_for_cd(list);
 	return (0);
 }
