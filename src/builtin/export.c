@@ -10,11 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
-#include "unistd.h"
-#include <dirent.h>
-#include <libft.h>
 #include <minishell_lb.h>
 #include <modules/builtin.h>
 

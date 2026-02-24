@@ -3,29 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 13:48:53 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 00:56:31 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:35:23 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
-#include "unistd.h"
-#include <dirent.h>
-#include <libft.h>
-#include <minishell_lb.h>
 #include <modules/ast.h>
-#include <modules/builtin.h>
-#include <modules/utils.h>
 #include <structs/s_shell.h>
+#include <libft.h>
+#include "unistd.h"
+#include <modules/utils.h>
 
 static int	all_character_is_digit(char *str)
 {
 	int	i;
 
 	i = 0;
+	if (str == NULL)
+		return (0);
+	if (str[i] == '-' || str[i] == '+')
+	{
+		i++;
+		if (str[i] == '\0')
+			return (1);
+	}
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))

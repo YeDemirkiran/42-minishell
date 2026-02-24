@@ -3,32 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   shell_level.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 15:30:10 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/18 15:11:14 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:20:59 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _GNU_SOURCE
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
-#include "modules/signal.h"
-#include "modules/utils.h"
-#include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
-#include "unistd.h"
-#include <errno.h>
 #include <libft.h>
 #include <minishell_lb.h>
+#include <gb.h>
+#include <structs/s_shell.h>
+#include <modules/builtin.h>
 
 void	find_shell_level(t_shell *shell)
 {

@@ -6,14 +6,11 @@
 /*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 21:06:13 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 00:56:23 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/23 08:13:34 by muayna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
 #include "unistd.h"
-#include <dirent.h>
 #include <libft.h>
 #include <minishell_lb.h>
 #include <modules/builtin.h>
@@ -34,21 +31,28 @@ char	*cd_shortcut(t_envp_list **list, char *input)
 
 static void	update_envp_value_for_cd(t_envp_list **list)
 {
-	char	buf[1024];
+	char	*check_fwd;
 
-	update_envp_value(list, "OLDPWD", buf);
-	getcwd(buf, 1024);
-	update_envp_value(list, "PWD", buf);
+	check_fwd = getcwd(NULL, 1024);
+	if(check_fwd != NULL)
+	{
+		update_envp_value(list, "OLDPWD", check_fwd);
+		free(check_fwd);
+	}
+	check_fwd = getcwd(NULL, 1024);
+	if(check_fwd != NULL)
+	{
+		update_envp_value(list, "PWD", check_fwd);
+		free(check_fwd);
+	}
 }
 
 int	cd(t_envp_list **list, t_ast *ast)
 {
-	char	buf[1024];
 	int		check;
 
 	if (check_cd_args_count(ast->data->ast_command.arguments))
 		return (1);
-	getcwd(buf, 1024);
 	if (ast->data->ast_command.arguments->next == NULL)
 	{
 		if (check_envp_home_path((*list)))

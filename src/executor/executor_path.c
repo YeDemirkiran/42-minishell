@@ -3,34 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   executor_path.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 17:27:04 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 17:53:15 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:05:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/ast.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
-#include "modules/expansion.h"
-#include "modules/signal.h"
-#include "modules/utils.h"
-#include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
 #include "unistd.h"
-#include <errno.h>
-#include <libft.h>
+#include "modules/executor.h"
+#include "gb.h"
 #include <minishell_lb.h>
-#include <readline/readline.h>
+#include <libft.h>
 
 static char	*find_correct_path(t_ast *ast, char *source_path)
 {

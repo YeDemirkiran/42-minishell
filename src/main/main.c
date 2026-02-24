@@ -3,38 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 13:18:09 by yademirk          #+#    #+#             */
-/*   Updated: 2026/02/18 15:44:28 by muayna           ###   ########.fr       */
+/*   Created: 2026/02/22 12:01:31 by muayna            #+#    #+#             */
+/*   Updated: 2026/02/22 15:55:37 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* ================================ HEADERS ================================ */
 
 // Standard libraries
-#include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <signal.h>
 #include <errno.h>
 
 // Internal libraries
 #include <readline/readline.h>
-#include <get_next_line.h>
-#include <minishell_lb.h>
 #include <gb.h>
 
 // Project headers
-#include "macros/m_colors.h"
 #include "structs/s_ast.h"
 #include "structs/s_shell.h"
 #include "modules/lexer.h"
 #include "modules/ast.h"
 #include "modules/parser.h"
-#include "modules/expansion.h"
-#include "modules/executor.h"
-#include "modules/builtin.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
 #include "g_sig.h"
@@ -61,7 +53,7 @@ static int	main_prepare_input(t_shell *shell, char **input)
 
 	install_prompt_signals();
 	prompt = rl_header(&(shell->env->envp_list), shell->env->envp_char);
-	*input = read_input(prompt, "> ", shell->interactive);
+	*input = read_input(prompt, "> ", shell->interactive, shell);
 	if (*input == NULL && (g_sig != SIGINT && errno != EINTR))
 	{
 		if (errno != 0)
@@ -105,51 +97,6 @@ static int	prepare_ast(char *input, t_shell *shell, t_ast **ast_addr)
 	if (*ast_addr == NULL)
 		return (1);
 	return (0);
-}
-
-static int	should_run_builtin(t_ast *ast)
-{
-	t_list	*args;
-
-	if (ast->type != AST_COMMAND)
-		return (0);
-	args = ast->data->ast_command.arguments;
-	if (args == NULL)
-		return (0);
-	if (args->content == NULL)
-		return (0);
-	if (isbuiltin((char *)(args->content)) == 0)
-		return (0);
-	return (1);
-}
-
-static void	run_exec(t_ast *ast, t_shell *shell)
-{
-	int		std[3];
-	t_list	*redir;
-
-	if (ast == NULL)
-		return ;
-	if (should_run_builtin(ast) != 0)
-	{
-		if (expansion(ast, *shell) != 1)
-			return ;
-		std[0] = dup(STDIN_FILENO);
-		std[1] = dup(STDOUT_FILENO);
-		std[2] = dup(STDERR_FILENO);
-		redir = ast->data->ast_command.redirs;
-		while (redir != NULL)
-			run_redirs(&redir);
-		run_builtin(ast, shell, 1);
-		dup2(std[0], STDIN_FILENO);
-		dup2(std[1], STDOUT_FILENO);
-		dup2(std[2], STDERR_FILENO);
-		close(std[0]);
-		close(std[1]);
-		close(std[2]);
-	}
-	else
-		shell->exit_status = executor(ast, shell, 0, 1);
 }
 
 int	main(int argc, char **argv, char **envp)

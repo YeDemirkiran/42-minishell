@@ -10,10 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
-#include "unistd.h"
-#include <libft.h>
 #include <minishell_lb.h>
 
 void	env(t_envp_list **list)

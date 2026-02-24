@@ -3,34 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   executor_errors.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 15:35:45 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 19:28:25 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 14:51:44 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define _GNU_SOURCE
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/ast.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
-#include "modules/signal.h"
-#include "modules/utils.h"
-#include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
-#include "unistd.h"
-#include <errno.h>
+#include <stdlib.h>
 #include <libft.h>
-#include <minishell_lb.h>
+#include <sys/wait.h>
 #include <readline/readline.h>
+
+#include <gb.h>
+#include <minishell_lb.h>
+
+#include "modules/executor.h"
+#include "modules/ast.h"
 
 #ifdef WCOREDUMP
 
@@ -81,7 +71,7 @@ void	check_builtin_status(t_ast *ast, t_shell *shell, int shell_print_exit,
 	if (isbuiltin((char *)(ast->data->ast_command.arguments->content)))
 	{
 		run_builtin(ast, shell, shell_print_exit);
-		ast_free_tree(ast);
+		ast_free_tree(shell->root_ast);
 		sort_malloc(1, 1);
 		clear_arr(&(shell->env->envp_char));
 		rl_clear_history();

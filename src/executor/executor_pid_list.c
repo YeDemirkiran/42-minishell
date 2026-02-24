@@ -3,32 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   executor_pid_list.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 15:35:50 by muayna            #+#    #+#             */
-/*   Updated: 2026/02/17 16:38:34 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:27:09 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define _GNU_SOURCE
-#include "../../lib/garbage_collector/gb.h"
-#include "enums/e_redir_type.h"
-#include "fcntl.h"
-#include "modules/builtin.h"
-#include "modules/executor.h"
+#include "modules/ast.h"
 #include "modules/signal.h"
 #include "modules/utils.h"
-#include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "structs/s_ast.h"
-#include "structs/s_redirection.h"
-#include "sys/wait.h"
-#include "unistd.h"
-#include <errno.h>
-#include <libft.h>
-#include <minishell_lb.h>
 
 void	reset_pid_list(t_pid_list **list)
 {
@@ -41,6 +25,7 @@ void	reset_pid_list(t_pid_list **list)
 		tmp = tmp->next;
 	}
 }
+
 /**
  * ? This func. create pid_list for executor
  * ! Example : cat | ls
@@ -51,7 +36,6 @@ void	reset_pid_list(t_pid_list **list)
 		ls output write on terminal. Cat still wait input but ls is finished,
 		you can see ls output in terminal.
  */
-
 void	create_pid_list(t_pid_list *root_pid_list, pid_t pid)
 {
 	if (root_pid_list->pid == 0)

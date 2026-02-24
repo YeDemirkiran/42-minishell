@@ -3,29 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: muayna <muayna@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: yademirk <yademirk@student.42istanbul.com. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 16:24:11 by muayna            #+#    #+#             */
-/*   Updated: 2026/01/16 11:01:57 by muayna           ###   ########.fr       */
+/*   Updated: 2026/02/22 15:46:00 by yademirk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
 #include "unistd.h"
-#include <dirent.h>
-#include <libft.h>
-#include <minishell_lb.h>
-#include <modules/builtin.h>
+#include "libft.h"
+#include "structs/s_ast.h"
 
 static int	check_option(char *str)
 {
 	int	i;
 
-	i = 1;
+	i = 0;
 	if (str == NULL)
 		return (1);
-	if (str[0] == '-')
+	if (str[i] == '-')
 	{
 		i++;
 		while (str[i])
@@ -34,6 +30,8 @@ static int	check_option(char *str)
 				return (1);
 			i++;
 		}
+		if (str[1] == '\0')
+			return (1);
 	}
 	else
 		return (1);

@@ -10,14 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
-#include "structs/s_ast.h"
-#include "unistd.h"
-#include <dirent.h>
-#include <gb.h>
-#include <libft.h>
 #include <minishell_lb.h>
-#include <modules/builtin.h>
+#include <libft.h>
 
 static t_envp_list	*find_node_back_enplist(t_envp_list *source,
 		t_envp_list *target)
