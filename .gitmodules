@@ -1,13 +1,13 @@
 [submodule "lib/garbage_collector"]
 	path = lib/garbage_collector
-	url = https://github.com/muh4mmedemin/garbage_collector.git
+	url = git@github.com:muh4mmedemin/garbage_collector.git
 [submodule "lib/libft"]
 	path = lib/libft
-	url = https://github.com/YeDemirkiran/libft.git
+	url = git@github.com:YeDemirkiran/libft.git
 [submodule "lib/minishell_lb"]
 	path = lib/minishell_lb
-	url = https://github.com/muh4mmedemin/minishell_lb.git
+	url = git@github.com:muh4mmedemin/minishell_lb.git
 [submodule "lib/get_next_line"]
 	path = lib/get_next_line
-	url = https://github.com/muh4mmedemin/get_next_line.git
+	url = git@github.com:muh4mmedemin/get_next_line.git
 	branch = withMakefile
